@@ -15,14 +15,13 @@
 
 <style>
   :root {
-    --paper: #F4F2EC;
-    --ink: #14131A;
-    --c1: #1B3BFF;
-    --c2: #FF2E7E;
-    --c3: #FF6B1A;
-    --c4: #6B2BFF;
-    --c5: #00A8AD;
-    --ground: var(--c1);
+    /* 밝은 바탕 다섯 개. 축이 바뀔 때 바탕이 아주 조금 옮겨간다. */
+    --base: #EAF1FF;
+    --accent: #1B49FF;
+    --ink: #16151C;
+    --sub: #6E6B7E;
+    --card: #FFFFFF;
+    --edge: rgba(22, 21, 28, 0.1);
 
     --display: "Yu Gothic", YuGothic, "Hiragino Kaku Gothic ProN", Meiryo,
       "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
@@ -33,194 +32,222 @@
   html, body { height: 100%; }
   body {
     font-family: var(--body);
-    color: #fff;
-    background: var(--ground);
-    transition: background-color 0.45s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: hidden;
+    color: var(--ink);
+    background: var(--base);
+    transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
   }
-  body.on-paper { background: var(--paper); color: var(--ink); overflow: auto; }
 
   button { font-family: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
-  :focus-visible { outline: 3px solid currentColor; outline-offset: 4px; }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 
   .app { position: relative; min-height: 100dvh; display: flex; flex-direction: column; }
   .view { display: none; flex: 1; flex-direction: column; }
   .view.live { display: flex; }
 
-  /* ── 상단 코너 ─────────────────────────────── */
+  /* 흰 선 낙서. 세 개만 두고 자리를 고정한다. */
+  .doodle { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .doodle i {
+    position: absolute; color: var(--accent); opacity: 0.3;
+    font-family: var(--body); font-weight: 700; line-height: 1;
+    transition: color 0.5s;
+  }
+  .doodle i:nth-child(1) { top: 13vh; right: 8vw; font-size: 34px; animation: bob 7s ease-in-out infinite alternate; }
+  .doodle i:nth-child(2) { top: 62vh; left: 5vw; font-size: 22px; animation: bob 9s 0.6s ease-in-out infinite alternate; }
+  .doodle i:nth-child(3) { top: 34vh; right: 16vw; font-size: 16px; animation: bob 8s 1.2s ease-in-out infinite alternate; }
+  @keyframes bob { to { transform: translateY(-13px) rotate(9deg); } }
+
+  /* ── 코너 ──────────────────────────────────── */
   .corner {
     position: fixed; inset: 0 0 auto 0; z-index: 20;
     display: flex; justify-content: space-between; align-items: center;
-    padding: 18px 20px; pointer-events: none;
+    padding: 16px 18px; pointer-events: none;
   }
   .corner > * { pointer-events: auto; }
   .wordmark {
-    font-family: var(--display); font-weight: 900; font-size: 1.1rem;
-    letter-spacing: -0.02em; opacity: 0; transition: opacity 0.3s;
+    font-family: var(--display); font-weight: 900; font-size: 1.05rem;
+    letter-spacing: -0.02em; color: var(--accent);
+    opacity: 0; transition: opacity 0.3s, color 0.5s;
   }
   .wordmark.show { opacity: 1; }
   .helpbtn {
-    width: 34px; height: 34px; border: 2px solid currentColor;
+    width: 34px; height: 34px; background: var(--card); color: var(--ink);
     border-radius: 50%; font-family: var(--display); font-weight: 900;
     font-size: 0.95rem; line-height: 1; display: grid; place-items: center;
+    box-shadow: 0 2px 10px rgba(22, 21, 28, 0.1);
+    transition: background-color 0.15s, color 0.15s;
   }
-  .helpbtn:hover { background: currentColor; }
-  .helpbtn:hover span { color: var(--ground); }
-  body.on-paper .helpbtn:hover span { color: var(--paper); }
+  .helpbtn:hover { background: var(--accent); color: #fff; }
+
+  /* 캡슐 라벨 */
+  .cap {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: var(--card); border-radius: 999px; padding: 7px 15px;
+    font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em;
+    color: var(--sub); box-shadow: 0 2px 8px rgba(22, 21, 28, 0.07);
+    white-space: nowrap;
+  }
+  .cap b { font-family: var(--display); font-size: 0.92rem; letter-spacing: 0; color: var(--accent); transition: color 0.5s; }
 
   /* ── 랜딩 ──────────────────────────────────── */
-  .blob {
-    position: absolute; width: 78vmin; height: 78vmin; border-radius: 50%;
-    background: rgba(255, 255, 255, 0.11); filter: blur(6px);
-    top: -18vmin; right: -22vmin; animation: drift 22s ease-in-out infinite alternate;
+  .land {
+    flex: 1; display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 0 clamp(20px, 6vw, 72px) clamp(34px, 7vh, 68px);
+    position: relative; z-index: 2;
   }
-  @keyframes drift { to { transform: translate3d(-9vmin, 14vmin, 0) scale(1.12); } }
-
-  .land { flex: 1; display: flex; flex-direction: column; justify-content: flex-end;
-    padding: 0 clamp(20px, 6vw, 76px) clamp(32px, 6vh, 64px); position: relative; z-index: 2; }
-
+  .land .over {
+    font-size: 0.92rem; color: var(--sub); margin-bottom: 14px;
+    animation: pop 0.5s 0.05s cubic-bezier(0.18, 0.9, 0.24, 1) both;
+  }
   .lock {
-    font-family: var(--display); font-weight: 900;
-    font-size: clamp(5.5rem, 27vmin, 17rem); line-height: 0.82;
-    letter-spacing: -0.06em;
-    display: grid; grid-template-columns: repeat(2, min-content);
-    will-change: transform;
+    font-family: var(--display); font-weight: 900; color: var(--accent);
+    font-size: clamp(5rem, 25vmin, 15rem); line-height: 0.84; letter-spacing: -0.06em;
+    display: grid; grid-template-columns: repeat(2, min-content); will-change: transform;
   }
-  .lock span { display: block; opacity: 0; transform: translateY(0.14em); animation: pop 0.62s cubic-bezier(0.18, 0.9, 0.24, 1) both; }
-  .lock span:nth-child(1) { animation-delay: 0.05s; }
-  .lock span:nth-child(2) { animation-delay: 0.13s; }
-  .lock span:nth-child(3) { animation-delay: 0.21s; }
-  .lock span:nth-child(4) { animation-delay: 0.29s; }
+  .lock span { display: block; opacity: 0; transform: translateY(0.13em); animation: pop 0.62s cubic-bezier(0.18, 0.9, 0.24, 1) both; }
+  .lock span:nth-child(1) { animation-delay: 0.12s; }
+  .lock span:nth-child(2) { animation-delay: 0.2s; }
+  .lock span:nth-child(3) { animation-delay: 0.28s; }
+  .lock span:nth-child(4) { animation-delay: 0.36s; }
   @keyframes pop { to { opacity: 1; transform: none; } }
 
   .land .tag {
-    font-size: clamp(1.25rem, 3.4vw, 2rem); font-weight: 700; line-height: 1.3;
-    margin-top: clamp(20px, 4vh, 40px); max-width: 22ch;
-    animation: pop 0.6s 0.4s cubic-bezier(0.18, 0.9, 0.24, 1) both;
+    font-family: var(--display); font-weight: 900;
+    font-size: clamp(1.6rem, 5vw, 2.6rem); line-height: 1.25; letter-spacing: -0.03em;
+    margin-top: clamp(20px, 4vh, 36px); max-width: 20ch;
+    animation: pop 0.6s 0.46s cubic-bezier(0.18, 0.9, 0.24, 1) both;
   }
+  .land .tag em { font-style: normal; color: var(--accent); }
   .land .row {
-    display: flex; align-items: center; gap: 22px; flex-wrap: wrap;
-    margin-top: clamp(22px, 4vh, 38px);
-    animation: pop 0.6s 0.52s cubic-bezier(0.18, 0.9, 0.24, 1) both;
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    margin-top: clamp(24px, 4vh, 40px);
+    animation: pop 0.6s 0.58s cubic-bezier(0.18, 0.9, 0.24, 1) both;
   }
   .start {
-    background: #fff; color: var(--c1); font-family: var(--display); font-weight: 900;
-    font-size: 1.15rem; letter-spacing: -0.01em; padding: 19px 44px;
-    transition: transform 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
+    background: var(--accent); color: #fff; border-radius: 999px;
+    font-family: var(--display); font-weight: 900; font-size: 1.1rem;
+    padding: 18px 42px; transition: transform 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
   .start:hover { transform: translateY(-3px); }
-  .start:active { transform: translateY(0); }
-  .land .meta { font-family: var(--mono); font-size: 0.76rem; letter-spacing: 0.09em; opacity: 0.8; }
+  .start:active { transform: none; }
 
   /* ── 검사 ──────────────────────────────────── */
-  .test { flex: 1; display: flex; flex-direction: column; padding: 78px clamp(20px, 5vw, 60px) clamp(24px, 4vh, 40px); position: relative; z-index: 2; }
+  .test { flex: 1; display: flex; flex-direction: column; padding: 70px clamp(18px, 5vw, 56px) clamp(22px, 4vh, 36px); position: relative; z-index: 2; }
+  .track { display: flex; gap: 2px; }
+  .track i { flex: 1; height: 3px; border-radius: 2px; background: rgba(22, 21, 28, 0.11); transition: background-color 0.3s; }
+  .track i.done { background: var(--accent); }
 
-  .track { display: flex; gap: 3px; margin-bottom: auto; }
-  .track i { flex: 1; height: 3px; background: rgba(255,255,255,0.26); transition: background-color 0.3s; }
-  .track i.done { background: #fff; }
-
-  .count { font-family: var(--mono); font-size: 0.76rem; letter-spacing: 0.12em; opacity: 0.82; margin: 26px 0 14px; }
-  .count b { font-family: var(--display); font-size: 1.5rem; letter-spacing: -0.02em; }
-
+  .qhead { display: flex; align-items: center; gap: 10px; margin: 22px 0 12px; flex-wrap: wrap; }
   .ask {
     font-family: var(--display); font-weight: 900;
-    font-size: clamp(1.75rem, 5.6vw, 3.4rem); line-height: 1.18;
-    letter-spacing: -0.035em; text-wrap: balance; max-width: 26ch;
+    font-size: clamp(1.55rem, 5vw, 2.9rem); line-height: 1.2;
+    letter-spacing: -0.035em; text-wrap: balance; max-width: 24ch;
   }
-  .ask, .count, .opts { animation: slide 0.34s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
-  @keyframes slide { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  .ask, .qhead, .pairs { animation: slide 0.32s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  @keyframes slide { from { opacity: 0; transform: translateY(11px); } to { opacity: 1; transform: none; } }
 
-  .opts { display: grid; gap: 10px; margin-top: clamp(26px, 5vh, 52px); max-width: 760px; }
-  .opt {
-    border: 2px solid rgba(255,255,255,0.42); padding: 20px 22px; text-align: left;
-    font-size: clamp(1rem, 2.1vw, 1.2rem); line-height: 1.4; font-weight: 500;
-    display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center;
-    transition: background-color 0.15s, border-color 0.15s, transform 0.15s;
+  .pairs { display: grid; gap: 12px; margin-top: auto; padding-top: clamp(22px, 4vh, 40px); max-width: 720px; }
+  .side {
+    background: var(--card); border-radius: 18px; padding: 18px 18px 14px;
+    box-shadow: 0 3px 14px rgba(22, 21, 28, 0.07);
+    display: flex; flex-direction: column; gap: 14px;
+    transition: box-shadow 0.18s;
   }
-  .opt kbd {
-    font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.06em;
-    border: 1.5px solid currentColor; padding: 2px 7px; opacity: 0.7;
+  .side:hover { box-shadow: 0 6px 22px rgba(22, 21, 28, 0.12); }
+  .side p { font-size: clamp(0.98rem, 2vw, 1.14rem); line-height: 1.45; font-weight: 500; }
+  .side .deg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .deg button {
+    border-radius: 999px; padding: 11px 8px; font-size: 0.84rem; font-weight: 700;
+    background: var(--base); color: var(--sub);
+    transition: background-color 0.15s, color 0.15s, transform 0.15s;
   }
-  .opt:hover { border-color: #fff; background: rgba(255,255,255,0.13); transform: translateX(4px); }
-  .opt.chosen { background: #fff; color: var(--ground); border-color: #fff; }
+  .deg button:hover { background: var(--accent); color: #fff; transform: translateY(-2px); }
+  .deg button.on { background: var(--accent); color: #fff; }
 
-  .back { margin-top: 22px; font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.1em; opacity: 0.72; align-self: flex-start; }
-  .back:hover { opacity: 1; }
+  .back { margin-top: 18px; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em; color: var(--sub); align-self: flex-start; }
+  .back:hover { color: var(--accent); }
   .back[hidden] { display: none; }
 
   /* ── 결과 ──────────────────────────────────── */
-  .res { max-width: 720px; margin: 0 auto; padding: 90px clamp(20px, 5vw, 40px) 90px; display: flex; flex-direction: column; gap: 30px; }
-  .res .who { font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c2); }
-  .res h1 { font-family: var(--display); font-weight: 900; font-size: clamp(2.1rem, 7vw, 3.6rem); line-height: 1.1; letter-spacing: -0.04em; text-wrap: balance; }
+  .res { max-width: 680px; margin: 0 auto; padding: 84px clamp(18px, 5vw, 36px) 84px; display: flex; flex-direction: column; gap: 26px; position: relative; z-index: 2; }
+  .res .over { font-size: 0.9rem; color: var(--sub); }
+  .res h1 {
+    font-family: var(--display); font-weight: 900;
+    font-size: clamp(2rem, 8vw, 3.4rem); line-height: 1.1; letter-spacing: -0.045em; text-wrap: balance;
+  }
+  .res h1 em { font-style: normal; color: var(--accent); }
 
-  .bars { display: flex; flex-direction: column; gap: 11px; }
-  .bar { display: grid; grid-template-columns: 8.5em 1fr; gap: 14px; align-items: center; }
-  .bar .nm { font-size: 0.8rem; color: #5C5A68; }
-  .bar .cells { display: flex; gap: 4px; }
-  .bar .cells i { flex: 1; max-width: 34px; height: 15px; background: #E2DFD6; }
-  .bar .cells i.f { background: var(--fill); }
+  .panel { background: var(--card); border-radius: 22px; padding: 24px 22px; box-shadow: 0 3px 16px rgba(22, 21, 28, 0.07); display: flex; flex-direction: column; gap: 16px; }
 
-  .lines { display: flex; flex-direction: column; gap: 15px; }
-  .lines p { font-size: 1.02rem; line-height: 1.72; max-width: 62ch; }
+  .bars { display: flex; flex-direction: column; gap: 13px; }
+  .bar { display: grid; grid-template-columns: 1fr auto; gap: 6px; }
+  .bar .nm { font-size: 0.78rem; color: var(--sub); }
+  .bar .val { font-family: var(--mono); font-size: 0.74rem; color: var(--sub); font-variant-numeric: tabular-nums; }
+  .bar .cells { grid-column: 1 / -1; display: flex; gap: 2px; }
+  .bar .cells i { flex: 1; height: 13px; border-radius: 2px; background: #EDECF2; }
+  .bar .cells i.f { background: var(--hue); }
 
-  .use { border-left: 4px solid var(--c2); background: #EAE7DF; padding: 22px 24px; display: flex; flex-direction: column; gap: 12px; }
-  .use h2 { font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--c2); }
-  .use ul { display: flex; flex-direction: column; gap: 10px; padding-left: 1.1em; }
-  .use li { font-size: 0.95rem; line-height: 1.6; }
+  .lines { display: flex; flex-direction: column; gap: 14px; }
+  .lines p { font-size: 1rem; line-height: 1.7; }
 
-  .acts { display: flex; gap: 12px; flex-wrap: wrap; }
-  .acts button { font-family: var(--display); font-weight: 900; font-size: 1rem; padding: 17px 30px; }
-  .acts .primary { background: var(--c1); color: #fff; }
-  .acts .ghost { border: 2px solid var(--ink); }
-  .toast { font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.06em; color: #5C5A68; min-height: 1.2em; }
+  .use h2 { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+  .use ul { display: flex; flex-direction: column; gap: 11px; padding-left: 1.1em; }
+  .use li { font-size: 0.95rem; line-height: 1.62; }
 
-  .disc { font-size: 0.82rem; line-height: 1.65; color: #5C5A68; border-top: 1px solid #DAD6CC; padding-top: 18px; max-width: 62ch; }
+  .acts { display: flex; gap: 10px; flex-wrap: wrap; }
+  .acts button { border-radius: 999px; font-family: var(--display); font-weight: 900; font-size: 0.98rem; padding: 16px 28px; }
+  .acts .primary { background: var(--accent); color: #fff; }
+  .acts .ghost { background: var(--card); color: var(--ink); box-shadow: 0 2px 10px rgba(22, 21, 28, 0.08); }
+  .toast { font-family: var(--mono); font-size: 0.73rem; color: var(--sub); min-height: 1.2em; }
+  .disc { font-size: 0.8rem; line-height: 1.65; color: var(--sub); }
 
   /* ── 도움말 ────────────────────────────────── */
   .sheet { position: fixed; inset: 0; z-index: 40; display: none; }
   .sheet.live { display: block; }
-  .sheet .veil { position: absolute; inset: 0; background: rgba(20, 19, 26, 0.55); }
-  .sheet .panel {
+  .sheet .veil { position: absolute; inset: 0; background: rgba(22, 21, 28, 0.4); }
+  .sheet .panel2 {
     position: absolute; top: 0; right: 0; height: 100%; width: min(420px, 100%);
-    background: var(--paper); color: var(--ink); padding: 26px 28px;
-    display: flex; flex-direction: column; gap: 18px; overflow-y: auto;
+    background: var(--card); padding: 24px 26px 28px;
+    display: flex; flex-direction: column; gap: 16px; overflow-y: auto;
     animation: in 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) both;
   }
   @keyframes in { from { transform: translateX(100%); } to { transform: none; } }
-  .sheet h2 { font-family: var(--display); font-weight: 900; font-size: 1.4rem; letter-spacing: -0.02em; }
-  .sheet dl { display: flex; flex-direction: column; gap: 15px; }
-  .sheet dt { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--c2); margin-bottom: 3px; }
-  .sheet dd { font-size: 0.92rem; line-height: 1.62; }
-  .sheet .close { align-self: flex-start; margin-top: auto; font-family: var(--mono); font-size: 0.76rem; letter-spacing: 0.1em; border-bottom: 2px solid currentColor; }
+  .sheet h2 { font-family: var(--display); font-weight: 900; font-size: 1.35rem; letter-spacing: -0.025em; color: var(--accent); }
+  .sheet dl { display: flex; flex-direction: column; gap: 14px; }
+  .sheet dt { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 3px; }
+  .sheet dd { font-size: 0.9rem; line-height: 1.62; }
+  .sheet .close { align-self: flex-start; margin-top: auto; font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.1em; color: var(--sub); border-bottom: 2px solid currentColor; }
 
   @media (prefers-reduced-motion: reduce) {
-    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-    .blob { animation: none; }
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
-  @media (max-width: 560px) {
-    .opt { grid-template-columns: 1fr; gap: 10px; }
-    .bar { grid-template-columns: 1fr; gap: 5px; }
+  @media (min-width: 720px) {
+    .side { flex-direction: row; align-items: center; gap: 20px; }
+    .side p { flex: 1; }
+    .side .deg { flex: 0 0 220px; }
   }
 </style>
+
+<div class="doodle" aria-hidden="true"><i>✳</i><i>✳</i><i>✳</i></div>
 
 <div class="app">
   <div class="corner">
     <div class="wordmark" id="wm">おしえて</div>
-    <button class="helpbtn" id="help" aria-label="이 검사는 무엇인가요"><span>?</span></button>
+    <button class="helpbtn" id="help" aria-label="이 검사는 무엇인가요">?</button>
   </div>
 
   <!-- 랜딩 -->
   <section class="view live" id="v-land">
-    <div class="blob"></div>
     <div class="land">
+      <p class="over">30문항 · 3분 · 로그인 없음</p>
       <div class="lock" id="lock" aria-label="오시에테">
         <span>お</span><span>し</span><span>え</span><span>て</span>
       </div>
-      <p class="tag">어떻게 일하는지<br>알려줘</p>
+      <p class="tag">어떻게 일하는지<br><em>알려줘</em></p>
       <div class="row">
         <button class="start" id="go">검사 시작</button>
-        <span class="meta">30문항 · 3분 · 로그인 없음</span>
+        <span class="cap">팀은 최대 <b>4명</b></span>
       </div>
     </div>
   </section>
@@ -229,9 +256,12 @@
   <section class="view" id="v-test">
     <div class="test">
       <div class="track" id="track" aria-hidden="true"></div>
-      <p class="count" id="count"></p>
+      <div class="qhead">
+        <span class="cap" id="count"></span>
+        <span class="cap" id="axis"></span>
+      </div>
       <h1 class="ask" id="ask"></h1>
-      <div class="opts" id="opts"></div>
+      <div class="pairs" id="pairs"></div>
       <button class="back" id="back" hidden>← 이전 문항</button>
     </div>
   </section>
@@ -239,12 +269,12 @@
   <!-- 결과 -->
   <section class="view" id="v-res">
     <div class="res">
-      <span class="who">당신이 일하는 방식</span>
+      <p class="over">당신이 일하는 방식</p>
       <h1 id="r-title"></h1>
-      <div class="bars" id="r-bars"></div>
+      <div class="panel"><div class="bars" id="r-bars"></div></div>
       <div class="lines" id="r-lines"></div>
-      <div class="use">
-        <h2>같이 일하는 분께</h2>
+      <div class="panel use">
+        <div><h2>같이 일하는 분께</h2></div>
         <ul id="r-use"></ul>
       </div>
       <div class="acts">
@@ -252,37 +282,38 @@
         <button class="ghost" id="again">다시 하기</button>
       </div>
       <p class="toast" id="toast"></p>
-      <p class="disc">지금은 링크에 결과가 담기는 것까지만 됩니다. 여러 명이 모여 길드가 되는 부분은 데이터베이스를 붙인 뒤에 동작합니다.</p>
+      <p class="disc">지금은 링크에 결과가 담기는 것까지만 됩니다. 방장 포함 네 명이 모여 길드가 되는 부분은 데이터베이스를 붙인 뒤에 동작합니다.</p>
     </div>
   </section>
 </div>
 
 <div class="sheet" id="sheet">
   <div class="veil" data-close></div>
-  <div class="panel" role="dialog" aria-label="도움말">
+  <div class="panel2" role="dialog" aria-label="도움말">
     <h2>おしえて 오시에테</h2>
     <dl>
       <div><dt>무엇인가요</dt><dd>일할 때의 성향을 다섯 축으로 봅니다. 어떤 유형이라고 이름 붙이지 않고, 어떻게 일하는 사람인지 문장으로 알려줍니다.</dd></div>
-      <div><dt>어떻게 하나요</dt><dd>두 문장 중 더 나에 가까운 쪽을 고릅니다. 30번이면 끝납니다. 키보드 1·2 또는 ← → 로도 넘길 수 있습니다.</dd></div>
-      <div><dt>왜 두 개 중에 골라야 하나요</dt><dd>1점부터 5점까지 매기면 사람마다 폭이 달라서, 성향이 아니라 답하는 습관 때문에 결과가 갈립니다. 둘 중 하나를 고르면 그 차이가 생기지 않습니다.</dd></div>
-      <div><dt>같이 일하는 사람과 비교하려면</dt><dd>결과 화면에서 링크를 만들어 보내세요. 받은 사람이 검사를 마치면 서로 어느 축이 맞고 어디서 부딪히는지 나옵니다.</dd></div>
-      <div><dt>답이 남나요</dt><dd>맞고 틀린 답은 없습니다. 좋은 성향과 나쁜 성향으로 나누지도 않습니다.</dd></div>
+      <div><dt>어떻게 답하나요</dt><dd>두 문장 중 가까운 쪽을 고르고, 그 안에서 [확실히]와 [조금] 중 하나를 누릅니다. 30번이면 끝납니다.</dd></div>
+      <div><dt>왜 점수 매기기가 아닌가요</dt><dd>1점부터 5점까지 매기면 사람마다 답하는 폭이 달라서, 성향이 아니라 습관 때문에 결과가 갈립니다. 그래서 중간값을 없앴습니다. 대신 [조금]을 둬서 둘 다 아닐 때도 답할 수 있게 했습니다.</dd></div>
+      <div><dt>팀은 몇 명까지인가요</dt><dd>방장을 포함해 네 명입니다. 더 늘리면 볼 게 너무 많아지고 결과가 읽히지 않습니다.</dd></div>
+      <div><dt>답이 남나요</dt><dd>맞고 틀린 답은 없습니다. 좋은 성향과 나쁜 성향으로 나누지도 않습니다. 내 점수는 나만 보고, 팀에는 서술만 갑니다.</dd></div>
     </dl>
     <button class="close" data-close>닫기</button>
   </div>
 </div>
 
 <script>
+  // 밝은 바탕 + 강조 색 한 쌍씩. vivid는 바탕이 아니라 강조로만 쓴다.
   const AXES = [
-    { key: 'a1', nm: '수용 — 주도', color: 'var(--c1)', hex: '#1B3BFF' },
-    { key: 'a2', nm: '관계 — 과업', color: 'var(--c2)', hex: '#FF2E7E' },
-    { key: 'a3', nm: '속도 — 완성도', color: 'var(--c3)', hex: '#FF6B1A' },
-    { key: 'a4', nm: '위임 — 통제', color: 'var(--c4)', hex: '#6B2BFF' },
-    { key: 'a5', nm: '즉흥 — 예측', color: 'var(--c5)', hex: '#00A8AD' }
+    { nm: '수용 — 주도', base: '#EAF1FF', accent: '#1B49FF' },
+    { nm: '관계 — 과업', base: '#FFECF3', accent: '#F0197C' },
+    { nm: '속도 — 완성도', base: '#FFF3E4', accent: '#E85D04' },
+    { nm: '위임 — 통제', base: '#F1ECFF', accent: '#6B2BFF' },
+    { nm: '즉흥 — 예측', base: '#E4F8EF', accent: '#00996B' }
   ];
 
-  // 축 안에서 높은 쪽이 A인 문항과 B인 문항을 번갈아 배치했다.
-  // 한쪽만 계속 정답처럼 보이면 응답자가 위치로 답하기 시작한다.
+  // 축 안에서 높은 쪽이 A인 문항과 B인 문항을 번갈아 놓았다.
+  // 한쪽이 계속 정답처럼 보이면 응답자가 내용이 아니라 위치로 답한다.
   const Q = [
     { x: 0, q: '회의가 내 생각과 다른 결론으로 흐를 때', a: '그 자리에서 반대 의견을 말한다', b: '일단 듣고, 정말 문제될 때만 따로 말한다', hi: 'a' },
     { x: 0, q: '역할이 겹쳐서 일이 붕 떴을 때', a: '상대가 어디까지 할 생각인지 먼저 확인한다', b: '내가 여기까지 하겠다고 먼저 선을 긋는다', hi: 'b' },
@@ -320,10 +351,9 @@
     { x: 4, q: '정보가 부족한 상태에서 결정해야 할 때', a: '지금 있는 것으로 정하고 나중에 고친다', b: '조금이라도 더 알아본 뒤에 정한다', hi: 'b' }
   ];
 
-  // 축별 · 구간별 서술. 라벨을 붙이지 않고 문장으로 내보낸다.
   const COPY = [
     {
-      title: ['먼저 듣는 사람', null, '할 말은 하는 사람'],
+      title: ['먼저 듣는', '할 말은 하는'],
       say: [
         '의견이 갈릴 때 먼저 물러나 듣습니다. 반대 의견이 없는 게 아니라, 그 자리에서 부딪히는 것보다 나중에 따로 정리하는 쪽을 택합니다.',
         '밀어붙일 때와 물러날 때를 상황에 따라 나눕니다. 중요하다고 판단한 안건에서만 목소리를 냅니다.',
@@ -336,7 +366,7 @@
       ]
     },
     {
-      title: ['사람부터 보는 사람', null, '결과부터 보는 사람'],
+      title: ['사람부터 보는', '결과부터 보는'],
       say: [
         '일보다 사람 상태를 먼저 봅니다. 분위기가 굳으면 진도보다 그걸 먼저 풀려고 합니다.',
         '사람과 결과 사이에서 균형을 잡습니다. 급할 때는 일 쪽으로, 여유가 있을 때는 사람 쪽으로 기웁니다.',
@@ -349,7 +379,7 @@
       ]
     },
     {
-      title: ['일단 내보내는 사람', null, '끝까지 다듬는 사람'],
+      title: ['일단 내보내는', '끝까지 다듬는'],
       say: [
         '완성도보다 속도를 먼저 챕니다. 80%에서 내보내고 피드백으로 고치는 편이 빠르다고 봅니다.',
         '중요한 것과 그렇지 않은 것을 나눠서 힘을 씁니다. 전부 완벽하게 하려고는 하지 않습니다.',
@@ -362,7 +392,7 @@
       ]
     },
     {
-      title: ['맡기고 손 떼는 사람', null, '모르는 상태가 불편한 사람'],
+      title: ['맡기고 손 떼는', '모르는 상태가 불편한'],
       say: [
         '맡긴 일은 놓습니다. 방식이 자기와 달라도 목적이 달성되면 그대로 둡니다.',
         '맡기긴 하는데 큰 흐름은 보고 있습니다. 세부까지 들어가지는 않습니다.',
@@ -375,7 +405,7 @@
       ]
     },
     {
-      title: ['가서 맞추는 사람', null, '미리 알아두는 사람'],
+      title: ['가서 맞추는', '미리 알아두는'],
       say: [
         '계획보다 현장에서 맞춥니다. 정보가 부족해도 일단 정하고 나중에 고치는 쪽입니다.',
         '필요한 만큼 준비하고 시작합니다. 계획이 어긋나도 크게 흔들리지 않습니다.',
@@ -389,56 +419,69 @@
     }
   ];
 
-  const $ = (id) => document.getElementById(id);
-  const band = (s) => (s <= 1 ? 0 : s >= 5 ? 2 : 1);
+  // 문항당 0~3점, 축당 6문항이므로 0~18점. 세 구간으로 나눈다.
+  const MAX = 18;
+  const band = (s) => (s <= 5 ? 0 : s >= 13 ? 2 : 1);
 
+  const $ = (id) => document.getElementById(id);
   let at = 0;
   let picks = new Array(Q.length).fill(null);
 
   const views = { land: $('v-land'), test: $('v-test'), res: $('v-res') };
   function show(name) {
     Object.entries(views).forEach(([k, el]) => el.classList.toggle('live', k === name));
-    document.body.classList.toggle('on-paper', name === 'res');
     $('wm').classList.toggle('show', name !== 'land');
-    if (name === 'res') document.body.style.removeProperty('--ground');
   }
 
-  // 랜딩 로고가 포인터를 아주 조금 따라간다.
+  function skin(i) {
+    document.body.style.setProperty('--base', AXES[i].base);
+    document.body.style.setProperty('--accent', AXES[i].accent);
+  }
+
   const lock = $('lock');
   addEventListener('pointermove', (e) => {
     if (!views.land.classList.contains('live')) return;
-    const dx = (e.clientX / innerWidth - 0.5) * 16;
-    const dy = (e.clientY / innerHeight - 0.5) * 10;
+    const dx = (e.clientX / innerWidth - 0.5) * 14;
+    const dy = (e.clientY / innerHeight - 0.5) * 9;
     lock.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
   });
 
-  // 진행 눈금 30개
   const track = $('track');
   Q.forEach(() => track.appendChild(document.createElement('i')));
 
   function paint() {
     const item = Q[at];
-    const ax = AXES[item.x];
-    document.body.style.setProperty('--ground', ax.hex);
+    skin(item.x);
 
-    $('count').innerHTML = `<b>${String(at + 1).padStart(2, '0')}</b> / 30 &nbsp;·&nbsp; ${ax.nm}`;
+    $('count').innerHTML = `<b>${String(at + 1).padStart(2, '0')}</b> / 30`;
+    $('axis').textContent = AXES[item.x].nm;
     $('ask').textContent = item.q;
 
-    const box = $('opts');
+    const box = $('pairs');
     box.innerHTML = '';
-    ['a', 'b'].forEach((side, i) => {
-      const btn = document.createElement('button');
-      btn.className = 'opt';
-      btn.type = 'button';
-      btn.innerHTML = `<kbd>${i + 1}</kbd><span>${item[side]}</span>`;
-      btn.addEventListener('click', () => choose(side, btn));
-      box.appendChild(btn);
+    ['a', 'b'].forEach((side) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'side';
+      const p = document.createElement('p');
+      p.textContent = item[side];
+      const deg = document.createElement('div');
+      deg.className = 'deg';
+      [['확실히 이쪽', 2], ['조금 이쪽', 1]].forEach(([label, strength]) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = label;
+        if (picks[at] && picks[at].side === side && picks[at].s === strength) b.classList.add('on');
+        b.addEventListener('click', () => choose(side, strength, b));
+        deg.appendChild(b);
+      });
+      wrap.append(p, deg);
+      box.appendChild(wrap);
     });
 
     [...track.children].forEach((c, i) => c.classList.toggle('done', i < at));
     $('back').hidden = at === 0;
 
-    ['count', 'ask', 'opts'].forEach((id) => {
+    ['qhead', 'ask', 'pairs'].forEach((id) => {
       const el = $(id);
       el.style.animation = 'none';
       void el.offsetWidth;
@@ -446,45 +489,54 @@
     });
   }
 
-  function choose(side, btn) {
-    if (btn.classList.contains('chosen')) return;
-    picks[at] = side;
-    btn.classList.add('chosen');
+  function choose(side, strength, btn) {
+    picks[at] = { side, s: strength };
+    $('pairs').querySelectorAll('.deg button').forEach((b) => b.classList.remove('on'));
+    btn.classList.add('on');
     setTimeout(() => {
       if (at < Q.length - 1) { at++; paint(); }
       else finish();
-    }, 190);
+    }, 200);
   }
 
+  // 높은 쪽을 확실히 = 3, 조금 = 2, 반대쪽 조금 = 1, 반대쪽 확실히 = 0
   function tally() {
     const out = [0, 0, 0, 0, 0];
-    Q.forEach((item, i) => { if (picks[i] === item.hi) out[item.x]++; });
+    Q.forEach((item, i) => {
+      const p = picks[i];
+      if (!p) return;
+      out[item.x] += p.side === item.hi ? (p.s === 2 ? 3 : 2) : (p.s === 1 ? 1 : 0);
+    });
     return out;
   }
 
   function render(scores) {
-    // 제목은 가장 치우친 축에서 뽑는다. 다 중간이면 치우치지 않았다고 쓴다.
     let top = 0, gap = -1;
-    scores.forEach((s, i) => { const d = Math.abs(s - 3); if (d > gap) { gap = d; top = i; } });
+    const mid = MAX / 2;
+    scores.forEach((s, i) => { const d = Math.abs(s - mid); if (d > gap) { gap = d; top = i; } });
     const tb = band(scores[top]);
-    $('r-title').textContent = gap < 2 || tb === 1 ? '한쪽으로 치우치지 않은 사람' : COPY[top].title[tb];
+    skin(top);
+
+    $('r-title').innerHTML = tb === 1
+      ? '한쪽으로 <em>치우치지 않은</em> 사람'
+      : `<em>${COPY[top].title[tb === 2 ? 1 : 0]}</em> 사람`;
 
     $('r-bars').innerHTML = AXES.map((ax, i) => {
-      const cells = Array.from({ length: 6 }, (_, k) =>
-        `<i class="${k < scores[i] ? 'f' : ''}" style="--fill:${ax.hex}"></i>`).join('');
-      return `<div class="bar"><span class="nm">${ax.nm}</span><span class="cells">${cells}</span></div>`;
+      const cells = Array.from({ length: MAX }, (_, k) =>
+        `<i class="${k < scores[i] ? 'f' : ''}" style="--hue:${ax.accent}"></i>`).join('');
+      return `<div class="bar"><span class="nm">${ax.nm}</span><span class="val">${scores[i]} / ${MAX}</span><span class="cells">${cells}</span></div>`;
     }).join('');
 
     $('r-lines').innerHTML = scores.map((s, i) => `<p>${COPY[i].say[band(s)]}</p>`).join('');
     $('r-use').innerHTML = scores
-      .map((s, i) => ({ s, i, d: Math.abs(s - 3) }))
+      .map((s, i) => ({ s, i, d: Math.abs(s - mid) }))
       .sort((p, q) => q.d - p.d).slice(0, 3)
       .map(({ s, i }) => `<li>${COPY[i].use[band(s)]}</li>`).join('');
   }
 
   function finish() {
     const scores = tally();
-    location.hash = 's' + scores.join('');
+    location.hash = 's' + scores.map((s) => s.toString(36)).join('');
     render(scores);
     show('res');
     scrollTo(0, 0);
@@ -497,9 +549,9 @@
     if ($('sheet').classList.contains('live')) { if (e.key === 'Escape') sheet(false); return; }
     if (views.land.classList.contains('live') && (e.key === 'Enter' || e.key === ' ')) { $('go').click(); return; }
     if (!views.test.classList.contains('live')) return;
-    const opts = $('opts').children;
-    if (e.key === '1' || e.key === 'ArrowLeft') opts[0].click();
-    if (e.key === '2' || e.key === 'ArrowRight') opts[1].click();
+    const btns = $('pairs').querySelectorAll('.deg button');
+    const n = Number(e.key);
+    if (n >= 1 && n <= 4) btns[n - 1].click();
     if (e.key === 'Backspace') { e.preventDefault(); $('back').click(); }
   });
 
@@ -515,7 +567,7 @@
   $('again').addEventListener('click', () => {
     at = 0; picks = new Array(Q.length).fill(null);
     history.replaceState(null, '', location.pathname);
-    document.body.style.setProperty('--ground', AXES[0].hex);
+    skin(0);
     show('land');
   });
 
@@ -523,9 +575,11 @@
   $('help').addEventListener('click', () => sheet(true));
   $('sheet').addEventListener('click', (e) => { if (e.target.hasAttribute('data-close')) sheet(false); });
 
-  // 링크로 받은 결과 열기
-  const m = location.hash.match(/^#s([0-6]{5})$/);
-  if (m) { render(m[1].split('').map(Number)); show('res'); }
+  const m = location.hash.match(/^#s([0-9a-i]{5})$/);
+  if (m) {
+    const scores = m[1].split('').map((c) => parseInt(c, 36));
+    if (scores.every((s) => s <= MAX)) { render(scores); show('res'); }
+  }
 </script>
 </body>
 </html>
