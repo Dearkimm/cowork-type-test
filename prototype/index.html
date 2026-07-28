@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>おしえて 오시에테 — 협업 성향 검사</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  * { margin: 0; padding: 0; }
+  ul, ol { list-style-position: outside; }
+  img, svg { display: block; max-width: 100%; }
+</style>
+</head>
+<body>
+
+<style>
+  :root {
+    --paper: #F4F2EC;
+    --ink: #14131A;
+    --c1: #1B3BFF;
+    --c2: #FF2E7E;
+    --c3: #FF6B1A;
+    --c4: #6B2BFF;
+    --c5: #00A8AD;
+    --ground: var(--c1);
+
+    --display: "Yu Gothic", YuGothic, "Hiragino Kaku Gothic ProN", Meiryo,
+      "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+    --body: "Malgun Gothic", "Apple SD Gothic Neo", system-ui, sans-serif;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  }
+
+  html, body { height: 100%; }
+  body {
+    font-family: var(--body);
+    color: #fff;
+    background: var(--ground);
+    transition: background-color 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  body.on-paper { background: var(--paper); color: var(--ink); overflow: auto; }
+
+  button { font-family: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+  :focus-visible { outline: 3px solid currentColor; outline-offset: 4px; }
+
+  .app { position: relative; min-height: 100dvh; display: flex; flex-direction: column; }
+  .view { display: none; flex: 1; flex-direction: column; }
+  .view.live { display: flex; }
+
+  /* ── 상단 코너 ─────────────────────────────── */
+  .corner {
+    position: fixed; inset: 0 0 auto 0; z-index: 20;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 20px; pointer-events: none;
+  }
+  .corner > * { pointer-events: auto; }
+  .wordmark {
+    font-family: var(--display); font-weight: 900; font-size: 1.1rem;
+    letter-spacing: -0.02em; opacity: 0; transition: opacity 0.3s;
+  }
+  .wordmark.show { opacity: 1; }
+  .helpbtn {
+    width: 34px; height: 34px; border: 2px solid currentColor;
+    border-radius: 50%; font-family: var(--display); font-weight: 900;
+    font-size: 0.95rem; line-height: 1; display: grid; place-items: center;
+  }
+  .helpbtn:hover { background: currentColor; }
+  .helpbtn:hover span { color: var(--ground); }
+  body.on-paper .helpbtn:hover span { color: var(--paper); }
+
+  /* ── 랜딩 ──────────────────────────────────── */
+  .blob {
+    position: absolute; width: 78vmin; height: 78vmin; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.11); filter: blur(6px);
+    top: -18vmin; right: -22vmin; animation: drift 22s ease-in-out infinite alternate;
+  }
+  @keyframes drift { to { transform: translate3d(-9vmin, 14vmin, 0) scale(1.12); } }
+
+  .land { flex: 1; display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 0 clamp(20px, 6vw, 76px) clamp(32px, 6vh, 64px); position: relative; z-index: 2; }
+
+  .lock {
+    font-family: var(--display); font-weight: 900;
+    font-size: clamp(5.5rem, 27vmin, 17rem); line-height: 0.82;
+    letter-spacing: -0.06em;
+    display: grid; grid-template-columns: repeat(2, min-content);
+    will-change: transform;
+  }
+  .lock span { display: block; opacity: 0; transform: translateY(0.14em); animation: pop 0.62s cubic-bezier(0.18, 0.9, 0.24, 1) both; }
+  .lock span:nth-child(1) { animation-delay: 0.05s; }
+  .lock span:nth-child(2) { animation-delay: 0.13s; }
+  .lock span:nth-child(3) { animation-delay: 0.21s; }
+  .lock span:nth-child(4) { animation-delay: 0.29s; }
+  @keyframes pop { to { opacity: 1; transform: none; } }
+
+  .land .tag {
+    font-size: clamp(1.25rem, 3.4vw, 2rem); font-weight: 700; line-height: 1.3;
+    margin-top: clamp(20px, 4vh, 40px); max-width: 22ch;
+    animation: pop 0.6s 0.4s cubic-bezier(0.18, 0.9, 0.24, 1) both;
+  }
+  .land .row {
+    display: flex; align-items: center; gap: 22px; flex-wrap: wrap;
+    margin-top: clamp(22px, 4vh, 38px);
+    animation: pop 0.6s 0.52s cubic-bezier(0.18, 0.9, 0.24, 1) both;
+  }
+  .start {
+    background: #fff; color: var(--c1); font-family: var(--display); font-weight: 900;
+    font-size: 1.15rem; letter-spacing: -0.01em; padding: 19px 44px;
+    transition: transform 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .start:hover { transform: translateY(-3px); }
+  .start:active { transform: translateY(0); }
+  .land .meta { font-family: var(--mono); font-size: 0.76rem; letter-spacing: 0.09em; opacity: 0.8; }
+
+  /* ── 검사 ──────────────────────────────────── */
+  .test { flex: 1; display: flex; flex-direction: column; padding: 78px clamp(20px, 5vw, 60px) clamp(24px, 4vh, 40px); position: relative; z-index: 2; }
+
+  .track { display: flex; gap: 3px; margin-bottom: auto; }
+  .track i { flex: 1; height: 3px; background: rgba(255,255,255,0.26); transition: background-color 0.3s; }
+  .track i.done { background: #fff; }
+
+  .count { font-family: var(--mono); font-size: 0.76rem; letter-spacing: 0.12em; opacity: 0.82; margin: 26px 0 14px; }
+  .count b { font-family: var(--display); font-size: 1.5rem; letter-spacing: -0.02em; }
+
+  .ask {
+    font-family: var(--display); font-weight: 900;
+    font-size: clamp(1.75rem, 5.6vw, 3.4rem); line-height: 1.18;
+    letter-spacing: -0.035em; text-wrap: balance; max-width: 26ch;
+  }
+  .ask, .count, .opts { animation: slide 0.34s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  @keyframes slide { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+  .opts { display: grid; gap: 10px; margin-top: clamp(26px, 5vh, 52px); max-width: 760px; }
+  .opt {
+    border: 2px solid rgba(255,255,255,0.42); padding: 20px 22px; text-align: left;
+    font-size: clamp(1rem, 2.1vw, 1.2rem); line-height: 1.4; font-weight: 500;
+    display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center;
+    transition: background-color 0.15s, border-color 0.15s, transform 0.15s;
+  }
+  .opt kbd {
+    font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.06em;
+    border: 1.5px solid currentColor; padding: 2px 7px; opacity: 0.7;
+  }
+  .opt:hover { border-color: #fff; background: rgba(255,255,255,0.13); transform: translateX(4px); }
+  .opt.chosen { background: #fff; color: var(--ground); border-color: #fff; }
+
+  .back { margin-top: 22px; font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.1em; opacity: 0.72; align-self: flex-start; }
+  .back:hover { opacity: 1; }
+  .back[hidden] { display: none; }
+
+  /* ── 결과 ──────────────────────────────────── */
+  .res { max-width: 720px; margin: 0 auto; padding: 90px clamp(20px, 5vw, 40px) 90px; display: flex; flex-direction: column; gap: 30px; }
+  .res .who { font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c2); }
+  .res h1 { font-family: var(--display); font-weight: 900; font-size: clamp(2.1rem, 7vw, 3.6rem); line-height: 1.1; letter-spacing: -0.04em; text-wrap: balance; }
+
+  .bars { display: flex; flex-direction: column; gap: 11px; }
+  .bar { display: grid; grid-template-columns: 8.5em 1fr; gap: 14px; align-items: center; }
+  .bar .nm { font-size: 0.8rem; color: #5C5A68; }
+  .bar .cells { display: flex; gap: 4px; }
+  .bar .cells i { flex: 1; max-width: 34px; height: 15px; background: #E2DFD6; }
+  .bar .cells i.f { background: var(--fill); }
+
+  .lines { display: flex; flex-direction: column; gap: 15px; }
+  .lines p { font-size: 1.02rem; line-height: 1.72; max-width: 62ch; }
+
+  .use { border-left: 4px solid var(--c2); background: #EAE7DF; padding: 22px 24px; display: flex; flex-direction: column; gap: 12px; }
+  .use h2 { font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--c2); }
+  .use ul { display: flex; flex-direction: column; gap: 10px; padding-left: 1.1em; }
+  .use li { font-size: 0.95rem; line-height: 1.6; }
+
+  .acts { display: flex; gap: 12px; flex-wrap: wrap; }
+  .acts button { font-family: var(--display); font-weight: 900; font-size: 1rem; padding: 17px 30px; }
+  .acts .primary { background: var(--c1); color: #fff; }
+  .acts .ghost { border: 2px solid var(--ink); }
+  .toast { font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.06em; color: #5C5A68; min-height: 1.2em; }
+
+  .disc { font-size: 0.82rem; line-height: 1.65; color: #5C5A68; border-top: 1px solid #DAD6CC; padding-top: 18px; max-width: 62ch; }
+
+  /* ── 도움말 ────────────────────────────────── */
+  .sheet { position: fixed; inset: 0; z-index: 40; display: none; }
+  .sheet.live { display: block; }
+  .sheet .veil { position: absolute; inset: 0; background: rgba(20, 19, 26, 0.55); }
+  .sheet .panel {
+    position: absolute; top: 0; right: 0; height: 100%; width: min(420px, 100%);
+    background: var(--paper); color: var(--ink); padding: 26px 28px;
+    display: flex; flex-direction: column; gap: 18px; overflow-y: auto;
+    animation: in 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  @keyframes in { from { transform: translateX(100%); } to { transform: none; } }
+  .sheet h2 { font-family: var(--display); font-weight: 900; font-size: 1.4rem; letter-spacing: -0.02em; }
+  .sheet dl { display: flex; flex-direction: column; gap: 15px; }
+  .sheet dt { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--c2); margin-bottom: 3px; }
+  .sheet dd { font-size: 0.92rem; line-height: 1.62; }
+  .sheet .close { align-self: flex-start; margin-top: auto; font-family: var(--mono); font-size: 0.76rem; letter-spacing: 0.1em; border-bottom: 2px solid currentColor; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    .blob { animation: none; }
+  }
+  @media (max-width: 560px) {
+    .opt { grid-template-columns: 1fr; gap: 10px; }
+    .bar { grid-template-columns: 1fr; gap: 5px; }
+  }
+</style>
+
+<div class="app">
+  <div class="corner">
+    <div class="wordmark" id="wm">おしえて</div>
+    <button class="helpbtn" id="help" aria-label="이 검사는 무엇인가요"><span>?</span></button>
+  </div>
+
+  <!-- 랜딩 -->
+  <section class="view live" id="v-land">
+    <div class="blob"></div>
+    <div class="land">
+      <div class="lock" id="lock" aria-label="오시에테">
+        <span>お</span><span>し</span><span>え</span><span>て</span>
+      </div>
+      <p class="tag">어떻게 일하는지<br>알려줘</p>
+      <div class="row">
+        <button class="start" id="go">검사 시작</button>
+        <span class="meta">30문항 · 3분 · 로그인 없음</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 검사 -->
+  <section class="view" id="v-test">
+    <div class="test">
+      <div class="track" id="track" aria-hidden="true"></div>
+      <p class="count" id="count"></p>
+      <h1 class="ask" id="ask"></h1>
+      <div class="opts" id="opts"></div>
+      <button class="back" id="back" hidden>← 이전 문항</button>
+    </div>
+  </section>
+
+  <!-- 결과 -->
+  <section class="view" id="v-res">
+    <div class="res">
+      <span class="who">당신이 일하는 방식</span>
+      <h1 id="r-title"></h1>
+      <div class="bars" id="r-bars"></div>
+      <div class="lines" id="r-lines"></div>
+      <div class="use">
+        <h2>같이 일하는 분께</h2>
+        <ul id="r-use"></ul>
+      </div>
+      <div class="acts">
+        <button class="primary" id="share">팀원에게 알려주기</button>
+        <button class="ghost" id="again">다시 하기</button>
+      </div>
+      <p class="toast" id="toast"></p>
+      <p class="disc">지금은 링크에 결과가 담기는 것까지만 됩니다. 여러 명이 모여 길드가 되는 부분은 데이터베이스를 붙인 뒤에 동작합니다.</p>
+    </div>
+  </section>
+</div>
+
+<div class="sheet" id="sheet">
+  <div class="veil" data-close></div>
+  <div class="panel" role="dialog" aria-label="도움말">
+    <h2>おしえて 오시에테</h2>
+    <dl>
+      <div><dt>무엇인가요</dt><dd>일할 때의 성향을 다섯 축으로 봅니다. 어떤 유형이라고 이름 붙이지 않고, 어떻게 일하는 사람인지 문장으로 알려줍니다.</dd></div>
+      <div><dt>어떻게 하나요</dt><dd>두 문장 중 더 나에 가까운 쪽을 고릅니다. 30번이면 끝납니다. 키보드 1·2 또는 ← → 로도 넘길 수 있습니다.</dd></div>
+      <div><dt>왜 두 개 중에 골라야 하나요</dt><dd>1점부터 5점까지 매기면 사람마다 폭이 달라서, 성향이 아니라 답하는 습관 때문에 결과가 갈립니다. 둘 중 하나를 고르면 그 차이가 생기지 않습니다.</dd></div>
+      <div><dt>같이 일하는 사람과 비교하려면</dt><dd>결과 화면에서 링크를 만들어 보내세요. 받은 사람이 검사를 마치면 서로 어느 축이 맞고 어디서 부딪히는지 나옵니다.</dd></div>
+      <div><dt>답이 남나요</dt><dd>맞고 틀린 답은 없습니다. 좋은 성향과 나쁜 성향으로 나누지도 않습니다.</dd></div>
+    </dl>
+    <button class="close" data-close>닫기</button>
+  </div>
+</div>
+
+<script>
+  const AXES = [
+    { key: 'a1', nm: '수용 — 주도', color: 'var(--c1)', hex: '#1B3BFF' },
+    { key: 'a2', nm: '관계 — 과업', color: 'var(--c2)', hex: '#FF2E7E' },
+    { key: 'a3', nm: '속도 — 완성도', color: 'var(--c3)', hex: '#FF6B1A' },
+    { key: 'a4', nm: '위임 — 통제', color: 'var(--c4)', hex: '#6B2BFF' },
+    { key: 'a5', nm: '즉흥 — 예측', color: 'var(--c5)', hex: '#00A8AD' }
+  ];
+
+  // 축 안에서 높은 쪽이 A인 문항과 B인 문항을 번갈아 배치했다.
+  // 한쪽만 계속 정답처럼 보이면 응답자가 위치로 답하기 시작한다.
+  const Q = [
+    { x: 0, q: '회의가 내 생각과 다른 결론으로 흐를 때', a: '그 자리에서 반대 의견을 말한다', b: '일단 듣고, 정말 문제될 때만 따로 말한다', hi: 'a' },
+    { x: 0, q: '역할이 겹쳐서 일이 붕 떴을 때', a: '상대가 어디까지 할 생각인지 먼저 확인한다', b: '내가 여기까지 하겠다고 먼저 선을 긋는다', hi: 'b' },
+    { x: 0, q: '담당이 정해지지 않은 일이 떠 있을 때', a: '내가 정리해서 방향을 제안한다', b: '다른 사람 생각을 먼저 물어본다', hi: 'a' },
+    { x: 0, q: '마감이 촉박한데 방향이 안 정해졌을 때', a: '누구든 정하면 따르겠다고 말한다', b: '이렇게 가자고 내가 정해서 밀고 간다', hi: 'b' },
+    { x: 0, q: '내 제안이 받아들여지지 않았을 때', a: '근거를 더 준비해서 한 번 더 꺼낸다', b: '팀 결정을 따르고 그대로 진행한다', hi: 'a' },
+    { x: 0, q: '새 팀에 들어간 첫 주에', a: '개선할 점이 보이면 바로 말한다', b: '기존 방식을 먼저 익히고 나중에 말한다', hi: 'a' },
+
+    { x: 1, q: '팀원 실수로 일정이 밀렸을 때', a: '무엇이 잘못됐는지 짚고 바로잡는다', b: '상대가 위축되지 않게 말을 고른다', hi: 'a' },
+    { x: 1, q: '협업 도구에 글을 남길 때', a: '인사와 맥락을 붙여서 쓴다', b: '필요한 내용만 짧게 쓴다', hi: 'b' },
+    { x: 1, q: '회의가 길어지고 분위기가 굳었을 때', a: '안건이 남았으니 계속 진행한다', b: '잠깐 끊고 분위기를 풀고 간다', hi: 'a' },
+    { x: 1, q: '일이 잘 끝났을 때 더 남는 것', a: '같이 한 사람들과의 과정', b: '나온 결과물 자체', hi: 'b' },
+    { x: 1, q: '새 프로젝트에서 먼저 알고 싶은 것', a: '목표와 일정', b: '누구와 함께 하는지', hi: 'a' },
+    { x: 1, q: '팀원이 개인 사정으로 힘들어 보일 때', a: '일을 덜어줄 방법을 먼저 찾는다', b: '일정은 유지하되 필요하면 말해달라고 한다', hi: 'b' },
+
+    { x: 2, q: '80% 정도 된 산출물을 두고', a: '일단 공유해서 피드백을 받는다', b: '마무리해서 완성된 걸 보여준다', hi: 'b' },
+    { x: 2, q: '문서를 쓸 때', a: '형식과 표현을 정돈하는 데 시간을 쓴다', b: '내용이 전달되면 형식은 넘긴다', hi: 'a' },
+    { x: 2, q: '마감에 맞췄지만 아쉬운 부분이 남았을 때', a: '그대로 낸다', b: '조금 늦더라도 손을 본다', hi: 'b' },
+    { x: 2, q: '둘 중 더 신경 쓰이는 쪽', a: '결과물에 허술한 부분이 남은 것', b: '진행이 느려서 일정이 밀리는 것', hi: 'a' },
+    { x: 2, q: '중요하지 않은 잡무를 맡았을 때', a: '빠르게 처리하고 넘어간다', b: '어차피 할 일이니 제대로 해둔다', hi: 'b' },
+    { x: 2, q: '검토를 부탁받았을 때', a: '걸리는 것만 빠르게 보고 돌려준다', b: '처음부터 끝까지 보고 정리해서 돌려준다', hi: 'b' },
+
+    { x: 3, q: '맡긴 일이 진행 중일 때', a: '중간에 어떻게 되고 있는지 본다', b: '완성됐다고 할 때까지 두고 본다', hi: 'a' },
+    { x: 3, q: '공동 문서에서 남이 쓴 문장이 어색할 때', a: '내용이 맞으면 그냥 둔다', b: '손을 봐서 다듬는다', hi: 'b' },
+    { x: 3, q: '내 방식과 다르게 처리됐지만 목적은 달성됐을 때', a: '왜 그렇게 했는지 확인하고 조정한다', b: '그대로 둔다', hi: 'a' },
+    { x: 3, q: '내가 하면 30분, 맡기면 하루 걸리는 일', a: '맡기고 내 시간은 다른 데 쓴다', b: '그냥 내가 한다', hi: 'b' },
+    { x: 3, q: '일을 나눌 때', a: '방식까지 정해서 넘긴다', b: '목표만 정하고 방식은 맡긴다', hi: 'a' },
+    { x: 3, q: '팀원이 요청은 안 했는데 헤매는 것 같을 때', a: '먼저 방법을 알려준다', b: '물어올 때까지 기다린다', hi: 'a' },
+
+    { x: 4, q: '처음 하는 업무나 처음 가는 자리 앞에서', a: '미리 조사해서 준비해 둔다', b: '가서 상황 보고 맞춘다', hi: 'a' },
+    { x: 4, q: '일정이 갑자기 바뀌었을 때', a: '불편하긴 하지만 금방 적응한다', b: '계획을 다시 정리해야 마음이 놓인다', hi: 'b' },
+    { x: 4, q: '프로젝트 시작 단계에서', a: '전체 계획을 세워두고 시작한다', b: '일단 시작하고 하면서 잡아간다', hi: 'a' },
+    { x: 4, q: '내가 모르는 채로 진행되는 일이 팀에 있을 때', a: '내 일이 아니면 신경 쓰지 않는다', b: '어떻게 되고 있는지는 알고 싶다', hi: 'b' },
+    { x: 4, q: '회의 전에', a: '안건과 배경을 미리 확인해 둔다', b: '들어가서 들으면서 파악한다', hi: 'a' },
+    { x: 4, q: '정보가 부족한 상태에서 결정해야 할 때', a: '지금 있는 것으로 정하고 나중에 고친다', b: '조금이라도 더 알아본 뒤에 정한다', hi: 'b' }
+  ];
+
+  // 축별 · 구간별 서술. 라벨을 붙이지 않고 문장으로 내보낸다.
+  const COPY = [
+    {
+      title: ['먼저 듣는 사람', null, '할 말은 하는 사람'],
+      say: [
+        '의견이 갈릴 때 먼저 물러나 듣습니다. 반대 의견이 없는 게 아니라, 그 자리에서 부딪히는 것보다 나중에 따로 정리하는 쪽을 택합니다.',
+        '밀어붙일 때와 물러날 때를 상황에 따라 나눕니다. 중요하다고 판단한 안건에서만 목소리를 냅니다.',
+        '할 말은 그 자리에서 합니다. 결론이 이상한 방향으로 굳는 걸 두고 보지 못합니다.'
+      ],
+      use: [
+        '동의한 것처럼 보여도 다 동의한 건 아닙니다. 회의가 끝난 뒤 따로 한 번 물어봐 주세요.',
+        '이 사람이 강하게 말할 때는 실제로 중요한 안건일 가능성이 높습니다.',
+        '반대 의견은 공격이 아닙니다. 근거로 답하면 대체로 바로 수긍합니다.'
+      ]
+    },
+    {
+      title: ['사람부터 보는 사람', null, '결과부터 보는 사람'],
+      say: [
+        '일보다 사람 상태를 먼저 봅니다. 분위기가 굳으면 진도보다 그걸 먼저 풀려고 합니다.',
+        '사람과 결과 사이에서 균형을 잡습니다. 급할 때는 일 쪽으로, 여유가 있을 때는 사람 쪽으로 기웁니다.',
+        '결과부터 봅니다. 문제가 생기면 원인을 짚는 게 먼저고, 감정을 다루는 건 그다음입니다.'
+      ],
+      use: [
+        '지적할 일이 있으면 결론만 던지지 마세요. 말투가 내용보다 오래 남습니다.',
+        '지금 어느 쪽이 급한지만 알려주면 알아서 맞춥니다.',
+        '말이 건조한 건 기분이 나쁜 게 아닙니다. 용건만 오가도 불편해하지 않습니다.'
+      ]
+    },
+    {
+      title: ['일단 내보내는 사람', null, '끝까지 다듬는 사람'],
+      say: [
+        '완성도보다 속도를 먼저 챕니다. 80%에서 내보내고 피드백으로 고치는 편이 빠르다고 봅니다.',
+        '중요한 것과 그렇지 않은 것을 나눠서 힘을 씁니다. 전부 완벽하게 하려고는 하지 않습니다.',
+        '마감을 지켰더라도 자기 기준에 못 미치면 그냥 넘기기 어렵습니다. 형식과 표현까지 손을 봅니다.'
+      ],
+      use: [
+        '빠르게 올라온 결과물은 초안입니다. 완성본으로 보고 판단하지 마세요.',
+        '어디까지가 중요한 일인지만 합의해두면 알아서 조절합니다.',
+        '"이 정도면 됐다"는 말은 잘 안 통합니다. 대신 이번 범위가 어디까지인지 정해두면 멈출 수 있습니다.'
+      ]
+    },
+    {
+      title: ['맡기고 손 떼는 사람', null, '모르는 상태가 불편한 사람'],
+      say: [
+        '맡긴 일은 놓습니다. 방식이 자기와 달라도 목적이 달성되면 그대로 둡니다.',
+        '맡기긴 하는데 큰 흐름은 보고 있습니다. 세부까지 들어가지는 않습니다.',
+        '일을 넘긴 뒤에도 중간 상태를 확인하고 싶어 합니다. 감시하려는 게 아니라 모르는 상태가 불편해서입니다.'
+      ],
+      use: [
+        '먼저 묻지 않는 편입니다. 필요한 보고는 알아서 올려주세요.',
+        '진행이 크게 틀어질 때만 알려주면 됩니다.',
+        '물어보기 전에 먼저 알려주세요. 착수 전에 결과물의 형태를 맞춰두면 다시 만드는 일이 줄어듭니다.'
+      ]
+    },
+    {
+      title: ['가서 맞추는 사람', null, '미리 알아두는 사람'],
+      say: [
+        '계획보다 현장에서 맞춥니다. 정보가 부족해도 일단 정하고 나중에 고치는 쪽입니다.',
+        '필요한 만큼 준비하고 시작합니다. 계획이 어긋나도 크게 흔들리지 않습니다.',
+        '모르는 상태로 들어가는 걸 견디기 어려워합니다. 미리 조사하고 계획을 세운 뒤에 움직입니다.'
+      ],
+      use: [
+        '긴 사전 준비를 요구하면 오히려 느려집니다. 시작할 수 있는 만큼만 주세요.',
+        '일정이 바뀌면 알려주기만 하면 됩니다.',
+        '갑작스러운 변경은 내용보다 통보 시점이 문제입니다. 확정 전이라도 미리 공유해주세요.'
+      ]
+    }
+  ];
+
+  const $ = (id) => document.getElementById(id);
+  const band = (s) => (s <= 1 ? 0 : s >= 5 ? 2 : 1);
+
+  let at = 0;
+  let picks = new Array(Q.length).fill(null);
+
+  const views = { land: $('v-land'), test: $('v-test'), res: $('v-res') };
+  function show(name) {
+    Object.entries(views).forEach(([k, el]) => el.classList.toggle('live', k === name));
+    document.body.classList.toggle('on-paper', name === 'res');
+    $('wm').classList.toggle('show', name !== 'land');
+    if (name === 'res') document.body.style.removeProperty('--ground');
+  }
+
+  // 랜딩 로고가 포인터를 아주 조금 따라간다.
+  const lock = $('lock');
+  addEventListener('pointermove', (e) => {
+    if (!views.land.classList.contains('live')) return;
+    const dx = (e.clientX / innerWidth - 0.5) * 16;
+    const dy = (e.clientY / innerHeight - 0.5) * 10;
+    lock.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
+  });
+
+  // 진행 눈금 30개
+  const track = $('track');
+  Q.forEach(() => track.appendChild(document.createElement('i')));
+
+  function paint() {
+    const item = Q[at];
+    const ax = AXES[item.x];
+    document.body.style.setProperty('--ground', ax.hex);
+
+    $('count').innerHTML = `<b>${String(at + 1).padStart(2, '0')}</b> / 30 &nbsp;·&nbsp; ${ax.nm}`;
+    $('ask').textContent = item.q;
+
+    const box = $('opts');
+    box.innerHTML = '';
+    ['a', 'b'].forEach((side, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'opt';
+      btn.type = 'button';
+      btn.innerHTML = `<kbd>${i + 1}</kbd><span>${item[side]}</span>`;
+      btn.addEventListener('click', () => choose(side, btn));
+      box.appendChild(btn);
+    });
+
+    [...track.children].forEach((c, i) => c.classList.toggle('done', i < at));
+    $('back').hidden = at === 0;
+
+    ['count', 'ask', 'opts'].forEach((id) => {
+      const el = $(id);
+      el.style.animation = 'none';
+      void el.offsetWidth;
+      el.style.animation = '';
+    });
+  }
+
+  function choose(side, btn) {
+    if (btn.classList.contains('chosen')) return;
+    picks[at] = side;
+    btn.classList.add('chosen');
+    setTimeout(() => {
+      if (at < Q.length - 1) { at++; paint(); }
+      else finish();
+    }, 190);
+  }
+
+  function tally() {
+    const out = [0, 0, 0, 0, 0];
+    Q.forEach((item, i) => { if (picks[i] === item.hi) out[item.x]++; });
+    return out;
+  }
+
+  function render(scores) {
+    // 제목은 가장 치우친 축에서 뽑는다. 다 중간이면 치우치지 않았다고 쓴다.
+    let top = 0, gap = -1;
+    scores.forEach((s, i) => { const d = Math.abs(s - 3); if (d > gap) { gap = d; top = i; } });
+    const tb = band(scores[top]);
+    $('r-title').textContent = gap < 2 || tb === 1 ? '한쪽으로 치우치지 않은 사람' : COPY[top].title[tb];
+
+    $('r-bars').innerHTML = AXES.map((ax, i) => {
+      const cells = Array.from({ length: 6 }, (_, k) =>
+        `<i class="${k < scores[i] ? 'f' : ''}" style="--fill:${ax.hex}"></i>`).join('');
+      return `<div class="bar"><span class="nm">${ax.nm}</span><span class="cells">${cells}</span></div>`;
+    }).join('');
+
+    $('r-lines').innerHTML = scores.map((s, i) => `<p>${COPY[i].say[band(s)]}</p>`).join('');
+    $('r-use').innerHTML = scores
+      .map((s, i) => ({ s, i, d: Math.abs(s - 3) }))
+      .sort((p, q) => q.d - p.d).slice(0, 3)
+      .map(({ s, i }) => `<li>${COPY[i].use[band(s)]}</li>`).join('');
+  }
+
+  function finish() {
+    const scores = tally();
+    location.hash = 's' + scores.join('');
+    render(scores);
+    show('res');
+    scrollTo(0, 0);
+  }
+
+  $('go').addEventListener('click', () => { show('test'); paint(); });
+  $('back').addEventListener('click', () => { if (at > 0) { at--; paint(); } });
+
+  addEventListener('keydown', (e) => {
+    if ($('sheet').classList.contains('live')) { if (e.key === 'Escape') sheet(false); return; }
+    if (views.land.classList.contains('live') && (e.key === 'Enter' || e.key === ' ')) { $('go').click(); return; }
+    if (!views.test.classList.contains('live')) return;
+    const opts = $('opts').children;
+    if (e.key === '1' || e.key === 'ArrowLeft') opts[0].click();
+    if (e.key === '2' || e.key === 'ArrowRight') opts[1].click();
+    if (e.key === 'Backspace') { e.preventDefault(); $('back').click(); }
+  });
+
+  $('share').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(location.href);
+      $('toast').textContent = '링크를 복사했습니다. 팀원에게 보내세요.';
+    } catch {
+      $('toast').textContent = '주소창의 링크를 복사해서 보내세요.';
+    }
+  });
+
+  $('again').addEventListener('click', () => {
+    at = 0; picks = new Array(Q.length).fill(null);
+    history.replaceState(null, '', location.pathname);
+    document.body.style.setProperty('--ground', AXES[0].hex);
+    show('land');
+  });
+
+  function sheet(open) { $('sheet').classList.toggle('live', open); }
+  $('help').addEventListener('click', () => sheet(true));
+  $('sheet').addEventListener('click', (e) => { if (e.target.hasAttribute('data-close')) sheet(false); });
+
+  // 링크로 받은 결과 열기
+  const m = location.hash.match(/^#s([0-6]{5})$/);
+  if (m) { render(m[1].split('').map(Number)); show('res'); }
+</script>
+</body>
+</html>
