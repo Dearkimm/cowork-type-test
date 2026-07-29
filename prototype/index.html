@@ -84,6 +84,8 @@
   .yl2 { left: 9vw; top: 44vh; animation: float 6.2s 1.3s ease-in-out infinite; }
   .yl3 { left: 52vw; top: 4vh; animation: float 5.8s 0.6s ease-in-out infinite; }
   .st7 { left: 44vw; bottom: 5vh; animation: tw 4.2s 1.7s ease-in-out infinite; }
+  .st8 { left: 63vw; bottom: 13vh; animation: tw 3.8s 0.4s ease-in-out infinite; }
+  .yl4 { left: 31vw; bottom: 27vh; animation: float 5.5s 2.3s ease-in-out infinite; }
   @keyframes tw { 0%, 100% { opacity: 0.2; transform: scale(0.7); } 50% { opacity: 1; transform: scale(1.1); } }
   @keyframes float { 0%, 100% { transform: translateY(0); opacity: 0.55; } 50% { transform: translateY(-12px); opacity: 0.95; } }
 
@@ -135,23 +137,28 @@
 
   /* 스티커. 로고 주변을 채운다. */
   .land canvas.stk { position: absolute; z-index: 0; }
-  /* 좌우 끝에만 몰리면 가운데가 비어 보인다. 위쪽 띠와 아래쪽 띠도 쓴다. */
-  .bl1 { left: 9%; top: 17%; animation: float 5.2s ease-in-out infinite; }
-  .bl2 { left: 43%; top: 3%; animation: float 6.1s 0.8s ease-in-out infinite; }
-  .bl3 { right: 8%; top: 12%; animation: float 5.6s 1.6s ease-in-out infinite; }
-  .bl4 { left: 5%; top: 37%; animation: float 6.6s 0.5s ease-in-out infinite; }
-  .bl5 { right: 6%; bottom: 33%; animation: float 5.9s 2.1s ease-in-out infinite; }
-  .hs1 { left: 29%; top: 7%; animation: float 4.8s 0.4s ease-in-out infinite; }
-  .hs2 { right: 27%; top: 9%; animation: float 5.1s 1.1s ease-in-out infinite; }
-  .ss1 { left: 19%; top: 27%; animation: tw 3.2s ease-in-out infinite; }
-  .ss2 { right: 16%; top: 31%; animation: tw 4.1s 1.2s ease-in-out infinite; }
-  .ss3 { left: 37%; bottom: 6%; animation: tw 3.7s 2s ease-in-out infinite; }
-  .ss4 { right: 39%; bottom: 10%; animation: tw 3.4s 0.6s ease-in-out infinite; }
-  .ss5 { left: 12%; bottom: 21%; animation: tw 4.6s 1.8s ease-in-out infinite; }
-  .ss6 { right: 11%; bottom: 19%; animation: tw 3.9s 2.6s ease-in-out infinite; }
-  .ss7 { left: 56%; top: 6%; animation: tw 4.3s 1.4s ease-in-out infinite; }
-  .ss8 { right: 46%; bottom: 4%; animation: tw 3.6s 2.4s ease-in-out infinite; }
-  .hs3 { left: 47%; bottom: 12%; animation: float 5.7s 1.9s ease-in-out infinite; }
+  /* 위·중간·아래 세 띠로 나눈다. 큰 스프라이트를 아래쪽에 두어야
+     위로 쏠린 느낌이 사라진다. 가운데 세로줄은 로고와 캐릭터 자리라 비운다. */
+  .bl2 { left: 42%; top: 3%; animation: float 6.1s 0.8s ease-in-out infinite; }
+  .hs1 { left: 27%; top: 8%; animation: float 4.8s 0.4s ease-in-out infinite; }
+  .hs2 { right: 25%; top: 6%; animation: float 5.1s 1.1s ease-in-out infinite; }
+  .ss1 { left: 16%; top: 12%; animation: tw 3.2s ease-in-out infinite; }
+  .ss4 { right: 36%; top: 16%; animation: tw 3.4s 0.6s ease-in-out infinite; }
+  .ss7 { left: 58%; top: 7%; animation: tw 4.3s 1.4s ease-in-out infinite; }
+
+  .bl1 { left: 7%; top: 27%; animation: float 5.2s ease-in-out infinite; }
+  .bl3 { right: 6%; top: 24%; animation: float 5.6s 1.6s ease-in-out infinite; }
+  .ss2 { right: 19%; top: 38%; animation: tw 4.1s 1.2s ease-in-out infinite; }
+  .ss5 { left: 20%; top: 43%; animation: tw 4.6s 1.8s ease-in-out infinite; }
+
+  .bl4 { left: 4%; bottom: 25%; animation: float 6.6s 0.5s ease-in-out infinite; }
+  .bl5 { right: 5%; bottom: 21%; animation: float 5.9s 2.1s ease-in-out infinite; }
+  .hs3 { left: 14%; bottom: 9%; animation: float 5.7s 1.9s ease-in-out infinite; }
+  .ss3 { right: 16%; bottom: 8%; animation: tw 3.7s 2s ease-in-out infinite; }
+  .ss6 { left: 33%; bottom: 4%; animation: tw 3.9s 2.6s ease-in-out infinite; }
+  .ss8 { right: 32%; bottom: 6%; animation: tw 3.6s 2.4s ease-in-out infinite; }
+  .bl6 { left: 24%; bottom: 30%; animation: float 6.3s 1.4s ease-in-out infinite; }
+  .hs4 { right: 23%; bottom: 33%; animation: float 5.4s 0.9s ease-in-out infinite; }
   .bow { position: absolute; z-index: 0; left: 50%; top: 50%; transform: translate(-50%, -195%); opacity: 0.8; }
 
   /* 아래에 네 마리를 세워 화면을 채운다 */
@@ -664,7 +671,8 @@
     const box = $('sky');
     [['cl1', CLOUD, 6], ['cl2', CLOUD, 5], ['cl3', CLOUD, 3], ['cl4', CLOUD, 4], ['cl5', CLOUD, 4],
      ['st1', STAR, 3], ['st2', STAR, 2], ['st3', STAR, 3], ['st4', STAR, 2], ['st5', STAR, 2], ['st6', STAR, 2],
-     ['st7', STAR, 2], ['yl1', STAR_Y, 4], ['yl2', STAR_Y, 3], ['yl3', STAR_Y, 3]].forEach(([cls, art, sc]) => {
+     ['st7', STAR, 2], ['st8', STAR, 3], ['yl1', STAR_Y, 4], ['yl2', STAR_Y, 3],
+     ['yl3', STAR_Y, 3], ['yl4', STAR_Y, 3]].forEach(([cls, art, sc]) => {
       const cv = sprite(art, sc);
       cv.className = cls;
       box.appendChild(cv);
@@ -676,13 +684,13 @@
     bow.className = 'bow';
     $('land').prepend(bow);
     // 랜딩 스티커
-    [['bl1', balloon('#FFB3CF', '#E86A9C'), 4], ['bl2', balloon('#FFE9A8', '#E5B94A'), 3],
-     ['bl3', balloon('#B6E3FF', '#5FA8DE'), 3], ['bl4', balloon('#C8F0D8', '#6FBF8E'), 3],
-     ['bl5', balloon('#DCCBFF', '#9277D8'), 2],
-     ['hs1', HEART, 4], ['hs2', HEART, 3],
-     ['ss1', STAR_Y, 3], ['ss2', STAR_Y, 4], ['ss3', STAR, 3],
-     ['ss4', STAR, 2], ['ss5', STAR_Y, 2], ['ss6', STAR, 3],
-     ['ss7', STAR_Y, 3], ['ss8', STAR, 2], ['hs3', HEART, 3]].forEach(([cls, art, sc]) => {
+    [['bl2', balloon('#FFE9A8', '#E5B94A'), 3], ['hs1', HEART, 3], ['hs2', HEART, 3],
+     ['ss1', STAR_Y, 2], ['ss4', STAR, 2], ['ss7', STAR_Y, 3],
+     ['bl1', balloon('#FFB3CF', '#E86A9C'), 4], ['bl3', balloon('#B6E3FF', '#5FA8DE'), 4],
+     ['ss2', STAR_Y, 3], ['ss5', STAR_Y, 2],
+     ['bl4', balloon('#C8F0D8', '#6FBF8E'), 4], ['bl5', balloon('#DCCBFF', '#9277D8'), 4],
+     ['hs3', HEART, 4], ['ss3', STAR, 3], ['ss6', STAR, 2], ['ss8', STAR, 2],
+     ['bl6', balloon('#FFD9A8', '#DE9A3C'), 3], ['hs4', HEART, 3]].forEach(([cls, art, sc]) => {
       const cv = sprite(art, sc);
       cv.className = 'stk ' + cls;
       $('land').prepend(cv);
