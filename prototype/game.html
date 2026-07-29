@@ -293,7 +293,11 @@
   /* 눈금은 없애고 구슬만 남긴다. 구슬은 CSS 원이 아니라 canvas 다.
      CSS 로 그리면 테두리가 매끈해서 픽셀로 안 보인다. */
   .beam { position: relative; width: 100%; padding: 4px 0; }
+  /* 양끝 화살표가 어느 쪽이 어느 문장인지 대신 말해준다.
+     키보드 좌우 이동과도 같은 그림이다. */
+  .beam .line { display: flex; align-items: center; justify-content: center; gap: clamp(12px, 3vw, 32px); }
   .beam .row { display: flex; align-items: center; justify-content: center; gap: clamp(10px, 2.4vw, 24px); }
+  .arw { display: flex; flex: none; }
   .orb { display: grid; place-items: center; padding: 4px; background: none; border: 0; box-shadow: none; }
   .orb canvas { display: block; }
   .beam .tip { margin-top: 14px; text-align: center; color: var(--sub); }
@@ -433,7 +437,11 @@
           <div class="scale">
             <p class="bub up" id="s-a"></p>
             <div class="beam">
-              <div class="row" id="orbs"></div>
+              <div class="line">
+                <span class="arw" id="arw-l" aria-hidden="true"></span>
+                <div class="row" id="orbs"></div>
+                <span class="arw" id="arw-r" aria-hidden="true"></span>
+              </div>
               <p class="tip px" id="tip">왼쪽은 위 문장, 오른쪽은 아래 문장이에요. 클수록 확실히.</p>
             </div>
             <p class="bub down" id="s-b"></p>
@@ -993,6 +1001,11 @@
   const CHK = ['......X', '.....XX', 'X...XX.', 'XX.XX..', '.XXXX..', '..XX...'];
   const orbScale = () => (innerWidth < 480 ? 2 : innerWidth < 780 ? 3 : 4);
 
+  const ARROW = ['.....K', '....KK', '...KKK', '..KKKK', '.KKKKK',
+    'KKKKKK', '.KKKKK', '..KKKK', '...KKK', '....KK', '.....K'];
+  const flipGrid = (g) => g.map((row) => [...row].reverse().join(''));
+  const arrowArt = (col, right) => ({ pal: { K: col }, grid: right ? flipGrid(ARROW) : ARROW });
+
   function pxOrb(k, state, sc) {
     const o = ORB[k], r = o.r, W = r * 2 + 1;
     const cv = document.createElement('canvas');
@@ -1021,6 +1034,8 @@
 
   function drawOrbs() {
     const sc = orbScale(), p = picks[at];
+    $('arw-l').replaceChildren(sprite(arrowArt(ORB[0].col, false), sc));
+    $('arw-r').replaceChildren(sprite(arrowArt(ORB[3].col, true), sc));
     [...$('orbs').children].forEach((btn, k) => {
       const c = CELLS[k];
       const on = p && p.side === c.side && p.s === c.s;
