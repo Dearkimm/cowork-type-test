@@ -146,18 +146,18 @@
   .ss4 { right: 36%; top: 16%; animation: tw 3.4s 0.6s ease-in-out infinite; }
   .ss7 { left: 58%; top: 7%; animation: tw 4.3s 1.4s ease-in-out infinite; }
 
-  .bl1 { left: 7%; top: 27%; animation: float 5.2s ease-in-out infinite; }
+  .wg1 { left: 6%; top: 26%; animation: float 5.2s ease-in-out infinite; }
   .bl3 { right: 6%; top: 24%; animation: float 5.6s 1.6s ease-in-out infinite; }
   .ss2 { right: 19%; top: 38%; animation: tw 4.1s 1.2s ease-in-out infinite; }
   .ss5 { left: 20%; top: 43%; animation: tw 4.6s 1.8s ease-in-out infinite; }
 
   .bl4 { left: 4%; bottom: 25%; animation: float 6.6s 0.5s ease-in-out infinite; }
-  .bl5 { right: 5%; bottom: 21%; animation: float 5.9s 2.1s ease-in-out infinite; }
+  .wg2 { right: 4%; bottom: 20%; animation: float 5.9s 2.1s ease-in-out infinite; }
   .hs3 { left: 14%; bottom: 9%; animation: float 5.7s 1.9s ease-in-out infinite; }
   .ss3 { right: 16%; bottom: 8%; animation: tw 3.7s 2s ease-in-out infinite; }
   .ss6 { left: 33%; bottom: 4%; animation: tw 3.9s 2.6s ease-in-out infinite; }
   .ss8 { right: 32%; bottom: 6%; animation: tw 3.6s 2.4s ease-in-out infinite; }
-  .bl6 { left: 24%; bottom: 30%; animation: float 6.3s 1.4s ease-in-out infinite; }
+  .wg3 { left: 25%; bottom: 31%; animation: float 6.3s 1.4s ease-in-out infinite; }
   .hs4 { right: 23%; bottom: 33%; animation: float 5.4s 0.9s ease-in-out infinite; }
   .bow { position: absolute; z-index: 0; left: 50%; top: 50%; transform: translate(-50%, -195%); opacity: 0.8; }
 
@@ -403,7 +403,7 @@
     <div class="land" id="land">
       <div class="frame" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
       <div class="lock pop3d" id="lock" aria-label="오시에테"></div>
-      <p class="tag pop3d b" id="tagline" aria-label="어떻게 일하는지 알려줘"></p>
+      <p class="tag pop3d b" id="tagline" aria-label="업무 스타일을 알려줘"></p>
       <button class="gbtn pxbtn cta" id="go">START</button>
       <p class="note px">30문항 · 3분 · 로그인 없음</p>
       <div class="crew" id="crew" aria-hidden="true"></div>
@@ -652,6 +652,37 @@
     return cv;
   }
 
+  /* 날개는 격자로 못 찍는다. 앞날개뼈 곡선을 먼저 긋고,
+     그 위 여섯 점에서 깃털을 아래바깥으로 내린다. 뿌리는 굵어 붙고 끝은 갈라진다.
+     끝 절반은 옅은 파랑으로 찍어 깃털 갈라짐이 보이게 한다. */
+  function wingArt(right) {
+    const W = 23, H = 13, SX = 22, SY = 7, A = 16, B = 6.5, N = 6, TH = 1.7;
+    const g = Array.from({ length: H }, () => new Array(W).fill(' '));
+    const put = (cx, cy, r, ch) => {
+      for (let y = Math.floor(cy - r) - 1; y <= Math.ceil(cy + r) + 1; y++) {
+        for (let x = Math.floor(cx - r) - 1; x <= Math.ceil(cx + r) + 1; x++) {
+          if (x < 0 || x >= W || y < 0 || y >= H) continue;
+          if ((x - cx) * (x - cx) + (y - cy) * (y - cy) <= r * r) g[y][x] = ch;
+        }
+      }
+    };
+    for (let t = 0; t <= 1.0001; t += 0.02) {
+      put(SX - A * t, SY - B * Math.sin((t * Math.PI) / 2), TH + 0.3, 'W');
+    }
+    for (let i = 0; i < N; i++) {
+      const s = i / (N - 1);
+      const px = SX - A * s, py = SY - B * Math.sin((s * Math.PI) / 2);
+      const a = ((265 - 27 * s) * Math.PI) / 180;
+      const dx = Math.cos(a), dy = -Math.sin(a), L = 4.5 + 6.5 * s;
+      for (let t = 0; t <= L; t += 0.3) {
+        put(px + dx * t, py + dy * t, TH * (1 - 0.42 * (t / L)), t > 0.55 * L ? 'L' : 'W');
+      }
+    }
+    let grid = g.map((row) => row.join(''));
+    if (right) grid = grid.map((row) => [...row].reverse().join(''));
+    return { pal: { W: '#FFFFFF', L: '#DCE8FA' }, grid };
+  }
+
   const CLOUD = {
     pal: { W: '#FFFFFF', L: '#EAF3FF', S: '#CFE3FA' },
     grid: [
@@ -724,11 +755,11 @@
     // 랜딩 스티커
     [['bl2', balloon('#FFE9A8', '#E5B94A'), 3], ['hs1', HEART, 3], ['hs2', HEART, 3],
      ['ss1', STAR_Y, 2], ['ss4', STAR, 2], ['ss7', STAR_Y, 3],
-     ['bl1', balloon('#FFB3CF', '#E86A9C'), 4], ['bl3', balloon('#B6E3FF', '#5FA8DE'), 4],
+     ['wg1', wingArt(false), 3], ['bl3', balloon('#B6E3FF', '#5FA8DE'), 4],
      ['ss2', STAR_Y, 3], ['ss5', STAR_Y, 2],
-     ['bl4', balloon('#C8F0D8', '#6FBF8E'), 4], ['bl5', balloon('#DCCBFF', '#9277D8'), 4],
+     ['bl4', balloon('#C8F0D8', '#6FBF8E'), 4], ['wg2', wingArt(true), 3],
      ['hs3', HEART, 4], ['ss3', STAR, 3], ['ss6', STAR, 2], ['ss8', STAR, 2],
-     ['bl6', balloon('#FFD9A8', '#DE9A3C'), 3], ['hs4', HEART, 3]].forEach(([cls, art, sc]) => {
+     ['wg3', wingArt(false), 2], ['hs4', HEART, 3]].forEach(([cls, art, sc]) => {
       const cv = sprite(art, sc);
       cv.className = 'stk ' + cls;
       $('land').prepend(cv);
@@ -752,7 +783,7 @@
     });
   }
   fan($('lock'), 'おしえて', 11, 0.075, 0.1);
-  fan($('tagline'), '어떻게 일하는지 알려줘', 6, 0.05, 0.46);
+  fan($('tagline'), '업무 스타일을 알려줘', 6, 0.05, 0.46);
 
   /* ── 축과 문항 ────────────────────────────── */
   const AXES = [
