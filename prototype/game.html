@@ -1,0 +1,1214 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>おしえて 오시에테 — 협업 성향 검사 (게임 틀)</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-jp.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/quiple/galmuri/dist/galmuri.css">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  * { margin: 0; padding: 0; }
+  ul, ol { list-style-position: outside; }
+  img, svg { display: block; max-width: 100%; }
+</style>
+</head>
+<body>
+
+<style>
+  :root {
+    --ca: #2B5BFF;
+    --ca-deep: #1436B8;
+    --ca-pale: #DCE5FF;
+    --cb: #FF4D9A;
+    --cb-deep: #C71E67;
+    --cb-pale: #FFE0EC;
+    --a-strong: #0F2FC9;
+    --a-light: #5A7BFF;
+    --b-light: #FF5CA3;
+    --b-strong: #C7105E;
+    --ink: #262232;
+    --sub: #736E85;
+    --card: #FFFFFF;
+    --edge: #E2DEEE;
+    --edge-deep: #CBC5DC;
+    --g-base: #6182F6;
+    --g-light: #A9BEFF;
+    --g-edge: #2E4FC4;
+    --cur: auto;
+
+    --display: "Pretendard JP Variable", "Pretendard Variable", Pretendard,
+      "Yu Gothic", YuGothic, "Hiragino Kaku Gothic ProN", Meiryo,
+      "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+    --body: "Pretendard Variable", Pretendard, "Malgun Gothic", "Apple SD Gothic Neo", system-ui, sans-serif;
+    --pixel: "Galmuri11", "Galmuri9", "Malgun Gothic", sans-serif;
+  }
+
+  html { min-height: 100%; }
+  html, body, button, input, a { cursor: var(--cur); }
+  body {
+    min-height: 100dvh;
+    font-family: var(--body);
+    color: var(--ink);
+    background: linear-gradient(180deg, #BDDFFF 0%, #E4F1FF 56%, #FFFFFF 100%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    overflow-x: hidden;
+    word-break: keep-all;
+    -webkit-font-smoothing: antialiased;
+  }
+  button { font-family: inherit; border: 0; background: none; color: inherit; }
+  input { font-family: inherit; }
+  :focus-visible { outline: 3px solid var(--cb); outline-offset: 4px; }
+  .px { font-family: var(--pixel); font-size: 11px; line-height: 1.6; }
+  canvas { image-rendering: pixelated; }
+
+  /* ── 배경 ─────────────────────────────────── */
+  .sky { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  .sky canvas { position: absolute; }
+  .cl1 { left: -26px; bottom: 26px; }
+  .cl2 { right: -34px; bottom: 96px; opacity: 0.9; }
+  .cl3 { left: 28vw; top: 11vh; opacity: 0.7; }
+  .cl4 { right: 15vw; top: 30vh; opacity: 0.5; }
+  .cl5 { left: 46vw; bottom: 6px; opacity: 0.8; }
+  .st1 { left: 6vw; top: 17vh; animation: tw 3.6s ease-in-out infinite; }
+  .st2 { right: 9vw; top: 25vh; animation: tw 4.4s 0.9s ease-in-out infinite; }
+  .st3 { left: 15vw; bottom: 30vh; animation: tw 4s 1.6s ease-in-out infinite; }
+  .st4 { right: 30vw; bottom: 22vh; animation: tw 4.8s 0.5s ease-in-out infinite; }
+  .st5 { left: 41vw; top: 8vh; animation: tw 5.2s 2.2s ease-in-out infinite; }
+  .st6 { right: 20vw; top: 46vh; animation: tw 3.9s 1.1s ease-in-out infinite; }
+  .yl1 { right: 6vw; bottom: 38vh; animation: float 5.4s ease-in-out infinite; }
+  .yl2 { left: 9vw; top: 44vh; animation: float 6.2s 1.3s ease-in-out infinite; }
+  .yl3 { left: 52vw; top: 4vh; animation: float 5.8s 0.6s ease-in-out infinite; }
+  .st7 { left: 44vw; bottom: 5vh; animation: tw 4.2s 1.7s ease-in-out infinite; }
+  @keyframes tw { 0%, 100% { opacity: 0.2; transform: scale(0.7); } 50% { opacity: 1; transform: scale(1.1); } }
+  @keyframes float { 0%, 100% { transform: translateY(0); opacity: 0.55; } 50% { transform: translateY(-12px); opacity: 0.95; } }
+
+  /* ── 입체 글씨 ────────────────────────────── */
+  .pop3d {
+    font-family: var(--display); font-weight: 900; color: #fff;
+    text-shadow: 0 2px 0 var(--ca-deep), 0 4px 0 var(--ca-deep), 0 6px 0 var(--ca-deep), 0 9px 14px rgba(38,34,50,0.22);
+    -webkit-text-stroke: 5px var(--ca-deep); paint-order: stroke fill; letter-spacing: -0.02em;
+  }
+  .pop3d.b { text-shadow: 0 2px 0 var(--cb-deep), 0 4px 0 var(--cb-deep), 0 6px 0 var(--cb-deep), 0 9px 14px rgba(38,34,50,0.22); -webkit-text-stroke-color: var(--cb-deep); }
+
+  /* ── 픽셀 버튼 ────────────────────────────── */
+  .gbtn {
+    background: var(--card); color: var(--ink);
+    border: 3px solid var(--edge-deep); border-radius: 15px;
+    box-shadow: 0 4px 0 var(--edge-deep);
+    transition: transform 0.08s, box-shadow 0.08s, background-color 0.12s, color 0.12s, border-color 0.12s;
+  }
+  .gbtn:active { transform: translateY(4px); box-shadow: 0 0 0 var(--edge-deep); }
+  .gbtn[disabled] { opacity: 0.45; }
+  .pxbtn { font-family: var(--pixel); letter-spacing: 0.02em; }
+
+  .app { position: relative; min-height: 100dvh; display: flex; flex-direction: column; z-index: 1; }
+  .view { display: none; flex: 1; flex-direction: column; }
+  .view.live { display: flex; }
+
+  .corner { position: fixed; inset: 0 0 auto 0; z-index: 30; display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; pointer-events: none; }
+  .corner > * { pointer-events: auto; }
+  .whoami { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.92); border-radius: 14px; border: 3px solid var(--edge-deep); padding: 5px 11px 5px 7px; opacity: 0; transition: opacity 0.3s; }
+  .whoami.show { opacity: 1; }
+  .whoami b { font-family: var(--pixel); font-size: 11px; }
+  .icobtn { width: 40px; height: 40px; display: grid; place-items: center; font-size: 1.05rem; font-weight: 800; color: var(--cb); }
+  .icobtn:hover { background: var(--cb); color: #fff; border-color: var(--cb-deep); box-shadow: 0 4px 0 var(--cb-deep); }
+
+  /* ── 랜딩 ─────────────────────────────────── */
+  .land { position: relative; overflow: hidden; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 76px clamp(14px, 5vw, 60px) 64px; }
+  .land > *:not(.wing) { position: relative; z-index: 1; }
+  /* 로고가 구름 위에 앉는다. Where is COLOR 의 구성. */
+  .logocloud { position: absolute; z-index: 0; left: 50%; top: 50%; transform: translate(-50%, -100%); opacity: 0.96; }
+
+  /* 포스터 프레임. 레퍼런스 세 장이 전부 이 테두리를 쓴다. */
+  .frame { position: absolute; inset: 12px; z-index: 0; border: 4px solid rgba(255,255,255,0.9); border-radius: 22px; pointer-events: none; }
+  .frame::before { content: ''; position: absolute; inset: 5px; border: 2px solid rgba(255,255,255,0.5); border-radius: 17px; }
+  .frame i { position: absolute; width: 10px; height: 10px; background: #fff; border-radius: 50%; }
+  .frame i:nth-child(1) { top: -7px; left: -7px; }
+  .frame i:nth-child(2) { top: -7px; right: -7px; }
+  .frame i:nth-child(3) { bottom: -7px; left: -7px; }
+  .frame i:nth-child(4) { bottom: -7px; right: -7px; }
+
+  /* 스티커. 로고 주변을 채운다. */
+  .land canvas.stk { position: absolute; z-index: 0; }
+  /* 좌우 끝에만 몰리면 가운데가 비어 보인다. 위쪽 띠와 아래쪽 띠도 쓴다. */
+  .bl1 { left: 9%; top: 17%; animation: float 5.2s ease-in-out infinite; }
+  .bl2 { left: 43%; top: 3%; animation: float 6.1s 0.8s ease-in-out infinite; }
+  .bl3 { right: 8%; top: 12%; animation: float 5.6s 1.6s ease-in-out infinite; }
+  .bl4 { left: 5%; top: 37%; animation: float 6.6s 0.5s ease-in-out infinite; }
+  .bl5 { right: 6%; bottom: 33%; animation: float 5.9s 2.1s ease-in-out infinite; }
+  .hs1 { left: 29%; top: 7%; animation: float 4.8s 0.4s ease-in-out infinite; }
+  .hs2 { right: 27%; top: 9%; animation: float 5.1s 1.1s ease-in-out infinite; }
+  .ss1 { left: 19%; top: 27%; animation: tw 3.2s ease-in-out infinite; }
+  .ss2 { right: 16%; top: 31%; animation: tw 4.1s 1.2s ease-in-out infinite; }
+  .ss3 { left: 37%; bottom: 6%; animation: tw 3.7s 2s ease-in-out infinite; }
+  .ss4 { right: 39%; bottom: 10%; animation: tw 3.4s 0.6s ease-in-out infinite; }
+  .ss5 { left: 12%; bottom: 21%; animation: tw 4.6s 1.8s ease-in-out infinite; }
+  .ss6 { right: 11%; bottom: 19%; animation: tw 3.9s 2.6s ease-in-out infinite; }
+  .ss7 { left: 56%; top: 6%; animation: tw 4.3s 1.4s ease-in-out infinite; }
+  .ss8 { right: 46%; bottom: 4%; animation: tw 3.6s 2.4s ease-in-out infinite; }
+  .hs3 { left: 47%; bottom: 12%; animation: float 5.7s 1.9s ease-in-out infinite; }
+  .bow { position: absolute; z-index: 0; left: 50%; top: 50%; transform: translate(-50%, -195%); opacity: 0.8; }
+
+  /* 아래에 네 마리를 세워 화면을 채운다 */
+  .crew { display: flex; align-items: flex-end; justify-content: center; gap: clamp(6px, 2.2vw, 18px); margin-top: clamp(20px, 4vh, 40px); }
+  .crew canvas { animation: hop 2.8s ease-in-out infinite; }
+  .crew canvas:nth-child(2) { animation-delay: 0.35s; }
+  .crew canvas:nth-child(3) { animation-delay: 0.7s; }
+  .crew canvas:nth-child(4) { animation-delay: 1.05s; }
+  @keyframes hop { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+  .lock { font-size: clamp(3.3rem, 17vw, 9.6rem); line-height: 1; white-space: nowrap; will-change: transform; }
+  .lock span { display: inline-block; opacity: 0; animation: pop 0.7s cubic-bezier(0.16, 1.3, 0.4, 1) both; }
+  @keyframes pop { from { opacity: 0; } to { opacity: 1; } }
+  .land .tag { font-size: clamp(1.15rem, 5vw, 2.2rem); line-height: 1; white-space: nowrap; margin-top: clamp(18px, 3.4vh, 34px); }
+  .land .tag span { display: inline-block; opacity: 0; animation: pop 0.6s cubic-bezier(0.16, 1.3, 0.4, 1) both; }
+
+  .cta { margin-top: 34px; padding: 17px clamp(36px, 12vw, 54px); font-size: 24px; color: #fff;
+    letter-spacing: 0.22em; text-indent: 0.22em; text-shadow: 1px 0 0 #fff; background: var(--cb); border-color: var(--cb-deep); box-shadow: 0 5px 0 var(--cb-deep); animation: rise 0.6s 0.72s cubic-bezier(0.16, 1.25, 0.4, 1) both; }
+  .cta:hover { background: #FF66A9; }
+  .cta:active { box-shadow: 0 0 0 var(--cb-deep); }
+  .land .note { margin-top: 18px; color: var(--sub); background: rgba(255,255,255,0.86); border-radius: 12px; padding: 9px 15px; animation: rise 0.6s 0.82s both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+  /* ── 캐릭터 선택 ──────────────────────────── */
+  .pick { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; padding: 78px clamp(16px, 5vw, 40px) 56px; width: 100%; max-width: 580px; margin: 0 auto; }
+  .pick h1 { font-family: var(--display); font-weight: 900; font-size: clamp(1.45rem, 5.4vw, 2.1rem); letter-spacing: -0.035em; text-align: center; }
+  .pick .hint { color: var(--sub); text-align: center; margin-top: -10px; }
+  .chars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; }
+  .chr { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 11px 2px 9px; }
+  .chr span { font-family: var(--pixel); font-size: 11px; }
+  .chr.on { background: var(--ca-pale); border-color: var(--ca-deep); box-shadow: 0 4px 0 var(--ca-deep); }
+  .nick { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+  .nick label { color: var(--sub); }
+  .nick input { width: 100%; padding: 14px 16px; font-size: 1.02rem; font-weight: 700; color: var(--ink); background: var(--card); border: 3px solid var(--edge-deep); border-radius: 15px; box-shadow: inset 0 2px 4px rgba(38,34,50,0.08); }
+  .nick input::placeholder { color: #B9B4C7; font-weight: 500; }
+  .nick input:focus { outline: none; border-color: var(--ca); }
+  .pick .go2 { width: 100%; padding: 16px; font-size: 19px; color: #fff; letter-spacing: 0.1em; text-indent: 0.1em; text-shadow: 1px 0 0 currentColor; background: var(--ca); border-color: var(--ca-deep); box-shadow: 0 5px 0 var(--ca-deep); }
+  .pick .go2:hover:not([disabled]) { background: #3E6AFF; }
+
+  /* ── 검사 ─────────────────────────────────── */
+  .test { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 840px; margin: 0 auto; padding: 66px clamp(10px, 3vw, 28px) clamp(14px, 3vh, 26px); }
+
+  /* 게임 창. 배경은 그대로 라이트 파스텔이고, 그 위에 흰 창을 얹는다.
+     구슬만 예쁘게 만들어도 설문으로 읽혔던 이유가 이 틀이 없어서였다. */
+  .gwin {
+    width: 100%; display: flex; flex-direction: column;
+    background: var(--card); border: 4px solid var(--edge-deep); border-radius: 20px;
+    box-shadow: 0 7px 0 var(--edge-deep); overflow: hidden;
+  }
+  .gbar {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 10px 14px; background: var(--g-base); color: #fff;
+    border-bottom: 4px solid var(--edge-deep); transition: background-color 0.5s;
+  }
+  .gbar .gt { display: flex; align-items: center; gap: 7px; font-size: 13px; letter-spacing: 0.04em; }
+  .gbar .gs { width: 12px; height: 12px; flex: none; background: #FFE9A8;
+    clip-path: polygon(50% 0,61% 35%,100% 35%,68% 57%,79% 100%,50% 73%,21% 100%,32% 57%,0 35%,39% 35%); }
+  .gbar .gq { font-size: 13px; letter-spacing: 0.06em; }
+  .gbar .gq b { font-size: 17px; }
+
+  /* 게이지는 창 안쪽 벽에 붙인다. 게임의 경험치 바 위치. */
+  .gwin .tube { width: 100%; height: 13px; border: 0; border-bottom: 3px solid var(--edge-deep); border-radius: 0; background: #F2F0F8; }
+  .gwin .tube > i { border-radius: 0; }
+
+  /* 다섯 문항이 한 장. 캐릭터가 발판을 하나씩 밟고 지나간다. */
+  .gtrail { display: flex; align-items: flex-end; gap: 12px; padding: 13px 16px 9px; border-bottom: 3px dashed var(--ca-pale); }
+  .gtrail .chap { font-size: 12px; color: var(--g-edge); padding-bottom: 1px; flex: none; }
+  .map { display: flex; align-items: flex-end; gap: 9px; height: 42px; }
+  .map .tile { position: relative; width: 26px; height: 9px; border-radius: 3px; background: #E7E3F0; }
+  .map .tile.done { background: var(--g-light); }
+  .map .tile.now { background: var(--g-base); }
+  .map .tile.now > * { position: absolute; left: 50%; bottom: 7px; transform: translateX(-50%); animation: hop 1.5s ease-in-out infinite; }
+
+  .gfoot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 14px; border-top: 3px solid var(--ca-pale); background: #FBFAFF; }
+  .gfoot .sel { font-size: 11px; color: var(--sub); }
+  .gfoot .sel b { color: var(--ca); }
+  .gfoot .sel b.b { color: var(--cb); }
+  .gfoot .ok { padding: 11px 20px; font-size: 14px; color: #fff; background: var(--ca); border-color: var(--ca-deep); box-shadow: 0 4px 0 var(--ca-deep); letter-spacing: 0.06em; flex: none; }
+  .gfoot .ok:hover:not([disabled]) { background: #3E6AFF; }
+  .gkeys { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 15px 11px; background: #F4F2FB; }
+  .gkeys .keys { font-size: 10px; color: #9A94AB; text-align: right; }
+  .gkeys .keys b { color: var(--g-edge); }
+  @media (max-width: 560px) { .gkeys .keys { display: none; } }
+
+  /* 픽셀 물약 게이지: 각진 테두리, 계단식 채움, 두 톤 하드컷 */
+  .tube {
+    flex: 1; height: 22px; background: #fff; border: 3px solid var(--g-edge); border-radius: 999px;
+    overflow: hidden; box-shadow: inset 0 2px 0 rgba(38,34,50,0.08);
+  }
+  .tube > i {
+    position: relative; display: block; height: 100%; width: 0;
+    background: linear-gradient(180deg, var(--g-light) 0 45%, var(--g-base) 45% 100%); border-radius: 999px;
+    transition: width 0.4s steps(6, end), background-color 0.5s;
+  }
+  .tube > i > u { position: absolute; right: 0; top: 0; bottom: 0; width: 3px; background: rgba(255,255,255,0.75); }
+  .tube > i > b { position: absolute; }
+  .tube > i > b:nth-of-type(1) { left: 26%; top: 3px; animation: tw 2.4s ease-in-out infinite; }
+  .tube > i > b:nth-of-type(2) { left: 62%; bottom: 3px; animation: tw 3.1s 1s ease-in-out infinite; }
+  .tube > i.splash { animation: splash 0.42s steps(4, end); }
+  @keyframes splash { 0% { transform: scaleY(1); } 50% { transform: scaleY(1.24); } 100% { transform: scaleY(1); } }
+
+  .mid { width: 100%; display: flex; flex-direction: column; justify-content: center; gap: clamp(20px, 3.4vh, 34px); padding: clamp(20px, 4vh, 34px) clamp(10px, 3vw, 22px) clamp(22px, 4vh, 36px); }
+  .ask { font-family: var(--display); font-weight: 900; color: var(--ink); font-size: clamp(1.5rem, 4.8vw, 2.3rem); line-height: 1.3; letter-spacing: -0.038em; text-align: center; max-width: 22ch; margin: 0 auto; text-wrap: balance; }
+  .scale { width: 100%; display: flex; flex-direction: column; gap: clamp(14px, 2.2vh, 20px); }
+
+  /* 너비는 JS(hug)가 실제 글줄 길이를 재서 맞춘다. max-width 만 두면
+     줄바꿈된 뒤에도 상자가 최대 너비로 남아 오른쪽이 비어 보인다. */
+  .bub {
+    position: relative; width: fit-content; max-width: min(27ch, 88%);
+    padding: 14px 19px; border-radius: 21px;
+    background: var(--card); color: var(--ink);
+    font-size: clamp(0.95rem, 2.4vw, 1.1rem); font-weight: 600; line-height: 1.5;
+    text-align: left; text-wrap: balance;
+    filter: drop-shadow(0 3px 5px rgba(38, 34, 50, 0.13));
+  }
+  .bub::after {
+    content: ''; position: absolute; bottom: -6px; width: 13px; height: 11px;
+    background-repeat: no-repeat; background-size: 13px 11px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='11' viewBox='0 0 13 11'%3E%3Cpath d='M13 0C13 6.1 7.2 11 0 11C6.1 10.2 10.2 6.1 10.2 0Z' fill='%23FFFFFF'/%3E%3C/svg%3E");
+  }
+  .bub.up { align-self: flex-start; border-bottom-left-radius: 7px; }
+  .bub.up::after { left: -6px; }
+  .bub.down { align-self: flex-end; border-bottom-right-radius: 7px; }
+  .bub.down::after { right: -6px; transform: scaleX(-1); }
+
+  /* 저울대 위 구슬 넷. 네모 버튼 네 개를 나란히 두면 어떻게 꾸며도
+     설문 위젯으로 읽혀서, 하나로 이어진 눈금 위에 구슬을 얹는 형태로 바꿨다.
+     크기가 세기, 색이 어느 편인지를 나타내고 글자는 쓰지 않는다. */
+  .beam { position: relative; width: 100%; padding: 6px 0 2px; }
+  .beam .rail {
+    position: absolute; left: 9%; right: 9%; top: 50%; height: 10px; margin-top: -5px;
+    border-radius: 999px; background: linear-gradient(90deg, var(--ca) 0%, #E8EBFF 42%, #FFE7F1 58%, var(--cb) 100%);
+    opacity: 0.45;
+  }
+  .beam .rail::before, .beam .rail::after {
+    content: ''; position: absolute; top: -4px; width: 4px; height: 18px; border-radius: 2px; background: currentColor;
+  }
+  .beam .rail::before { left: -8px; color: var(--ca); }
+  .beam .rail::after { right: -8px; color: var(--cb); }
+  .beam .row { position: relative; display: flex; align-items: center; justify-content: space-between; padding: 0 3%; }
+  .orb {
+    position: relative; display: grid; place-items: center;
+    background: none; border: 0; box-shadow: none; border-radius: 50%;
+  }
+  .orb .ball {
+    display: block; border-radius: 50%; border: 4px solid #fff;
+    box-shadow: 0 4px 0 rgba(38, 34, 50, 0.13);
+    transition: transform 0.12s cubic-bezier(0.2, 1.4, 0.4, 1), box-shadow 0.12s;
+  }
+  .orb[data-k="0"] .ball { width: clamp(38px, 11vw, 52px); height: clamp(38px, 11vw, 52px); background: var(--ca); }
+  .orb[data-k="1"] .ball { width: clamp(26px, 7.4vw, 34px); height: clamp(26px, 7.4vw, 34px); background: #9DB2FF; }
+  .orb[data-k="2"] .ball { width: clamp(26px, 7.4vw, 34px); height: clamp(26px, 7.4vw, 34px); background: #FFA6C8; }
+  .orb[data-k="3"] .ball { width: clamp(38px, 11vw, 52px); height: clamp(38px, 11vw, 52px); background: var(--cb); }
+  .orb:hover .ball { transform: translateY(-4px) scale(1.06); box-shadow: 0 8px 0 rgba(38, 34, 50, 0.13); }
+  .orb .spark { position: absolute; opacity: 0; transition: opacity 0.12s; }
+  .orb.cur .ball { box-shadow: 0 0 0 4px var(--g-light), 0 4px 0 rgba(38,34,50,0.16); }
+  .orb.on .ball { transform: scale(1.14); box-shadow: 0 0 0 5px rgba(255,255,255,0.75), 0 4px 0 rgba(38,34,50,0.16); }
+  .orb.on .spark { opacity: 1; }
+  .beam .tip { margin-top: 12px; text-align: center; color: var(--sub); }
+  .beam .tip[hidden] { display: none; }
+
+  .ask, .scale { animation: slide 0.3s steps(5, end) both; }
+  @keyframes slide { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  .back { font-family: var(--pixel); font-size: 11px; color: var(--sub); flex: none; }
+  .back:hover { color: var(--ca); }
+  .back[hidden] { visibility: hidden; }
+
+  /* ── 결과 ─────────────────────────────────── */
+  .res { width: 100%; max-width: 640px; margin: 0 auto; padding: 72px clamp(14px, 5vw, 28px) 72px; display: flex; flex-direction: column; gap: 18px; }
+  .res .me { align-self: center; display: flex; align-items: center; gap: 9px; background: rgba(255,255,255,0.92); border: 3px solid var(--edge-deep); border-radius: 14px; padding: 7px 14px 7px 9px; }
+  .res .me b { font-family: var(--pixel); font-size: 11px; }
+  .res .me span { color: var(--sub); }
+  .res h1 { font-family: var(--display); font-weight: 900; font-size: clamp(1.8rem, 7.4vw, 3rem); line-height: 1.22; letter-spacing: -0.045em; text-align: center; text-wrap: balance; margin-top: 4px; }
+  .res h1 em { font-style: normal; color: var(--ca); }
+  .res .lead { text-align: center; color: var(--sub); font-size: 0.94rem; margin-bottom: 4px; }
+
+  .panel { background: var(--card); border: 3px solid var(--edge-deep); border-radius: 20px; box-shadow: 0 4px 0 var(--edge-deep); padding: 20px 18px; display: flex; flex-direction: column; gap: 16px; }
+  .panel > h2 { font-family: var(--pixel); font-size: 13px; display: flex; align-items: center; gap: 7px; }
+  .panel > h2::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--cb); flex: none; }
+
+  .bars { display: flex; flex-direction: column; gap: 18px; }
+  .bar .top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 7px; }
+  .bar .nm { font-size: 0.87rem; font-weight: 700; }
+  .bar .val { color: var(--sub); font-variant-numeric: tabular-nums; flex: none; }
+  .bar .tr { position: relative; height: 14px; background: #F2F0F8; border-radius: 999px; }
+  .bar .tr::before { content: ''; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 2px; margin-left: -1px; background: #C9C3DA; }
+  .bar .tr i { position: absolute; top: 0; bottom: 0; min-width: 4px; }
+  .bar .tr i.r { left: 50%; border-radius: 0 3px 3px 0; background: var(--ca); }
+  .bar .tr i.l { right: 50%; border-radius: 3px 0 0 3px; background: var(--cb); }
+  .bar .poles { display: flex; justify-content: space-between; gap: 8px; margin-top: 7px; }
+  .bar .poles span:first-child { color: var(--b-strong); }
+  .bar .poles span:last-child { color: var(--a-strong); }
+
+  .lines { display: flex; flex-direction: column; gap: 15px; }
+  .lines p { font-size: 0.98rem; line-height: 1.78; }
+
+  .combo { background: #FFF7FB; border: 3px solid var(--cb); border-radius: 20px; box-shadow: 0 4px 0 var(--cb); padding: 20px 18px; display: flex; flex-direction: column; gap: 14px; }
+  .combo h2 { font-family: var(--pixel); font-size: 13px; color: var(--b-strong); }
+  .combo p { font-size: 0.96rem; line-height: 1.76; }
+
+  .use ul { display: flex; flex-direction: column; gap: 12px; padding-left: 1.15em; }
+  .use li { font-size: 0.93rem; line-height: 1.66; }
+  .use li::marker { color: var(--cb); }
+
+  .acts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+  .acts button { font-family: var(--pixel); font-size: 16px; padding: 15px 20px; flex: 1 1 auto; }
+  .acts .primary { background: var(--ca); color: #fff; border-color: var(--ca-deep); box-shadow: 0 4px 0 var(--ca-deep); }
+  .acts .primary:hover { background: #3E6AFF; }
+  .toast { color: var(--sub); min-height: 1.4em; }
+  .disc { color: var(--sub); line-height: 1.7; }
+
+  /* ── 도움말 ───────────────────────────────── */
+  .sheet { position: fixed; inset: 0; z-index: 50; display: none; }
+  .sheet.live { display: block; }
+  .sheet .veil { position: absolute; inset: 0; background: rgba(38, 34, 50, 0.42); }
+  .sheet .pane { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(430px, calc(100% - 28px)); max-height: min(80vh, 680px); overflow-y: auto; background: var(--card); border: 3px solid var(--edge-deep); border-radius: 22px; box-shadow: 0 5px 0 var(--edge-deep); padding: 20px 20px 22px; display: flex; flex-direction: column; gap: 14px; animation: zoom 0.2s steps(4, end) both; }
+  @keyframes zoom { from { opacity: 0; transform: translate(-50%, -50%) scale(0.92); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+  .sheet .head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .sheet h2 { font-family: var(--pixel); font-size: 16px; color: var(--ca); }
+  .sheet .x { width: 32px; height: 32px; display: grid; place-items: center; color: var(--sub); font-weight: 800; flex: none; }
+  .sheet dl { display: flex; flex-direction: column; gap: 13px; }
+  .sheet dt { font-weight: 800; font-size: 0.89rem; color: var(--cb); margin-bottom: 2px; }
+  .sheet dd { font-size: 0.88rem; line-height: 1.62; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+  @media (max-width: 560px) {
+    .test { padding-top: 56px; }
+    .bub { max-width: 90%; padding: 12px 15px; }
+    .cell { padding: 10px 1px; }
+    .cell .lab { font-size: 11px; }
+    .panel, .combo { padding: 17px 15px; }
+    .acts button { flex: 1 1 100%; }
+    .st5, .st6, .yl2, .cl4 { display: none; }
+  }
+  @media (max-width: 380px) {
+    .pop3d { -webkit-text-stroke-width: 4px; }
+    .chars { gap: 5px; }
+    .chr { padding: 9px 0 7px; }
+  }
+  @media (max-height: 700px) {
+    .mid { gap: 20px; padding-bottom: 30px; }
+    .ask { font-size: clamp(1.4rem, 5vw, 1.9rem); }
+  }
+</style>
+
+<div class="sky" id="sky" aria-hidden="true"></div>
+
+<div class="app">
+  <div class="corner">
+    <div class="whoami" id="whoami"></div>
+    <button class="gbtn icobtn" id="help" aria-label="이 검사는 무엇인가요">?</button>
+  </div>
+
+  <section class="view live" id="v-land">
+    <div class="land" id="land">
+      <div class="frame" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      <div class="lock pop3d" id="lock" aria-label="오시에테"></div>
+      <p class="tag pop3d b" id="tagline" aria-label="어떻게 일하는지 알려줘"></p>
+      <button class="gbtn pxbtn cta" id="go">START</button>
+      <p class="note px">30문항 · 3분 · 로그인 없음</p>
+      <div class="crew" id="crew" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <section class="view" id="v-pick">
+    <div class="pick">
+      <h1>캐릭터를 골라주세요</h1>
+      <p class="hint px">팀에서 나를 구분하는 표시가 돼요.</p>
+      <div class="chars" id="chars"></div>
+      <div class="nick">
+        <label class="px" for="nick-in">별명 (여덟 자까지)</label>
+        <input id="nick-in" type="text" maxlength="8" placeholder="화면에 표시될 이름" autocomplete="off">
+      </div>
+      <button class="gbtn pxbtn go2" id="go2" disabled>검사 시작</button>
+    </div>
+  </section>
+
+  <section class="view" id="v-test">
+    <div class="test">
+      <div class="gwin">
+        <header class="gbar">
+          <span class="gt px"><i class="gs" aria-hidden="true"></i>설문 퀘스트</span>
+          <span class="gq px">Q <b id="num"></b> / 30</span>
+        </header>
+        <span class="tube"><i id="fill"><u></u><b></b><b></b></i></span>
+        <div class="gtrail">
+          <span class="chap px" id="chap"></span>
+          <span class="map" id="map" aria-hidden="true"></span>
+        </div>
+        <div class="mid">
+          <h1 class="ask" id="ask"></h1>
+          <div class="scale">
+            <p class="bub up" id="s-a"></p>
+            <div class="beam">
+              <span class="rail" aria-hidden="true"></span>
+              <div class="row" id="orbs"></div>
+              <p class="tip px" id="tip">왼쪽은 위 문장, 오른쪽은 아래 문장이에요. 클수록 확실히.</p>
+            </div>
+            <p class="bub down" id="s-b"></p>
+          </div>
+        </div>
+        <footer class="gfoot">
+          <span class="sel px" id="sel">선택: 없음</span>
+          <button class="gbtn pxbtn ok" id="ok" disabled>▶ 확인</button>
+        </footer>
+        <div class="gkeys">
+          <button class="back" id="back" hidden>◀ 앞으로</button>
+          <span class="keys px"><b>← →</b> 이동 &nbsp; <b>SPACE</b> 선택 &nbsp; <b>1~4</b> 바로 고르기</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="v-res">
+    <div class="res">
+      <div class="me" id="r-me"></div>
+      <h1 id="r-title"></h1>
+      <p class="lead" id="r-lead"></p>
+      <div class="panel">
+        <h2>어디로 기울어 있나</h2>
+        <div class="bars" id="r-bars"></div>
+      </div>
+      <div class="panel">
+        <h2>이렇게 일해요</h2>
+        <div class="lines" id="r-lines"></div>
+      </div>
+      <div class="combo" id="r-combo" hidden>
+        <h2>특히 이런 사람</h2>
+        <div id="r-combo-body"></div>
+      </div>
+      <div class="panel use">
+        <h2>같이 일하는 분께</h2>
+        <ul id="r-use"></ul>
+      </div>
+      <div class="acts">
+        <button class="gbtn primary" id="share">팀원 초대하기</button>
+        <button class="gbtn" id="again">다시 하기</button>
+      </div>
+      <p class="toast px" id="toast"></p>
+      <p class="disc px">지금은 링크에 결과가 담기는 것까지만 됩니다. 방장 포함 네 명이 모여 팀 결과가 나오는 부분은 데이터베이스를 붙인 뒤에 동작합니다.</p>
+    </div>
+  </section>
+</div>
+
+<div class="sheet" id="sheet">
+  <div class="veil" data-close></div>
+  <div class="pane" role="dialog" aria-label="도움말">
+    <div class="head">
+      <h2>おしえて 오시에테</h2>
+      <button class="gbtn x" data-close aria-label="닫기">✕</button>
+    </div>
+    <dl>
+      <div><dt>무엇인가요</dt><dd>일할 때의 성향을 봅니다. 어떤 유형이라고 이름 붙이지 않고, 어떻게 일하는 사람인지 문장으로 알려줍니다.</dd></div>
+      <div><dt>어떻게 답하나요</dt><dd>위아래 말풍선 사이에 네 칸이 있어요. 위쪽 말풍선에 가까우면 왼쪽 두 칸, 아래쪽에 가까우면 오른쪽 두 칸에서 고릅니다. 삼각형이 두 개면 [확실히], 하나면 [조금]이에요. 키보드 1·2·3·4로도 됩니다.</dd></div>
+      <div><dt>왜 점수 매기기가 아닌가요</dt><dd>1점부터 5점까지 매기면 사람마다 답하는 폭이 달라서, 성향이 아니라 습관 때문에 결과가 갈립니다. 그래서 중간값을 없앴어요. 대신 [조금]을 둬서 둘 다 아닐 때도 답할 수 있게 했습니다.</dd></div>
+      <div><dt>캐릭터는 뭔가요</dt><dd>팀 결과에서 누가 누구인지 구분하는 표시예요.</dd></div>
+      <div><dt>팀은 몇 명까지인가요</dt><dd>방장을 포함해 네 명이에요. 더 늘리면 볼 게 너무 많아지고 결과가 읽히지 않습니다.</dd></div>
+      <div><dt>답이 남나요</dt><dd>맞고 틀린 답은 없어요. 좋은 성향과 나쁜 성향으로 나누지도 않습니다. 내 점수는 나만 보고, 팀에는 서술만 갑니다.</dd></div>
+    </dl>
+  </div>
+</div>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+
+  function sprite(art, scale) {
+    const cv = document.createElement('canvas');
+    cv.width = art.grid[0].length * scale;
+    cv.height = art.grid.length * scale;
+    const g = cv.getContext('2d');
+    art.grid.forEach((row, y) => {
+      for (let x = 0; x < row.length; x++) {
+        const col = art.pal[row[x]];
+        if (!col) continue;
+        g.fillStyle = col;
+        g.fillRect(x * scale, y * scale, scale, scale);
+      }
+    });
+    return cv;
+  }
+
+  /* 20×20 전신. 머리를 크게, 눈을 2×2에 하이라이트, 볼에 분홍.
+     몸통 실루엣을 넷이 공유해서 한 세트로 보이게 했다. */
+  const CHARS = [
+    { key: 'dog', name: '멍멍이',
+      pal: { K: '#7A4A22', B: '#F5B463', D: '#D9903C', W: '#FFF8EE', E: '#2E1C10', H: '#FFFFFF', P: '#FF9DB4', N: '#7A4A22' },
+      grid: [
+        '....................',
+        '.KKK............KKK.',
+        '.KDDKKKKKKKKKKKKDDK.',
+        '.KDDBBBBBBBBBBBBDDK.',
+        '.KDDBBEEBBBBEEBBDDK.',
+        '.KDDBBEHBBBBEHBBDDK.',
+        '.KDDBBBBBWWBBBBBDDK.',
+        '..KBPBBBWNNWBBBPBK..',
+        '..KBBBBBWWWWBBBBBK..',
+        '...KBBBBBWWBBBBBK...',
+        '....KKBBBBBBBBKK....',
+        '......KBBBBBBK......',
+        '.....KWBBBBBBWK.....',
+        '.....KWWBBBBWWK..KK.',
+        '.....KWWWWWWWWK.KDK.',
+        '.....KWWWWWWWWKKKDK.',
+        '.....KWWWWWWWWKKDK..',
+        '.....KWWWWWWWWKKK...',
+        '.....KWKWWWWKWK.....',
+        '.....KKKKKKKKKK.....'
+      ] },
+    { key: 'cat', name: '고양이',
+      pal: { K: '#4A3F4A', B: '#AEB9C7', D: '#8E9BAC', W: '#FFFFFF', E: '#2B2530', H: '#FFFFFF', P: '#FFAFCB', N: '#FF8FBC' },
+      grid: [
+        '....................',
+        '..KK............KK..',
+        '..KPK..........KPK..',
+        '..KPPK........KPPK..',
+        '..KPPPKKKKKKKKPPPK..',
+        '..KDDBBBBBBBBBBDDK..',
+        '.KDDBBBBBBBBBBBBDDK.',
+        '.KDBBEEBBBBBBEEBBDK.',
+        '.KBBBEHBBBBBBEHBBBK.',
+        '.KBBBBBBBNNBBBBBBBK.',
+        '.KBPBBBBBWWBBBBBPBK.',
+        '..KBBBBBBBBBBBBBBK..',
+        '...KKBBBBBBBBBBKK...',
+        '.....KBBBBBBBBK.....',
+        '.....KWWWWWWWWK..KK.',
+        '.....KWWWWWWWWK.KDK.',
+        '.....KWWWWWWWWKKKDK.',
+        '.....KWWWWWWWWKKDK..',
+        '.....KWKWWWWKWK.....',
+        '.....KKKKKKKKKK.....'
+      ] },
+    { key: 'rabbit', name: '토끼',
+      pal: { K: '#8A7A88', B: '#FFFFFF', D: '#E8E2EC', W: '#FFFFFF', E: '#3A2F36', H: '#FFFFFF', P: '#FFC2DA', N: '#FF8FBC' },
+      grid: [
+        '....KK........KK....',
+        '....KPK......KPK....',
+        '....KPK......KPK....',
+        '....KPK......KPK....',
+        '....KBKKKKKKKKBK....',
+        '..KBBBBBBBBBBBBBBK..',
+        '.KBBBBBBBBBBBBBBBBK.',
+        '.KBBEEBBBBBBBBEEBBK.',
+        '.KBBEHBBBBBBBBEHBBK.',
+        '.KBBBBBBBNNBBBBBBBK.',
+        '.KBPBBBBWWWWBBBBPBK.',
+        '..KBBBBBBBBBBBBBBK..',
+        '...KKBBBBBBBBBBKK...',
+        '.....KBBBBBBBBK.....',
+        '.....KBBBBBBBBK..KK.',
+        '.....KBBBBBBBBKKKDK.',
+        '.....KBBBBBBBBKKDK..',
+        '.....KBBBBBBBBK.....',
+        '.....KBKBBBBKBK.....',
+        '.....KKKKKKKKKK.....'
+      ] },
+    { key: 'hamster', name: '햄스터',
+      pal: { K: '#A8763C', B: '#F7D9A0', D: '#E0BC7E', W: '#FFF8EA', E: '#3A2A1E', H: '#FFFFFF', P: '#FF9EBB', N: '#C77A4A' },
+      grid: [
+        '....................',
+        '...KK..........KK...',
+        '..KDDK........KDDK..',
+        '..KDDKKKKKKKKKKDDK..',
+        '.KDDBBBBBBBBBBBBDDK.',
+        '.KDBBBBBBBBBBBBBBDK.',
+        '.KBBEEBBBBBBBBEEBBK.',
+        '.KBBEHBBBBBBBBEHBBK.',
+        '.KBPBBBBBNNBBBBBPBK.',
+        '.KBBBBBBWWWWBBBBBBK.',
+        'KBBBBBBWWWWWWBBBBBBK',
+        'KBBBBBWWWWWWWWBBBBBK',
+        'KBBBBWWWWWWWWWWBBBBK',
+        'KBBBBWWWWWWWWWWBBBBK',
+        '.KBBBWWWWWWWWWWBBBK.',
+        '.KBBBBWWWWWWWWBBBBK.',
+        '..KBBBBBBBBBBBBBBK..',
+        '...KBBBBBBBBBBBBK...',
+        '....KKPKKKKKKPKK....',
+        '......KK....KK......'
+      ] }
+  ];
+
+  const STAR = { pal: { W: '#FFFFFF' }, grid: ['...W...', '...W...', '..WWW..', 'WWWWWWW', '..WWW..', '...W...', '...W...'] };
+  const STAR_Y = { pal: { W: '#FFE9A8' }, grid: ['...W...', '...W...', '..WWW..', 'WWWWWWW', '..WWW..', '...W...', '...W...'] };
+  // 무지개는 곡선이라 격자로 못 찍는다. 원의 방정식으로 픽셀을 계산해서 찍는다.
+  function rainbow(scale) {
+    const bands = ['#FF9AA8', '#FFC48A', '#FFEA9A', '#A8E6A3', '#9CCBFF', '#C4AEF5'];
+    const R = 26, BW = 3, W = R * 2 + 1, H = R + 1;
+    const cv = document.createElement('canvas');
+    cv.width = W * scale; cv.height = H * scale;
+    const g = cv.getContext('2d');
+    for (let y = 0; y < H; y++) {
+      for (let x = 0; x < W; x++) {
+        const d = Math.sqrt((x - R) * (x - R) + (H - 1 - y) * (H - 1 - y));
+        const k = Math.floor((R - d) / BW);
+        if (d > R || k < 0 || k >= bands.length) continue;
+        g.fillStyle = bands[k];
+        g.fillRect(x * scale, y * scale, scale, scale);
+      }
+    }
+    return cv;
+  }
+
+  const CLOUD = {
+    pal: { W: '#FFFFFF', L: '#EAF3FF', S: '#CFE3FA' },
+    grid: [
+      '........WWWWWW..........',
+      '......WWWWWWWWWW........',
+      '....WWWWWWWWWWWWWW..WW..',
+      '..WWWWWWWWWWWWWWWWWWWWW.',
+      '.WWWWWWWWWWWWWWWWWWWWWWW',
+      'WWWWWWWWWWWWWWWWWWWWWWWW',
+      'WWWWWWWWWWWWWWWWWWWWWWWW',
+      'LWWWWWWWWWWWWWWWWWWWWWWL',
+      'LLWWWWWWWWWWWWWWWWWWWLLL',
+      '.LLLLWWWWWWWWWWWWLLLLL..',
+      '..SSLLLLLLLLLLLLLL......',
+      '....SSSS..SSSS..........'
+    ]
+  };
+  // 풍선과 하트. 색만 바꿔 여러 개를 만든다.
+  const BALLOON_GRID = [
+    '...KKK...', '.KKBHBKK.', 'KBBBHBBBK', 'KBBBBBBBK', 'KBBBBBBBK',
+    'KBBBBBBBK', '.KBBBBBK.', '..KBBBK..', '...KBK...', '....K....',
+    '....S....', '.....S...', '....S....', '.....S...'
+  ];
+  const balloon = (base, dark) => ({ pal: { K: dark, B: base, H: '#FFFFFF', S: '#C9D8EE' }, grid: BALLOON_GRID });
+  const HEART = {
+    pal: { K: '#E86A9C', P: '#FF9DC4', H: '#FFFFFF' },
+    grid: ['.KK.KK.', 'KPHKPPK', 'KPPPPPK', 'KPPPPPK', '.KPPPK.', '..KPK..', '...K...']
+  };
+
+  /* prototype/sprites/{key}.png 가 있으면 그걸 쓰고, 없으면 위 격자를 그린다.
+     그림 파일을 넣기만 하면 커서와 세 화면에 한꺼번에 반영된다. */
+  const SPRITE_DIR = 'sprites/';
+  function charEl(i, scale) {
+    const art = CHARS[i];
+    const img = document.createElement('img');
+    img.alt = '';
+    img.width = art.grid[0].length * scale;
+    img.height = art.grid.length * scale;
+    img.style.imageRendering = 'pixelated';
+    img.addEventListener('error', () => img.replaceWith(sprite(art, scale)), { once: true });
+    img.src = SPRITE_DIR + art.key + '.png';
+    return img;
+  }
+
+  function setCursor(i) {
+    const art = CHARS[i];
+    const use = (u) => document.documentElement.style.setProperty('--cur', `url(${u}) 8 2, auto`);
+    const probe = new Image();
+    probe.addEventListener('load', () => use(SPRITE_DIR + art.key + '.png'), { once: true });
+    probe.addEventListener('error', () => use(sprite(art, 2).toDataURL('image/png')), { once: true });
+    probe.src = SPRITE_DIR + art.key + '.png';
+  }
+
+  (function decorate() {
+    const box = $('sky');
+    [['cl1', CLOUD, 6], ['cl2', CLOUD, 5], ['cl3', CLOUD, 3], ['cl4', CLOUD, 4], ['cl5', CLOUD, 4],
+     ['st1', STAR, 3], ['st2', STAR, 2], ['st3', STAR, 3], ['st4', STAR, 2], ['st5', STAR, 2], ['st6', STAR, 2],
+     ['st7', STAR, 2], ['yl1', STAR_Y, 4], ['yl2', STAR_Y, 3], ['yl3', STAR_Y, 3]].forEach(([cls, art, sc]) => {
+      const cv = sprite(art, sc);
+      cv.className = cls;
+      box.appendChild(cv);
+    });
+    const lc = sprite(CLOUD, 15);
+    lc.className = 'logocloud';
+    $('land').prepend(lc);
+    const bow = rainbow(3);
+    bow.className = 'bow';
+    $('land').prepend(bow);
+    // 랜딩 스티커
+    [['bl1', balloon('#FFB3CF', '#E86A9C'), 4], ['bl2', balloon('#FFE9A8', '#E5B94A'), 3],
+     ['bl3', balloon('#B6E3FF', '#5FA8DE'), 3], ['bl4', balloon('#C8F0D8', '#6FBF8E'), 3],
+     ['bl5', balloon('#DCCBFF', '#9277D8'), 2],
+     ['hs1', HEART, 4], ['hs2', HEART, 3],
+     ['ss1', STAR_Y, 3], ['ss2', STAR_Y, 4], ['ss3', STAR, 3],
+     ['ss4', STAR, 2], ['ss5', STAR_Y, 2], ['ss6', STAR, 3],
+     ['ss7', STAR_Y, 3], ['ss8', STAR, 2], ['hs3', HEART, 3]].forEach(([cls, art, sc]) => {
+      const cv = sprite(art, sc);
+      cv.className = 'stk ' + cls;
+      $('land').prepend(cv);
+    });
+    // 아래에 네 마리
+    CHARS.forEach((c, i) => $('crew').appendChild(charEl(i, 3)));
+  })();
+
+  [...document.querySelectorAll('.tube > i > b')].forEach((slot, k) => {
+    slot.appendChild(sprite(STAR, k === 0 ? 2 : 1));
+  });
+
+  function fan(el, text, spread, lift, delay0) {
+    el.innerHTML = '';
+    const chars = [...text];
+    const n = chars.length;
+    chars.forEach((ch, i) => {
+      const s = document.createElement('span');
+      const t = n === 1 ? 0 : (i / (n - 1)) * 2 - 1;
+      if (ch === ' ') { s.innerHTML = '&nbsp;'; s.style.width = '0.34em'; }
+      else s.textContent = ch;
+      s.style.transform = `rotate(${(t * spread).toFixed(2)}deg) translateY(${(Math.abs(t) * lift).toFixed(3)}em)`;
+      s.style.animationDelay = (delay0 + i * 0.07).toFixed(2) + 's';
+      el.appendChild(s);
+    });
+  }
+  fan($('lock'), 'おしえて', 11, 0.075, 0.1);
+  fan($('tagline'), '어떻게 일하는지 알려줘', 6, 0.05, 0.46);
+
+  /* ── 축과 문항 ────────────────────────────── */
+  const AXES = [
+    { nm: '의견이 갈릴 때' }, { nm: '일과 사람 사이에서' }, { nm: '결과물을 낼 때' },
+    { nm: '일을 맡길 때' }, { nm: '시작하기 전에' }
+  ];
+
+  const BY_AXIS = [
+    [
+      { q: '회의가 내 생각과 다른 결론으로 흐를 때', a: '그 자리에서 반대 의견을 말해요', b: '일단 듣고, 정말 문제될 때만 따로 말해요', hi: 'a' },
+      { q: '역할이 겹쳐서 일이 붕 떴을 때', a: '상대가 어디까지 할 생각인지 먼저 확인해요', b: '내가 여기까지 하겠다고 먼저 이야기해요', hi: 'b' },
+      { q: '담당이 정해지지 않은 일이 있을 때', a: '직접 정리해서 방향을 제안해요', b: '다른 사람 생각을 먼저 물어봐요', hi: 'a' },
+      { q: '마감이 촉박한데 방향이 안 정해졌을 때', a: '누군가 방향을 제시해 주면 빠르게 맞춰서 따라가요', b: '내가 먼저 의견을 제시하고 방향을 리드해요', hi: 'b' },
+      { q: '내 제안이 받아들여지지 않았을 때', a: '근거를 더 준비해서 한 번 제안해요', b: '팀 결정을 따르고 그대로 진행해요', hi: 'a' },
+      { q: '새 팀에 들어간 첫 주에', a: '개선할 점이 보이면 바로 말해요', b: '기존 방식을 먼저 익히고 나중에 말해요', hi: 'a' }
+    ],
+    [
+      { q: '팀원 실수로 일정이 밀렸을 때', a: '원인을 짚어서 다시 안 생기게 해요', b: '상대가 위축되지 않게 말을 골라요', hi: 'a' },
+      { q: '협업 도구에 글을 남길 때', a: '인사와 부드러운 표현을 곁들여서 써요', b: '용건 중심으로 핵심을 명확하게 써요', hi: 'b' },
+      { q: '회의가 길어지고 분위기가 굳었을 때', a: '예정된 안건을 우선 마무리지어요', b: '피로도를 고려해 잠시 쉬어가요', hi: 'a' },
+      { q: '일이 잘 끝났을 때 더 기억에 남는 것', a: '같이 한 사람들과의 과정이 남아요', b: '나의 결과물이 뿌듯해요', hi: 'b' },
+      { q: '새 프로젝트를 시작할 때', a: '목표와 일정을 먼저 확인해요', b: '누구와 함께 하는지를 먼저 봐요', hi: 'a' },
+      { q: '팀원이 개인 사정으로 힘들어 보일 때', a: '제가 일을 좀 덜어주는 쪽으로 조정해요', b: '역할과 일정은 그대로 두고 필요하면 말해달라고 해요', hi: 'b' }
+    ],
+    [
+      { q: '80% 정도 된 산출물을 두고', a: '일단 공유해서 피드백을 받아요', b: '마무리해서 완성된 걸 보여줘요', hi: 'b' },
+      { q: '문서를 쓸 때', a: '형식과 표현을 정돈하는 데 시간을 써요', b: '요점이 잘 보이면 형식은 넘겨요', hi: 'a' },
+      { q: '마감에 맞췄지만 아쉬운 부분이 남았을 때', a: '제출이 끝났으니 다음 업무로 넘어가요', b: '제출 후에도 아쉬운 부분을 계속 수정해요', hi: 'b' },
+      { q: '둘 중 더 신경 쓰이는 쪽', a: '결과물에 허술한 부분이 남는 게 신경 쓰여요', b: '진행이 느려서 일정이 밀리는 게 신경 쓰여요', hi: 'a' },
+      { q: '중요하지 않은 잡무를 맡았을 때', a: '빠르게 처리하고 중요한 일로 넘어가요', b: '이것도 결과물이라 제 기준까지는 맞춰요', hi: 'b' },
+      { q: '검토를 부탁받았을 때', a: '급한 부분을 우선적으로 보고 빠르게 돌려줘요', b: '전체적으로 보고 정리해서 돌려줘요', hi: 'b' }
+    ],
+    [
+      { q: '맡긴 일이 진행 중일 때', a: '중간중간 진척 상황을 체크해요', b: '맡은 사람에게 온전히 맡겨요', hi: 'a' },
+      { q: '공동 문서에서 남이 쓴 문장이 어색할 때', a: '내용이 맞으면 그냥 둬요', b: '손을 봐서 다듬어요', hi: 'b' },
+      { q: '내 방식과 다르게 처리됐지만 목적은 달성됐을 때', a: '왜 그렇게 했는지 확인하고 조정해요', b: '그대로 둬요', hi: 'a' },
+      { q: '내가 하면 30분, 맡기면 하루 걸리는 일', a: '맡기고 내 시간은 다른 데 써요', b: '그냥 내가 하는 게 속 편해요', hi: 'b' },
+      { q: '일을 나눌 때', a: '방식까지 정해서 넘겨요', b: '목표만 정하고 방식은 맡겨요', hi: 'a' },
+      { q: '팀원이 요청은 안 했는데 헤매는 것 같을 때', a: '먼저 방법을 알려줘요', b: '스스로 할 시간을 주고 기다려요', hi: 'a' }
+    ],
+    [
+      { q: '처음 하는 업무나 처음 가는 자리 앞에서', a: '미리 조사해서 준비해 둬요', b: '가서 상황 보고 맞춰요', hi: 'a' },
+      { q: '일정이 갑자기 바뀌었을 때', a: '불편하긴 하지만 금방 적응해요', b: '계획을 다시 정리해야 마음이 놓여요', hi: 'b' },
+      { q: '프로젝트 시작 단계에서', a: '전체 계획을 세워두고 시작해요', b: '일단 시작하고 하면서 잡아가요', hi: 'a' },
+      { q: '내가 모르는 채로 진행되는 일이 팀에 있을 때', a: '맡은 사람을 믿고 신경 쓰지 않아요', b: '흐름은 알고 있어야 마음이 놓여요', hi: 'b' },
+      { q: '회의 전에', a: '안건과 배경을 미리 확인해 둬요', b: '일단 들어가서 파악해요', hi: 'a' },
+      { q: '정보가 부족한 상태에서 결정해야 할 때', a: '일단 있는 정보로 방향을 잡고 진행하면서 수정해요', b: '조금이라도 더 알아본 뒤에 정해요', hi: 'b' }
+    ]
+  ];
+
+  const ROUND_ORDER = [
+    [0, 2, 4, 1, 3], [3, 1, 0, 4, 2], [2, 4, 3, 0, 1],
+    [1, 0, 2, 3, 4], [4, 3, 1, 2, 0], [0, 1, 4, 3, 2]
+  ];
+  const Q = [];
+  ROUND_ORDER.forEach((order, round) => {
+    order.forEach((ax) => Q.push(Object.assign({ x: ax }, BY_AXIS[ax][round])));
+  });
+
+  const COPY = [
+    {
+      pole: ['먼저 듣는', '할 말은 하는'],
+      say: [
+        '의견이 갈릴 때 먼저 물러나 듣습니다. 반대 의견이 없는 게 아니라, 그 자리에서 부딪히는 것보다 나중에 따로 정리하는 쪽을 택합니다. 회의에서는 조용하지만 끝난 뒤에 생각이 정리되어 나오는 편이고, 그래서 결정이 이미 굳은 다음에 이야기가 시작되는 일이 있습니다.',
+        '밀어붙일 때와 물러날 때를 상황에 따라 나눕니다. 사소한 안건에서는 대체로 흐름을 따라가고, 중요하다고 판단한 것에만 목소리를 냅니다. 그래서 이 사람이 말을 꺼내면 팀이 한 번 멈춰서 듣는 편입니다.',
+        '할 말은 그 자리에서 합니다. 결론이 이상한 방향으로 굳는 걸 두고 보지 못해서 회의 중에 흐름을 끊기도 합니다. 나중에 따로 말하는 것보다 그 순간에 정리하는 편이 낫다고 보는 쪽입니다.'
+      ],
+      use: [
+        '동의한 것처럼 보여도 다 동의한 건 아닙니다. 회의가 끝난 뒤 따로 한 번 물어봐 주세요.',
+        '이 사람이 강하게 말할 때는 실제로 중요한 안건일 가능성이 높습니다.',
+        '반대 의견은 공격이 아닙니다. 근거로 답하면 대체로 바로 수긍합니다.'
+      ]
+    },
+    {
+      pole: ['사람부터 보는', '결과부터 보는'],
+      say: [
+        '일보다 사람 상태를 먼저 봅니다. 분위기가 굳으면 진도보다 그걸 먼저 풀려고 하고, 지적할 일이 있어도 말을 어떻게 꺼낼지부터 생각합니다. 팀이 오래 붙어 있을 때 이 성향이 크게 작용하고, 대신 일정이 급할 때는 결정이 한 박자 늦어집니다.',
+        '사람과 결과 사이에서 균형을 잡습니다. 급할 때는 일 쪽으로, 여유가 있을 때는 사람 쪽으로 기웁니다. 어느 한쪽에 고정되어 있지 않아서, 지금 무엇이 급한지 알려주면 알아서 맞추는 편입니다.',
+        '결과부터 봅니다. 문제가 생기면 원인을 짚는 게 먼저고 감정을 다루는 건 그다음입니다. 말이 담담해서 차갑게 읽힐 수 있지만 그건 관심이 없는 게 아니라 순서가 다른 것입니다.'
+      ],
+      use: [
+        '지적할 일이 있으면 결론만 던지지 마세요. 말투가 내용보다 오래 남습니다.',
+        '지금 어느 쪽이 급한지만 알려주면 알아서 맞춥니다.',
+        '말이 담담한 건 기분이 나쁜 게 아닙니다. 용건만 오가도 불편해하지 않습니다.'
+      ]
+    },
+    {
+      pole: ['빠르게 내보내는', '끝까지 다듬는'],
+      say: [
+        '완성도보다 속도를 먼저 챕니다. 80%에서 내보내고 피드백으로 고치는 편이 빠르다고 보고, 형식보다 요점이 전달되는지를 기준으로 삼습니다. 팀에서 가장 먼저 무언가를 만들어 오는 역할이 되기 쉽고, 올린 것이 초안이라는 걸 함께 말해주면 오해가 줄어듭니다.',
+        '중요한 것과 그렇지 않은 것을 나눠서 힘을 씁니다. 전부 완벽하게 하려고는 하지 않고, 어디까지가 이번 범위인지 정해지면 그 안에서 조절합니다. 범위가 흐릿할 때만 판단이 흔들립니다.',
+        '마감을 지켰더라도 자기 기준에 못 미치면 그냥 넘기기 어렵습니다. 형식과 표현까지 손을 보고, 제출한 뒤에도 아쉬운 부분이 계속 남습니다. 결과물의 마지막 10%를 책임지는 사람이 되는 대신, 그 10%에 들어간 시간은 남에게 잘 보이지 않습니다.'
+      ],
+      use: [
+        '빠르게 올라온 결과물은 초안입니다. 완성본으로 보고 판단하지 마세요.',
+        '어디까지가 중요한 일인지만 합의해두면 알아서 조절합니다.',
+        '"이 정도면 됐다"는 말은 잘 안 통합니다. 대신 이번 범위가 어디까지인지 정해두면 멈출 수 있습니다.'
+      ]
+    },
+    {
+      pole: ['믿고 맡기는', '직접 챕기는'],
+      say: [
+        '맡긴 일은 상대에게 온전히 넘깁니다. 방식이 자기와 달라도 목적이 달성되면 그대로 두고, 굳이 확인하지 않습니다. 같이 일하는 사람이 자기 방식으로 해볼 여지가 넓어지고, 대신 방향이 어긋났을 때 발견이 늦습니다.',
+        '맡기긴 하는데 큰 흐름은 보고 있습니다. 세부까지 들어가지는 않고, 결과가 크게 틀어질 것 같을 때만 개입합니다. 확인과 기다림 사이에서 선을 잡는 편입니다.',
+        '일을 넘긴 뒤에도 중간 상태를 확인하고 싶어 합니다. 감시하려는 게 아니라 모르는 상태가 불편해서인데, 받는 쪽에서는 그 차이가 잘 안 보입니다. 남의 산출물까지 기준에 맞추려 하다 보면 일이 본인에게 몰리기도 합니다.'
+      ],
+      use: [
+        '먼저 묻지 않는 편입니다. 필요한 보고는 알아서 올려주세요.',
+        '진행이 크게 틀어질 때만 알려주면 됩니다.',
+        '물어보기 전에 먼저 알려주세요. 착수 전에 결과물의 형태를 맞춰두면 다시 만드는 일이 줄어듭니다.'
+      ]
+    },
+    {
+      pole: ['상황 보고 맞추는', '미리 알아두는'],
+      say: [
+        '계획보다 현장에서 맞춥니다. 정보가 부족해도 일단 정하고 나중에 고치는 쪽이고, 일정이 바뀌어도 크게 흔들리지 않습니다. 착수가 빠른 대신 같은 결정을 두 번 하게 되는 경우가 생깁니다.',
+        '필요한 만큼 준비하고 시작합니다. 전부 알아본 뒤에 움직이지도, 아무것도 모른 채 들어가지도 않습니다. 준비 시간을 스스로 조절하는 편이라 일정 변화에 비교적 잘 붙습니다.',
+        '모르는 상태로 들어가는 걸 견디기 어려워합니다. 미리 조사하고 계획을 세운 뒤에 움직이고, 계획이 흔들리면 다시 정리해야 마음이 놓입니다. 준비가 팀 전체의 위험을 줄이는 쪽으로 작동하고, 대신 착수 시점은 남보다 늦습니다.'
+      ],
+      use: [
+        '긴 사전 준비를 요구하면 오히려 느려집니다. 시작할 수 있는 만큼만 주세요.',
+        '일정이 바뀌면 알려주기만 하면 됩니다.',
+        '갑작스러운 변경은 내용보다 통보 시점이 문제입니다. 확정 전이라도 미리 공유해주세요.'
+      ]
+    }
+  ];
+
+  const COMBO = [
+    { when: (b) => b[0] === 0 && b[3] === 2, text: '앞에서 말은 아끼면서 결과물에는 손을 댑니다. 상대는 왜 고쳐졌는지 모른 채 바뀐 결과만 보게 되니, 고친 이유를 한 줄이라도 남겨두면 훨씬 잘 전달됩니다.' },
+    { when: (b) => b[0] === 2 && b[2] === 2 && b[3] === 2, text: '말도 하고 기준도 높고 남의 것까지 봅니다. 팀 결과물의 품질을 끌어올리는 자리에 가장 잘 맞고, 대신 혼자 다 지고 가는 구조가 되기 쉽습니다.' },
+    { when: (b) => b[2] === 2 && b[4] === 2, text: '준비도 오래, 마무리도 오래 하는 편입니다. 착수부터 완료까지 걸리는 시간이 전체적으로 길어지니 일정을 잡을 때 이 점을 미리 반영해두면 편합니다.' },
+    { when: (b) => b[2] === 2 && b[3] === 2, text: '자기 결과물에도 남의 결과물에도 같은 기준을 적용합니다. 팀이 커질수록 볼 것이 늘어나니, 어디까지 볼지 미리 정해두는 편이 좋습니다.' },
+    { when: (b) => b[3] === 2 && b[4] === 2, text: '모르는 상태를 못 견디는 성향이 남의 일까지 확인하는 쪽으로 나타납니다. 감시하려는 게 아니라 정보가 없는 게 불편한 것이라, 미리 공유받으면 확인이 줄어듭니다.' },
+    { when: (b) => b[0] === 2 && b[1] === 2, text: '할 말을 하면서 결과부터 보니 회의에서 단호해 보입니다. 실제 의도보다 세게 전달될 수 있습니다.' },
+    { when: (b) => b[0] === 2 && b[1] === 0, text: '의견은 분명히 내면서 말은 고릅니다. 반대해도 관계가 상하지 않는 쪽이라 껄끄러운 이야기를 꺼내는 자리에 잘 맞습니다.' },
+    { when: (b) => b[0] === 2 && b[3] === 2, text: '말도 하고 손도 댑니다. 팀에서 방향이 빨리 잡히는 대신, 다른 사람이 스스로 판단할 여지는 좁아집니다.' },
+    { when: (b) => b[2] === 0 && b[4] === 0, text: '준비도 짧고 마무리도 짧습니다. 팀에서 속도는 가장 빠르겠고, 되돌아오는 일이 생기면 그때 비용이 한꺼번에 몰립니다.' },
+    { when: (b) => b[1] === 2 && b[0] === 0, text: '결과를 보면서도 앞에 나서지는 않습니다. 판단은 이미 서 있는데 말이 안 나오는 경우가 많으니, 물어봐 주면 나옵니다.' },
+    { when: (b) => b[3] === 0 && b[2] === 2, text: '자기 결과물에는 엄격한데 남의 것에는 손대지 않습니다. 기준을 말로 알려주지 않으면 팀은 그 기준을 모른 채 지나갑니다.' },
+    { when: (b) => b[4] === 2 && b[0] === 0, text: '미리 다 알아보고 들어가는데 그 자리에서 말은 아낍니다. 준비한 내용이 쓰이지 못하고 끝나는 경우가 생깁니다.' },
+    { when: (b) => b[1] === 0 && b[2] === 2, text: '사람도 챕기고 결과물도 다듬습니다. 둘 다 시간이 드는 일이라 본인 일정이 가장 먼저 밀립니다.' },
+    { when: (b) => b[0] === 0 && b[1] === 0, text: '앞에 나서지 않고 사람을 먼저 봅니다. 팀 분위기가 편해지는 쪽이고, 정작 본인이 불편한 것은 끝까지 말하지 않는 경우가 많습니다.' },
+    { when: (b) => b[2] === 0 && b[3] === 2, text: '자기 결과물은 빠르게 내보내면서 남의 것은 확인합니다. 기준이 자기와 남에게 다르게 적용되는 것처럼 보일 수 있어서, 무엇을 보는지 먼저 말해두면 오해가 줄어듭니다.' },
+    { when: (b) => b[4] === 0 && b[3] === 2, text: '준비 없이 시작하면서 진행 중에는 자주 확인합니다. 계획 대신 중간 점검으로 방향을 잡는 방식이라, 팀에게는 갑작스러운 확인으로 느껴질 수 있습니다.' },
+    { when: (b) => b[4] === 2 && b[2] === 0, text: '시작 전에는 오래 알아보고 결과물은 빠르게 내보냅니다. 준비에 쓴 시간이 산출물에는 잘 드러나지 않아서 일이 쉬웠다고 오해받기도 합니다.' },
+    { when: (b) => b[1] === 2 && b[3] === 0, text: '결과를 보면서도 남의 방식에는 손대지 않습니다. 목적만 맞으면 넘기는 쪽이라 같이 일하기 편한 유형입니다.' },
+    { when: (b) => b[0] === 0 && b[3] === 0 && b[4] === 0, text: '앞에 나서지 않고, 준비도 짧고, 맡긴 일도 넘깁니다. 흐름을 거스르지 않는 대신 팀에서 존재감이 옅어지기 쉬워서, 의견을 물어봐 주는 사람이 있으면 크게 달라집니다.' },
+    { when: (b) => b.every((v) => v === 1), text: '다섯 가지가 모두 중간대입니다. 특정 방식에 고정되어 있지 않고 상황에 따라 움직이는 편이라, 팀에서 비어 있는 자리를 메우는 역할이 잘 맞습니다.' }
+  ];
+
+  const MAX = 18, MID = 9;
+  const band = (s) => (s <= 5 ? 0 : s >= 13 ? 2 : 1);
+
+  const CELLS = [
+    { side: 'a', s: 2, label: '확실히' },
+    { side: 'a', s: 1, label: '조금' },
+    { side: 'b', s: 1, label: '조금' },
+    { side: 'b', s: 2, label: '확실히' }
+  ];
+
+  // 하늘색과 게이지 색을 한 쌍으로 묶는다.
+  const SKIES = [
+    { a: '#BDDFFF', b: '#E4F1FF', g: '#6182F6', gl: '#A9BEFF', ge: '#2E4FC4' },
+    { a: '#FFD6E7', b: '#FFEDF5', g: '#FF5C9E', gl: '#FFA8C8', ge: '#C71E67' },
+    { a: '#CFF2E2', b: '#EAFAF3', g: '#2BB88A', gl: '#8FE0C3', ge: '#0F7A57' },
+    { a: '#FFEBBF', b: '#FFF7E4', g: '#F0A020', gl: '#FFD07A', ge: '#B06E00' },
+    { a: '#DED4FF', b: '#F0ECFF', g: '#7A5CF0', gl: '#BCA8FF', ge: '#4A2FB8' },
+    { a: '#BDDFFF', b: '#E4F1FF', g: '#6182F6', gl: '#A9BEFF', ge: '#2E4FC4' }
+  ];
+
+  let at = 0;
+  let picks = new Array(Q.length).fill(null);
+  let me = { c: null, nick: '' };
+  const views = { land: $('v-land'), pick: $('v-pick'), test: $('v-test'), res: $('v-res') };
+
+  function show(name) {
+    Object.entries(views).forEach(([k, el]) => el.classList.toggle('live', k === name));
+    $('whoami').classList.toggle('show', me.c !== null && (name === 'test' || name === 'pick'));
+  }
+  function sky(i) {
+    const s = SKIES[i];
+    const st = document.body.style;
+    st.background = `linear-gradient(180deg, ${s.a} 0%, ${s.b} 56%, #FFFFFF 100%)`;
+    st.backgroundAttachment = 'fixed';
+    st.backgroundRepeat = 'no-repeat';
+    document.documentElement.style.setProperty('--g-base', s.g);
+    document.documentElement.style.setProperty('--g-light', s.gl);
+    document.documentElement.style.setProperty('--g-edge', s.ge);
+  }
+
+  const lock = $('lock');
+  addEventListener('pointermove', (e) => {
+    if (!views.land.classList.contains('live')) return;
+    lock.style.transform = `translate3d(${(e.clientX / innerWidth - 0.5) * 12}px, ${(e.clientY / innerHeight - 0.5) * 7}px, 0)`;
+  });
+
+  const charsBox = $('chars');
+  CHARS.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'gbtn chr';
+    btn.appendChild(charEl(i, 4));
+    btn.addEventListener('click', () => {
+      me.c = i; setCursor(i);
+      [...charsBox.children].forEach((el, k) => el.classList.toggle('on', k === i));
+      refreshWho(); validate();
+    });
+    charsBox.appendChild(btn);
+  });
+
+  function refreshWho() {
+    const w = $('whoami');
+    if (me.c === null) { w.innerHTML = ''; return; }
+    w.innerHTML = '';
+    w.appendChild(charEl(me.c, 2));
+    const b = document.createElement('b');
+    b.textContent = me.nick || CHARS[me.c].name;
+    w.appendChild(b);
+    w.classList.add('show');
+  }
+  const nickIn = $('nick-in');
+  nickIn.addEventListener('input', () => { me.nick = nickIn.value.trim(); refreshWho(); validate(); });
+  function validate() { $('go2').disabled = !(me.c !== null && me.nick.length > 0); }
+
+  /* 줄바꿈된 실제 글줄 중 가장 긴 것에 상자 너비를 맞춘다.
+     CSS 만으로는 줄바꿈 뒤에도 상자가 max-width 로 남는다. */
+  function hug(el) {
+    el.style.width = '';
+    const r = document.createRange();
+    r.selectNodeContents(el);
+    const rects = [...r.getClientRects()];
+    if (!rects.length) return;
+    const cs = getComputedStyle(el);
+    const pad = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
+    el.style.width = Math.ceil(Math.max(...rects.map((x) => x.width)) + pad + 1) + 'px';
+  }
+  addEventListener('resize', () => {
+    if (views.test.classList.contains('live')) { hug($('s-a')); hug($('s-b')); }
+  });
+
+  /* 지금 커서가 놓인 구슬. 고른 것과는 다르다. */
+  let cur = null;
+
+  function selLabel() {
+    const el = $('sel');
+    if (cur === null) { el.innerHTML = '선택: 없음'; $('ok').disabled = true; return; }
+    const c = CELLS[cur];
+    el.innerHTML = '선택: <b class="' + c.side + '">' + (c.side === 'a' ? '위 문장' : '아래 문장')
+      + ' · ' + c.label + '</b>';
+    $('ok').disabled = false;
+  }
+  function focusOrb(k) {
+    cur = (k + CELLS.length) % CELLS.length;
+    [...$('orbs').children].forEach((b, i) => b.classList.toggle('cur', i === cur));
+    selLabel();
+  }
+
+  function paint() {
+    const item = Q[at];
+    const ch = Math.floor(at / 5);
+    sky(ch);
+    $('num').textContent = String(at + 1).padStart(2, '0');
+    $('chap').textContent = (ch + 1) + '장';
+
+    const mp = $('map');
+    mp.innerHTML = '';
+    for (let i = 0; i < 5; i++) {
+      const t = document.createElement('span');
+      const here = i === at % 5;
+      t.className = 'tile' + (i < at % 5 ? ' done' : here ? ' now' : '');
+      if (here && me.c !== null) t.appendChild(charEl(me.c, 2));
+      mp.appendChild(t);
+    }
+
+    const f = $('fill');
+    f.style.width = (((at + 1) / Q.length) * 100) + '%';
+    f.classList.remove('splash');
+    void f.offsetWidth;
+    f.classList.add('splash');
+
+    $('ask').textContent = item.q;
+    $('s-a').textContent = item.a;
+    $('s-b').textContent = item.b;
+    hug($('s-a')); hug($('s-b'));
+
+    const row = $('orbs');
+    row.innerHTML = '';
+    CELLS.forEach((c, k) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'orb';
+      btn.dataset.k = k;
+      btn.setAttribute('aria-label', (c.side === 'a' ? '위 문장' : '아래 문장') + ' · ' + c.label);
+      const ball = document.createElement('span');
+      ball.className = 'ball';
+      const sp = sprite(STAR, 2);
+      sp.className = 'spark';
+      btn.append(ball, sp);
+      const p = picks[at];
+      if (p && p.side === c.side && p.s === c.s) btn.classList.add('on');
+      btn.addEventListener('mouseenter', () => focusOrb(k));
+      btn.addEventListener('click', () => { focusOrb(k); commit(); });
+      row.appendChild(btn);
+    });
+    $('tip').hidden = at !== 0;
+
+    const done = picks[at];
+    cur = done ? CELLS.findIndex((c) => c.side === done.side && c.s === done.s) : null;
+    if (cur !== null && cur >= 0) focusOrb(cur); else { cur = null; selLabel(); }
+
+    $('back').hidden = at === 0;
+    [$('ask'), document.querySelector('.scale')].forEach((el) => {
+      el.style.animation = 'none'; void el.offsetWidth; el.style.animation = '';
+    });
+  }
+
+  /* 커서에 놓인 답을 확정하고 다음으로 넘어간다.
+     정답 연출은 넣지 않는다. 잘한 답이 있는 것처럼 보이면 답을 꾸미게 된다. */
+  function commit() {
+    if (cur === null) return;
+    const c = CELLS[cur];
+    picks[at] = { side: c.side, s: c.s };
+    const btns = [...$('orbs').children];
+    btns.forEach((b) => b.classList.remove('on'));
+    btns[cur].classList.add('on');
+    setTimeout(() => { if (at < Q.length - 1) { at++; paint(); } else finish(); }, 190);
+  }
+
+  function tally() {
+    const out = [0, 0, 0, 0, 0];
+    Q.forEach((item, i) => {
+      const p = picks[i];
+      if (!p) return;
+      out[item.x] += p.side === item.hi ? (p.s === 2 ? 3 : 2) : (p.s === 1 ? 1 : 0);
+    });
+    return out;
+  }
+
+  function render(scores) {
+    const bands = scores.map(band);
+    let top = 0, gap = -1;
+    scores.forEach((s, i) => { const d = Math.abs(s - MID); if (d > gap) { gap = d; top = i; } });
+
+    const meBox = $('r-me');
+    meBox.innerHTML = '';
+    if (me.c !== null) {
+      meBox.appendChild(charEl(me.c, 2));
+      const b = document.createElement('b');
+      b.textContent = me.nick || CHARS[me.c].name;
+      const s = document.createElement('span');
+      s.textContent = '님이 일하는 방식';
+      meBox.append(b, s);
+    } else {
+      const s = document.createElement('span');
+      s.textContent = '당신이 일하는 방식';
+      meBox.appendChild(s);
+    }
+
+    $('r-title').innerHTML = bands[top] === 1
+      ? '한쪽으로 <em>치우치지 않은</em> 사람'
+      : `<em>${COPY[top].pole[bands[top] === 2 ? 1 : 0]}</em> 사람`;
+
+    const strong = bands.filter((v) => v !== 1).length;
+    $('r-lead').textContent = strong === 0
+      ? '다섯 가지가 모두 중간대에 있습니다.'
+      : `다섯 가지 중 ${strong}가지가 한쪽으로 뚜렷하게 기울어 있습니다.`;
+
+    $('r-bars').innerHTML = AXES.map((ax, i) => {
+      const s = scores[i];
+      const right = s >= MID;
+      const w = (Math.abs(s - MID) / MID) * 50;
+      return `<div class="bar">
+        <div class="top"><span class="nm">${ax.nm}</span><span class="val px">${s} / ${MAX}</span></div>
+        <div class="tr"><i class="${right ? 'r' : 'l'}" style="width:${w}%"></i></div>
+        <div class="poles px"><span>${COPY[i].pole[0]}</span><span>${COPY[i].pole[1]}</span></div>
+      </div>`;
+    }).join('');
+
+    $('r-lines').innerHTML = scores.map((s, i) => `<p>${COPY[i].say[bands[i]]}</p>`).join('');
+
+    const hits = COMBO.filter((c) => c.when(bands)).slice(0, 3);
+    $('r-combo').hidden = hits.length === 0;
+    $('r-combo-body').innerHTML = hits.map((c) => `<p>${c.text}</p>`).join('');
+
+    $('r-use').innerHTML = scores.map((s, i) => ({ i, d: Math.abs(s - MID) }))
+      .sort((p, q) => q.d - p.d).slice(0, 3)
+      .map(({ i }) => `<li>${COPY[i].use[bands[i]]}</li>`).join('');
+  }
+
+  function finish() {
+    const scores = tally();
+    const parts = ['s=' + scores.map((s) => s.toString(36)).join('')];
+    if (me.c !== null) parts.push('c=' + me.c);
+    if (me.nick) parts.push('n=' + encodeURIComponent(me.nick));
+    location.hash = parts.join('&');
+    sky(0); render(scores); show('res'); scrollTo(0, 0);
+  }
+
+  $('go').addEventListener('click', () => { show('pick'); nickIn.focus(); });
+  $('go2').addEventListener('click', () => { show('test'); paint(); });
+  $('ok').addEventListener('click', commit);
+  $('back').addEventListener('click', () => { if (at > 0) { at--; paint(); } });
+
+  addEventListener('keydown', (e) => {
+    if ($('sheet').classList.contains('live')) { if (e.key === 'Escape') sheet(false); return; }
+    if (views.land.classList.contains('live') && (e.key === 'Enter' || e.key === ' ')) { $('go').click(); return; }
+    if (views.pick.classList.contains('live') && e.key === 'Enter' && !$('go2').disabled) { $('go2').click(); return; }
+    if (!views.test.classList.contains('live')) return;
+    const n = Number(e.key);
+    if (n >= 1 && n <= 4) { focusOrb(n - 1); commit(); return; }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); focusOrb(cur === null ? 0 : cur - 1); return; }
+    if (e.key === 'ArrowRight') { e.preventDefault(); focusOrb(cur === null ? CELLS.length - 1 : cur + 1); return; }
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); commit(); return; }
+    if (e.key === 'Backspace') { e.preventDefault(); $('back').click(); }
+  });
+
+  $('share').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(location.href);
+      $('toast').textContent = '링크를 복사했어요. 팀원에게 보내주세요.';
+    } catch {
+      $('toast').textContent = '주소창의 링크를 복사해서 보내주세요.';
+    }
+  });
+  $('again').addEventListener('click', () => {
+    at = 0; picks = new Array(Q.length).fill(null);
+    history.replaceState(null, '', location.pathname);
+    sky(0); show('land');
+  });
+
+  function sheet(open) { $('sheet').classList.toggle('live', open); }
+  $('help').addEventListener('click', () => sheet(true));
+  $('sheet').addEventListener('click', (e) => { if (e.target.closest('[data-close]')) sheet(false); });
+
+  (function fromHash() {
+    const h = new URLSearchParams(location.hash.slice(1));
+    const s = h.get('s');
+    if (!s || !/^[0-9a-i]{5}$/.test(s)) return;
+    const scores = s.split('').map((c) => parseInt(c, 36));
+    if (!scores.every((v) => v <= MAX)) return;
+    const c = Number(h.get('c'));
+    if (Number.isInteger(c) && CHARS[c]) { me.c = c; setCursor(c); }
+    me.nick = (h.get('n') || '').slice(0, 8);
+    render(scores);
+    show('res');
+  })();
+</script>
+
+</body>
+</html>
