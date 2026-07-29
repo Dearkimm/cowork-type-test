@@ -25,13 +25,14 @@
     --ca: #2B5BFF;
     --ca-deep: #1436B8;
     --ca-pale: #DCE5FF;
-    --ca-soft: #8698D4;
-    --ca-dark: #2A47A6;
     --cb: #FF4D9A;
     --cb-deep: #C71E67;
     --cb-pale: #FFE0EC;
-    --cb-soft: #E39BB8;
-    --cb-dark: #A8446E;
+    /* 강도 색은 채도를 유지하고 명도만 바꾼다. 회색을 섞으면 탁해진다. */
+    --a-strong: #0F2FC9;
+    --a-light: #5A7BFF;
+    --b-light: #FF5CA3;
+    --b-strong: #C7105E;
     --ink: #262232;
     --sub: #736E85;
     --card: #FFFFFF;
@@ -46,8 +47,6 @@
     --pixel: "Galmuri11", "Galmuri9", "Malgun Gothic", sans-serif;
   }
 
-  /* 배경을 화면에 고정한다. height:100% 로 두면 그라데이션이 화면 높이에서
-     끊기고 그 아래로 반복되어 결과 화면 중간에 띠가 생긴다. */
   html { min-height: 100%; }
   html, body, button, input, a { cursor: var(--cur); }
   body {
@@ -57,7 +56,6 @@
     background: linear-gradient(180deg, var(--sky-1) 0%, var(--sky-2) 58%, #FFFFFF 100%);
     background-attachment: fixed;
     background-repeat: no-repeat;
-    transition: background-color 0.6s;
     overflow-x: hidden;
     word-break: keep-all;
     -webkit-font-smoothing: antialiased;
@@ -67,7 +65,7 @@
   :focus-visible { outline: 3px solid var(--cb); outline-offset: 4px; }
   .px { font-family: var(--pixel); font-size: 11px; line-height: 1.6; }
 
-  /* ── 배경 장식 ────────────────────────────── */
+  /* ── 배경 ─────────────────────────────────── */
   .sky { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
   .cloud { position: absolute; background: #fff; border-radius: 50%; opacity: 0.85; }
   .cloud::before, .cloud::after { content: ''; position: absolute; background: #fff; border-radius: 50%; }
@@ -84,13 +82,17 @@
   .c4::before { width: 54px; height: 54px; right: 48px; bottom: 4px; }
   .c4::after { width: 38px; height: 38px; right: 88px; bottom: -10px; }
 
-  .spark { position: absolute; color: #fff; line-height: 1; font-size: 20px; text-shadow: 0 0 12px rgba(255,255,255,0.95); }
-  .s1 { left: 6vw; top: 18vh; animation: tw 3.6s ease-in-out infinite; }
-  .s2 { right: 11vw; top: 33vh; font-size: 13px; animation: tw 4.4s 0.8s ease-in-out infinite; }
-  .s3 { left: 17vw; bottom: 27vh; font-size: 15px; animation: tw 4s 1.5s ease-in-out infinite; }
-  .s4 { right: 26vw; bottom: 17vh; font-size: 11px; animation: tw 4.8s 0.4s ease-in-out infinite; }
-  .s5 { left: 42vw; top: 11vh; font-size: 12px; animation: tw 5.2s 2.1s ease-in-out infinite; }
-  @keyframes tw { 0%, 100% { opacity: 0.25; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.15); } }
+  /* 픽셀 반짝임과 하트. 캐릭터와 같은 방식으로 그린다. */
+  .deco { position: absolute; image-rendering: pixelated; }
+  .d1 { left: 6vw; top: 17vh; animation: tw 3.6s ease-in-out infinite; }
+  .d2 { right: 10vw; top: 31vh; animation: tw 4.4s 0.9s ease-in-out infinite; }
+  .d3 { left: 16vw; bottom: 26vh; animation: tw 4s 1.6s ease-in-out infinite; }
+  .d4 { right: 27vw; bottom: 15vh; animation: tw 4.8s 0.5s ease-in-out infinite; }
+  .d5 { left: 43vw; top: 10vh; animation: tw 5.2s 2.2s ease-in-out infinite; }
+  .d6 { right: 6vw; bottom: 34vh; animation: float 5.4s ease-in-out infinite; }
+  .d7 { left: 10vw; top: 42vh; animation: float 6.2s 1.3s ease-in-out infinite; }
+  @keyframes tw { 0%, 100% { opacity: 0.25; transform: scale(0.75); } 50% { opacity: 1; transform: scale(1.1); } }
+  @keyframes float { 0%, 100% { transform: translateY(0); opacity: 0.55; } 50% { transform: translateY(-12px); opacity: 0.9; } }
 
   /* ── 입체 글씨 (로고·태그라인 전용) ────────── */
   .pop3d {
@@ -157,82 +159,76 @@
   .test {
     flex: 1; display: flex; flex-direction: column; align-items: center;
     width: 100%; max-width: 800px; margin: 0 auto;
-    padding: 64px clamp(14px, 4vw, 32px) clamp(16px, 3vh, 28px);
+    padding: 62px clamp(14px, 4vw, 32px) clamp(14px, 3vh, 26px);
   }
   .prog { width: 100%; display: flex; align-items: center; gap: 10px; }
   .prog .num { font-family: var(--display); font-weight: 900; font-size: clamp(1.3rem, 4.6vw, 1.55rem); letter-spacing: -0.04em; color: var(--ca); line-height: 1; }
   .prog .of { color: var(--sub); flex: none; }
 
-  /* 반짝이는 물약 게이지 */
+  /* 물약 게이지: 유리 광택과 느린 하이라이트, 반짝임 둘. 사선 결은 뺐다. */
   .tube {
     flex: 1; height: 22px; background: #fff; border-radius: 999px; overflow: hidden;
     box-shadow: inset 0 2px 6px rgba(38,34,50,0.15), 0 1px 0 rgba(255,255,255,0.9);
   }
   .tube > i {
     position: relative; display: block; height: 100%; width: 0; border-radius: 999px; overflow: hidden;
-    background: linear-gradient(180deg, #BFD0FF 0%, #86A2FF 52%, #5F80F5 100%);
+    background: linear-gradient(180deg, #C3D3FF 0%, #88A4FF 52%, #6182F6 100%);
     transition: width 0.55s cubic-bezier(0.34, 1.28, 0.5, 1);
   }
-  /* 유리 광택 */
   .tube > i::before {
-    content: ''; position: absolute; left: 3px; right: 3px; top: 2px; height: 38%;
-    border-radius: 999px; background: linear-gradient(180deg, rgba(255,255,255,0.8), rgba(255,255,255,0));
+    content: ''; position: absolute; left: 4px; right: 4px; top: 2px; height: 36%;
+    border-radius: 999px; background: linear-gradient(180deg, rgba(255,255,255,0.82), rgba(255,255,255,0));
   }
-  /* 흐르는 반짝임 결 */
-  .tube > i > em:nth-of-type(1) {
-    position: absolute; inset: 0;
-    background: repeating-linear-gradient(112deg, rgba(255,255,255,0.5) 0 3px, rgba(255,255,255,0) 3px 13px);
-    animation: drift 2.6s linear infinite;
+  .tube > i > em {
+    position: absolute; top: 0; bottom: 0; width: 30%; left: -34%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.72), transparent);
+    animation: sweep 4.2s ease-in-out infinite;
   }
-  /* 훑고 지나가는 하이라이트 */
-  .tube > i > em:nth-of-type(2) {
-    position: absolute; top: 0; bottom: 0; width: 36%; left: -40%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.92), transparent);
-    animation: sweep 2.9s ease-in-out infinite;
-  }
-  .tube > i > b { position: absolute; color: #fff; font-size: 9px; line-height: 1; text-shadow: 0 0 6px #fff; }
-  .tube > i > b:nth-of-type(1) { left: 26%; top: 3px; animation: tw 1.9s ease-in-out infinite; }
-  .tube > i > b:nth-of-type(2) { left: 58%; bottom: 3px; font-size: 7px; animation: tw 2.5s 0.6s ease-in-out infinite; }
-  .tube > i > b:nth-of-type(3) { left: 82%; top: 5px; font-size: 8px; animation: tw 2.2s 1.2s ease-in-out infinite; }
-  @keyframes drift { to { transform: translateX(-26px); } }
-  @keyframes sweep { 0% { left: -40%; } 55%, 100% { left: 108%; } }
+  .tube > i > b { position: absolute; image-rendering: pixelated; }
+  .tube > i > b:nth-of-type(1) { left: 30%; top: 4px; animation: tw 2.4s ease-in-out infinite; }
+  .tube > i > b:nth-of-type(2) { left: 70%; bottom: 4px; animation: tw 3.1s 1s ease-in-out infinite; }
+  @keyframes sweep { 0% { left: -34%; } 60%, 100% { left: 106%; } }
   .tube > i.splash { animation: splash 0.5s cubic-bezier(0.3, 1.4, 0.4, 1); }
-  @keyframes splash { 0% { transform: scaleY(1); } 35% { transform: scaleY(1.3); } 100% { transform: scaleY(1); } }
+  @keyframes splash { 0% { transform: scaleY(1); } 35% { transform: scaleY(1.28); } 100% { transform: scaleY(1); } }
 
-  /* 질문은 게이지에 가깝게 붙이고, 선택지와는 넉넉히 띄운다 */
+  /* 질문과 선택지를 한 덩어리로 묶어 화면 가운데보다 살짝 위에 둔다 */
+  .mid {
+    flex: 1; width: 100%; display: flex; flex-direction: column; justify-content: center;
+    gap: clamp(26px, 5vh, 48px); padding-bottom: clamp(36px, 11vh, 120px);
+  }
   .ask {
     font-family: var(--display); font-weight: 900; color: var(--ink);
-    font-size: clamp(1.85rem, 6.4vw, 3.1rem); line-height: 1.26; letter-spacing: -0.042em;
-    text-align: center; max-width: 20ch; margin: clamp(26px, 5vh, 52px) auto 0; text-wrap: balance;
+    font-size: clamp(1.5rem, 4.8vw, 2.3rem); line-height: 1.3; letter-spacing: -0.038em;
+    text-align: center; max-width: 22ch; margin: 0 auto; text-wrap: balance;
   }
-  .scale { width: 100%; display: flex; flex-direction: column; gap: clamp(16px, 2.6vh, 22px); margin-top: clamp(30px, 6vh, 60px); }
+  .scale { width: 100%; display: flex; flex-direction: column; gap: clamp(14px, 2.2vh, 20px); }
 
-  /* 말풍선: 같은 색 꼬리를 모서리 밖으로 내보낸다. 배경을 오려내지 않으니
-     그라데이션 위에서도 어긋나지 않는다. */
+  /* 말풍선: 아이폰처럼 초승달 꼬리. 흰색을 더하기만 하니 어떤 배경에서도 안 깨진다. */
   .bub {
     position: relative; max-width: min(33ch, 90%);
-    padding: 15px 20px; border-radius: 22px;
+    padding: 14px 19px; border-radius: 21px;
     background: var(--card); color: var(--ink);
-    font-size: clamp(0.98rem, 2.6vw, 1.18rem); font-weight: 600; line-height: 1.46;
-    box-shadow: 0 3px 10px rgba(38, 34, 50, 0.1);
+    font-size: clamp(0.96rem, 2.5vw, 1.15rem); font-weight: 600; line-height: 1.46;
+    filter: drop-shadow(0 3px 5px rgba(38, 34, 50, 0.13));
   }
   .bub::after {
-    content: ''; position: absolute; bottom: 3px; width: 15px; height: 15px;
-    background: var(--card); border-radius: 4px 0 5px 0;
+    content: ''; position: absolute; bottom: -6px; width: 13px; height: 11px;
+    background-repeat: no-repeat; background-size: 13px 11px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='11' viewBox='0 0 13 11'%3E%3Cpath d='M13 0C13 6.1 7.2 11 0 11C6.1 10.2 10.2 6.1 10.2 0Z' fill='%23FFFFFF'/%3E%3C/svg%3E");
   }
-  .bub.up { align-self: flex-start; }
-  .bub.up::after { left: -4px; transform: rotate(48deg); }
-  .bub.down { align-self: flex-end; text-align: right; }
-  .bub.down::after { right: -4px; transform: rotate(42deg); }
+  .bub.up { align-self: flex-start; border-bottom-left-radius: 7px; }
+  .bub.up::after { left: -6px; }
+  .bub.down { align-self: flex-end; text-align: right; border-bottom-right-radius: 7px; }
+  .bub.down::after { right: -6px; transform: scaleX(-1); }
 
   .cells { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(5px, 1.6vw, 8px); }
   .cell { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; padding: 13px 2px 12px; border-radius: 16px; }
   .cell .arw { font-size: clamp(1.05rem, 3.4vw, 1.25rem); line-height: 0.8; }
   .cell .lab { font-size: clamp(0.76rem, 2.6vw, 0.95rem); font-weight: 800; letter-spacing: -0.03em; white-space: nowrap; }
-  .cell.a2 { background: var(--ca-pale); color: var(--ca-dark); }
-  .cell.a1 { color: var(--ca-soft); }
-  .cell.b1 { color: var(--cb-soft); }
-  .cell.b2 { background: var(--cb-pale); color: var(--cb-dark); }
+  .cell.a2 { background: var(--ca-pale); color: var(--a-strong); }
+  .cell.a1 { color: var(--a-light); }
+  .cell.b1 { color: var(--b-light); }
+  .cell.b2 { background: var(--cb-pale); color: var(--b-strong); }
   .cell.a1:hover, .cell.a2:hover, .cell.a1.on, .cell.a2.on { background: var(--ca); color: #fff; border-color: var(--ca-deep); box-shadow: 0 4px 0 var(--ca-deep); }
   .cell.b1:hover, .cell.b2:hover, .cell.b1.on, .cell.b2.on { background: var(--cb); color: #fff; border-color: var(--cb-deep); box-shadow: 0 4px 0 var(--cb-deep); }
   .cell.on { transform: translateY(3px); box-shadow: 0 1px 0 var(--edge-deep); }
@@ -240,12 +236,9 @@
   .ask, .scale { animation: slide 0.32s cubic-bezier(0.2, 0.9, 0.3, 1) both; }
   @keyframes slide { from { opacity: 0; transform: translateY(11px); } to { opacity: 1; transform: none; } }
 
-  /* 아래 빈 공간에 고른 캐릭터를 앉힌다 */
-  .foot { width: 100%; margin-top: auto; padding-top: 22px; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
-  .foot .buddy { display: flex; align-items: flex-end; gap: 9px; }
-  .foot .buddy canvas { image-rendering: pixelated; animation: bob 2.6s ease-in-out infinite; }
+  .foot { width: 100%; margin-top: auto; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
+  .foot canvas { image-rendering: pixelated; animation: bob 2.8s ease-in-out infinite; }
   @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-  .foot .buddy .say { background: rgba(255,255,255,0.9); border-radius: 12px; padding: 7px 11px; color: var(--sub); }
   .back { color: var(--sub); align-self: flex-end; }
   .back:hover { color: var(--ca); }
   .back[hidden] { visibility: hidden; }
@@ -270,16 +263,19 @@
   .bar .val { color: var(--sub); font-variant-numeric: tabular-nums; flex: none; }
   .bar .tr { position: relative; height: 14px; background: #F2F0F8; border-radius: 999px; }
   .bar .tr::before { content: ''; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 2px; margin-left: -1px; background: #DAD6E6; border-radius: 2px; }
-  .bar .tr i { position: absolute; top: 0; bottom: 0; border-radius: 999px; min-width: 5px; }
+  /* 가운데 쪽은 각지게 둬야 채워진 느낌이 난다 */
+  .bar .tr i { position: absolute; top: 0; bottom: 0; min-width: 5px; }
+  .bar .tr i.r { left: 50%; border-radius: 0 999px 999px 0; background: var(--ca); }
+  .bar .tr i.l { right: 50%; border-radius: 999px 0 0 999px; background: var(--cb); }
   .bar .poles { display: flex; justify-content: space-between; gap: 8px; margin-top: 7px; }
-  .bar .poles span:first-child { color: var(--cb-dark); }
-  .bar .poles span:last-child { color: var(--ca-dark); }
+  .bar .poles span:first-child { color: var(--b-strong); }
+  .bar .poles span:last-child { color: var(--a-strong); }
 
   .lines { display: flex; flex-direction: column; gap: 15px; }
   .lines p { font-size: 0.98rem; line-height: 1.78; }
 
   .combo { background: #FFF7FB; border: 2.5px solid var(--cb-pale); border-radius: 22px; box-shadow: 0 4px 0 var(--cb-pale); padding: 20px 18px; display: flex; flex-direction: column; gap: 14px; }
-  .combo h2 { font-family: var(--display); font-weight: 900; font-size: 1rem; color: var(--cb-dark); letter-spacing: -0.02em; }
+  .combo h2 { font-family: var(--display); font-weight: 900; font-size: 1rem; color: var(--b-strong); letter-spacing: -0.02em; }
   .combo p { font-size: 0.96rem; line-height: 1.76; }
 
   .use ul { display: flex; flex-direction: column; gap: 12px; padding-left: 1.15em; }
@@ -309,15 +305,13 @@
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
-
-  /* ── 모바일 ───────────────────────────────── */
   @media (max-width: 560px) {
-    .test { padding-top: 58px; }
-    .bub { max-width: 92%; padding: 13px 16px; border-radius: 19px; }
+    .test { padding-top: 56px; }
+    .bub { max-width: 92%; padding: 12px 16px; }
     .cell { border-radius: 13px; padding: 11px 1px 10px; }
     .panel, .combo { border-radius: 18px; padding: 17px 15px; }
-    .foot .buddy .say { display: none; }
     .acts button { flex: 1 1 100%; }
+    .d5, .d7 { display: none; }
   }
   @media (max-width: 380px) {
     .pop3d { -webkit-text-stroke-width: 4px; }
@@ -325,16 +319,14 @@
     .chr { padding: 10px 0 8px; }
   }
   @media (max-height: 700px) {
-    .ask { margin-top: 20px; font-size: clamp(1.6rem, 5.6vw, 2.2rem); }
-    .scale { margin-top: 22px; }
+    .mid { gap: 20px; padding-bottom: 30px; }
+    .ask { font-size: clamp(1.4rem, 5vw, 1.9rem); }
   }
 </style>
 
-<div class="sky" aria-hidden="true">
+<div class="sky" id="sky" aria-hidden="true">
   <div class="cloud c1"></div><div class="cloud c2"></div>
   <div class="cloud c3"></div><div class="cloud c4"></div>
-  <span class="spark s1">✦</span><span class="spark s2">✦</span><span class="spark s3">✦</span>
-  <span class="spark s4">✦</span><span class="spark s5">✦</span>
 </div>
 
 <div class="app">
@@ -371,16 +363,18 @@
     <div class="test">
       <div class="prog">
         <span class="num" id="num"></span><span class="of px">/ 30</span>
-        <span class="tube"><i id="fill"><em></em><em></em><b>✦</b><b>✦</b><b>✦</b></i></span>
+        <span class="tube"><i id="fill"><em></em><b></b><b></b></i></span>
       </div>
-      <h1 class="ask" id="ask"></h1>
-      <div class="scale">
-        <p class="bub up" id="s-a"></p>
-        <div class="cells" id="cells"></div>
-        <p class="bub down" id="s-b"></p>
+      <div class="mid">
+        <h1 class="ask" id="ask"></h1>
+        <div class="scale">
+          <p class="bub up" id="s-a"></p>
+          <div class="cells" id="cells"></div>
+          <p class="bub down" id="s-b"></p>
+        </div>
       </div>
       <div class="foot">
-        <div class="buddy" id="buddy"></div>
+        <div id="buddy"></div>
         <button class="back px" id="back" hidden>◀ 앞으로</button>
       </div>
     </div>
@@ -436,21 +430,7 @@
 </div>
 
 <script>
-  const CHARS = [
-    { key: 'dog', name: '멍멍이',
-      pal: { O: '#7A5230', B: '#F2C48F', F: '#C9884D', K: '#3A2A1E', N: '#FFFFFF' },
-      grid: ['............', '.OO.OOOO.OO.', 'OFFOBBBBOFFO', 'OFFOBBBBOFFO', 'OFFBBBBBBFFO', '.OFBKBBKBFO.', '.OBBBBBBBBO.', '.OBBBNNBBBO.', '.OBBBNNBBBO.', '..OBBBBBBO..', '...OOOOOO...', '............'] },
-    { key: 'cat', name: '고양이',
-      pal: { O: '#5B4A57', B: '#FFFFFF', E: '#FFB8D4', K: '#3A2F36', N: '#FF8FBC' },
-      grid: ['.OO......OO.', '.OEO....OEO.', '.OEEO..OEEO.', '.OBBBOOBBBO.', '..OBBBBBBO..', '.OBBBBBBBBO.', '.OBKBBBBKBO.', '.OBBBBBBBBO.', '.OBBBNNBBBO.', '..OBBBBBBO..', '...OOOOOO...', '............'] },
-    { key: 'rabbit', name: '토끼',
-      pal: { O: '#8A7A88', B: '#FFFFFF', E: '#FFC2DA', K: '#3A2F36', N: '#FF8FBC' },
-      grid: ['...OO..OO...', '..OEO..OEO..', '..OEO..OEO..', '..OEO..OEO..', '..OBOOOOBO..', '.OBBBBBBBBO.', '.OBKBBBBKBO.', '.OBBBBBBBBO.', '.OBBBNNBBBO.', '..OBBBBBBO..', '...OOOOOO...', '............'] },
-    { key: 'hamster', name: '햄스터',
-      pal: { O: '#9A6A3A', B: '#F7D29B', K: '#3A2A1E', N: '#FF8FBC', W: '#FFF6E6' },
-      grid: ['............', '..OO....OO..', '.OBBO..OBBO.', '.OBBOOOOBBO.', '.OBBBBBBBBO.', 'OBBKBBBBKBBO', 'OBBBBBBBBBBO', 'OBBBBNNBBBBO', '.OBBWWWWBBO.', '.OBBBBBBBBO.', '..OOOOOOOO..', '............'] }
-  ];
-
+  /* ── 픽셀 스프라이트 ─────────────────────── */
   function sprite(c, scale) {
     const cv = document.createElement('canvas');
     cv.width = c.grid[0].length * scale;
@@ -466,11 +446,48 @@
     });
     return cv;
   }
+
+  const CHARS = [
+    { key: 'dog', name: '멍멍이',
+      pal: { O: '#7A5230', B: '#F2C48F', F: '#C9884D', K: '#3A2A1E', N: '#FFFFFF' },
+      grid: ['............', '.OO.OOOO.OO.', 'OFFOBBBBOFFO', 'OFFOBBBBOFFO', 'OFFBBBBBBFFO', '.OFBKBBKBFO.', '.OBBBBBBBBO.', '.OBBBNNBBBO.', '.OBBBNNBBBO.', '..OBBBBBBO..', '...OOOOOO...', '............'] },
+    { key: 'cat', name: '고양이',
+      pal: { O: '#5B4A57', B: '#FFFFFF', E: '#FFB8D4', K: '#3A2F36', N: '#FF8FBC' },
+      grid: ['.OO......OO.', '.OEO....OEO.', '.OEEO..OEEO.', '.OBBBOOBBBO.', '..OBBBBBBO..', '.OBBBBBBBBO.', '.OBKBBBBKBO.', '.OBBBBBBBBO.', '.OBBBNNBBBO.', '..OBBBBBBO..', '...OOOOOO...', '............'] },
+    { key: 'rabbit', name: '토끼',
+      pal: { O: '#8A7A88', B: '#FFFFFF', E: '#FFC2DA', K: '#3A2F36', N: '#FF8FBC' },
+      grid: ['...OO..OO...', '..OEO..OEO..', '..OEO..OEO..', '..OEO..OEO..', '..OBOOOOBO..', '.OBBBBBBBBO.', '.OBKBBBBKBO.', '.OBBBBBBBBO.', '.OBBBNNBBBO.', '..OBBBBBBO..', '...OOOOOO...', '............'] },
+    { key: 'hamster', name: '햄스터',
+      pal: { O: '#9A6A3A', B: '#F7D29B', K: '#3A2A1E', N: '#FF8FBC', W: '#FFF6E6' },
+      grid: ['............', '..OO....OO..', '.OBBO..OBBO.', '.OBBOOOOBBO.', '.OBBBBBBBBO.', 'OBBKBBBBKBBO', 'OBBBBBBBBBBO', 'OBBBBNNBBBBO', '.OBBWWWWBBO.', '.OBBBBBBBBO.', '..OOOOOOOO..', '............'] }
+  ];
+
+  const STAR = { pal: { W: '#FFFFFF' }, grid: ['...W...', '...W...', '..WWW..', 'WWWWWWW', '..WWW..', '...W...', '...W...'] };
+  const HEART = { pal: { P: '#FFB3CF' }, grid: ['.PP.PP.', 'PPPPPPP', 'PPPPPPP', '.PPPPP.', '..PPP..', '...P...'] };
+
   function setCursor(i) {
     const url = sprite(CHARS[i], 2).toDataURL('image/png');
     document.documentElement.style.setProperty('--cur', `url(${url}) 4 2, auto`);
   }
 
+  // 배경 장식
+  (function decorate() {
+    const box = $id('sky');
+    [['d1', STAR, 3], ['d2', STAR, 2], ['d3', STAR, 3], ['d4', STAR, 2],
+     ['d5', STAR, 2], ['d6', HEART, 3], ['d7', HEART, 2]].forEach(([cls, art, sc]) => {
+      const cv = sprite(art, sc);
+      cv.className = 'deco ' + cls;
+      box.appendChild(cv);
+    });
+  })();
+  function $id(id) { return document.getElementById(id); }
+
+  // 게이지 안 반짝임
+  [...document.querySelectorAll('.tube > i > b')].forEach((slot, k) => {
+    slot.appendChild(sprite(STAR, k === 0 ? 2 : 1));
+  });
+
+  /* ── 축과 문항 ────────────────────────────── */
   const AXES = [
     { nm: '의견이 갈릴 때' }, { nm: '일과 사람 사이에서' }, { nm: '결과물을 낼 때' },
     { nm: '일을 맡길 때' }, { nm: '시작하기 전에' }
@@ -528,8 +545,6 @@
     order.forEach((ax) => Q.push(Object.assign({ x: ax }, BY_AXIS[ax][round])));
   });
 
-  /* 양쪽 극 이름은 둘 다 멀쩡하게 읽혀야 한다. 한쪽이 부족한 것처럼 보이면
-     결과를 받는 사람이 자기 결과를 방어하게 된다. */
   const COPY = [
     {
       pole: ['먼저 듣는', '할 말은 하는'],
@@ -623,7 +638,7 @@
 
   const MAX = 18, MID = 9;
   const band = (s) => (s <= 5 ? 0 : s >= 13 ? 2 : 1);
-  const $ = (id) => document.getElementById(id);
+  const $ = $id;
 
   const CELLS = [
     { cls: 'a2', side: 'a', s: 2, arw: '▲', label: '확실히' },
@@ -689,18 +704,6 @@
   nickIn.addEventListener('input', () => { me.nick = nickIn.value.trim(); refreshWho(); validate(); });
   function validate() { $('go2').disabled = !(me.c !== null && me.nick.length > 0); }
 
-  const CHEER = ['잘 하고 있어요', '반쯤 왔어요', '거의 다 왔어요', '조금만 더요'];
-  function drawBuddy() {
-    const box = $('buddy');
-    box.innerHTML = '';
-    if (me.c === null) return;
-    box.appendChild(sprite(CHARS[me.c], 4));
-    const say = document.createElement('span');
-    say.className = 'say px';
-    say.textContent = CHEER[Math.min(CHEER.length - 1, Math.floor(at / 8))];
-    box.appendChild(say);
-  }
-
   function paint() {
     const item = Q[at];
     sky(Math.floor(at / 5));
@@ -729,7 +732,10 @@
       box.appendChild(btn);
     });
 
-    drawBuddy();
+    const buddy = $('buddy');
+    buddy.innerHTML = '';
+    if (me.c !== null) buddy.appendChild(sprite(CHARS[me.c], 4));
+
     $('back').hidden = at === 0;
     [$('ask'), document.querySelector('.scale')].forEach((el) => {
       el.style.animation = 'none'; void el.offsetWidth; el.style.animation = '';
@@ -786,12 +792,9 @@
       const s = scores[i];
       const right = s >= MID;
       const w = (Math.abs(s - MID) / MID) * 50;
-      const style = right
-        ? `left:50%;width:${w}%;background:var(--ca)`
-        : `right:50%;width:${w}%;background:var(--cb)`;
       return `<div class="bar">
         <div class="top"><span class="nm">${ax.nm}</span><span class="val px">${s} / ${MAX}</span></div>
-        <div class="tr"><i style="${style}"></i></div>
+        <div class="tr"><i class="${right ? 'r' : 'l'}" style="width:${w}%"></i></div>
         <div class="poles px"><span>${COPY[i].pole[0]}</span><span>${COPY[i].pole[1]}</span></div>
       </div>`;
     }).join('');
