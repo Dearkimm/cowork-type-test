@@ -214,9 +214,7 @@
     padding: 12px 16px; background: var(--g-base); color: #fff;
     border-bottom: 4px solid var(--edge-deep); transition: background-color 0.5s;
   }
-  .gbar .gt { display: flex; align-items: center; gap: 8px; font-size: 14px; letter-spacing: 0.04em; }
-  .gbar .gs { width: 13px; height: 13px; flex: none; background: #FFE07A;
-    clip-path: polygon(50% 0, 61% 35%, 100% 35%, 68% 57%, 79% 100%, 50% 73%, 21% 100%, 32% 57%, 0 35%, 39% 35%); }
+  .gbar .gt { font-size: 14px; letter-spacing: 0.04em; }
   .gbar .gq { font-size: 13px; letter-spacing: 0.06em; color: rgba(255, 255, 255, 0.72); }
   .gbar .gq b { font-size: 19px; color: #fff; }
 
@@ -229,20 +227,22 @@
   .map .tile.now { background: var(--g-base); }
   .map .tile.now > * { position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); animation: hop 1.5s ease-in-out infinite; }
 
-  .gfoot { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    padding: 12px 16px; border-top: 3px dashed var(--ca-pale); background: #FBFAFF; }
-  .gfoot .sel { font-size: 12px; color: var(--sub); }
+  /* 아래 칸은 레퍼런스처럼 두 줄이다. 왼쪽에 키 안내와 선택 표시, 오른쪽에 확인. */
+  .gfoot { flex: none; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px;
+    padding: 12px 17px 13px; border-top: 3px dashed var(--ca-pale); }
+  .gfoot .hints { display: flex; flex-direction: column; gap: 6px; }
+  .gfoot .keys { font-size: 11px; color: #9C8330; }
+  .gfoot .keys b { color: #6F5A0C; }
+  .gfoot .sel { font-size: 11px; color: var(--sub); }
   .gfoot .sel b { color: var(--a-strong); }
   .gfoot .sel b.b { color: var(--b-strong); }
   .gfoot .ok { flex: none; padding: 13px 24px; font-size: 15px; letter-spacing: 0.06em; color: #fff;
     background: var(--ca); border-color: var(--ca-deep); box-shadow: 0 4px 0 var(--ca-deep); }
   .gfoot .ok:hover:not([disabled]) { background: #3E6AFF; }
-  .gkeys { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    padding: 9px 16px 11px; background: #F4F2FB; }
-  .gkeys .keys { font-size: 10px; color: #9A94AB; text-align: right; }
-  .gkeys .keys b { color: var(--g-edge); }
+
+  .undo { width: 100%; margin-top: 11px; display: flex; }
   @media (max-width: 560px) {
-    .gkeys .keys { display: none; }
+    .gfoot .keys { display: none; }
     .map { height: 50px; gap: 8px; }
     .map .tile { width: 22px; }
   }
@@ -263,7 +263,11 @@
   @keyframes splash { 0% { transform: scaleY(1); } 50% { transform: scaleY(1.24); } 100% { transform: scaleY(1); } }
 
   .mid { flex: 1; width: 100%; display: flex; flex-direction: column; justify-content: center; gap: clamp(24px, 4.4vh, 44px); padding: clamp(20px, 4vh, 36px) clamp(14px, 4vw, 34px) clamp(20px, 4vh, 34px); }
-  .ask { font-family: var(--display); font-weight: 900; color: var(--ink); font-size: clamp(1.6rem, 5.2vw, 2.7rem); line-height: 1.3; letter-spacing: -0.038em; text-align: center; max-width: 22ch; margin: 0 auto; text-wrap: balance; }
+  /* 문항도 픽셀 폰트 왼쪽 정렬이다. 가운데 정렬 + 프리텐다드 900 으로는
+     배치를 맞춰도 레퍼런스 화면처럼 안 보인다. */
+  .ask { font-family: var(--pixel); font-weight: 400; color: var(--ink); font-size: 22px;
+    line-height: 1.55; letter-spacing: 0; text-align: left; }
+  @media (min-width: 700px) { .ask { font-size: 33px; line-height: 1.44; } }
   .scale { width: 100%; display: flex; flex-direction: column; gap: clamp(16px, 2.6vh, 24px); }
 
   /* 너비는 JS(hug)가 실제 글줄 길이를 재서 맞춘다. max-width 만 두면
@@ -289,7 +293,7 @@
   /* 눈금은 없애고 구슬만 남긴다. 구슬은 CSS 원이 아니라 canvas 다.
      CSS 로 그리면 테두리가 매끈해서 픽셀로 안 보인다. */
   .beam { position: relative; width: 100%; padding: 4px 0; }
-  .beam .row { display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(4px, 6vw, 76px); }
+  .beam .row { display: flex; align-items: center; justify-content: center; gap: clamp(10px, 2.4vw, 24px); }
   .orb { display: grid; place-items: center; padding: 4px; background: none; border: 0; box-shadow: none; }
   .orb canvas { display: block; }
   .beam .tip { margin-top: 14px; text-align: center; color: var(--sub); }
@@ -376,7 +380,7 @@
   }
   @media (max-height: 700px) {
     .mid { gap: 20px; padding-top: 18px; padding-bottom: 18px; }
-    .ask { font-size: clamp(1.4rem, 5vw, 1.9rem); }
+    .ask { font-size: 22px; line-height: 1.5; }
   }
 </style>
 
@@ -416,7 +420,7 @@
     <div class="test">
       <div class="gwin">
         <header class="gbar">
-          <span class="gt px"><i class="gs" aria-hidden="true"></i>오시에테 퀘스트</span>
+          <span class="gt px">▶ 다음 상황에서 나는?</span>
           <span class="gq px">Q <b id="num"></b> / 30</span>
         </header>
         <span class="tube"><i id="fill"><u></u></i></span>
@@ -436,14 +440,14 @@
           </div>
         </div>
         <footer class="gfoot">
-          <span class="sel px" id="sel">선택: 없음</span>
+          <div class="hints">
+            <span class="keys px"><b>← →</b> 이동 &nbsp;&nbsp;<b>SPACE</b> 선택</span>
+            <span class="sel px" id="sel">선택: 없음</span>
+          </div>
           <button class="gbtn pxbtn ok" id="ok" disabled>▶ 확인</button>
         </footer>
-        <div class="gkeys">
-          <button class="back" id="back" hidden>◀ 앞으로</button>
-          <span class="keys px"><b>← →</b> 이동 &nbsp; <b>SPACE</b> 선택 &nbsp; <b>1~4</b> 바로 고르기</span>
-        </div>
       </div>
+      <div class="undo"><button class="back" id="back" hidden>◀ 앞으로</button></div>
     </div>
   </section>
 
@@ -979,7 +983,7 @@
   });
 
   /* 구슬. 원의 방정식으로 격자를 채워 계단이 남게 찍는다.
-     r 이 세기, 색이 어느 문장인지다. 고른 것만 속을 채우고 체크를 넣는다. */
+     속은 항상 차 있고, 고른 것에만 흰 체크가 들어간다. r 이 세기다. */
   const ORB = [
     { r: 8, col: '#2B5BFF', deep: '#0F2FC9' },
     { r: 6, col: '#7E9BFF', deep: '#3E6AFF' },
@@ -994,13 +998,11 @@
     const cv = document.createElement('canvas');
     cv.width = W * sc; cv.height = W * sc;
     const g = cv.getContext('2d');
-    const th = state === 1 ? 3 : 2;
-    g.fillStyle = state === 1 ? o.deep : o.col;
     for (let y = 0; y < W; y++) {
       for (let x = 0; x < W; x++) {
         const d = Math.sqrt((x - r) * (x - r) + (y - r) * (y - r));
         if (d > r + 0.5) continue;
-        if (state !== 2 && d <= r - th) continue;
+        g.fillStyle = state === 1 && d > r - 2 ? o.deep : o.col;
         g.fillRect(x * sc, y * sc, sc, sc);
       }
     }
@@ -1029,7 +1031,7 @@
     const el = $('sel');
     if (cur === null) { el.textContent = '선택: 없음'; $('ok').disabled = true; return; }
     const c = CELLS[cur];
-    el.innerHTML = '선택: <b class="' + c.side + '">' + (c.side === 'a' ? '위 문장' : '아래 문장')
+    el.innerHTML = '선택: <b class="' + c.side + '">' + (c.side === 'a' ? '위' : '아래')
       + ' · ' + c.label + '</b>';
     $('ok').disabled = false;
   }
