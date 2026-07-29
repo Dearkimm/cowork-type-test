@@ -96,7 +96,7 @@
   /* ── 픽셀 버튼 ────────────────────────────── */
   .gbtn {
     background: var(--card); color: var(--ink);
-    border: 3px solid var(--edge-deep); border-radius: 4px;
+    border: 3px solid var(--edge-deep); border-radius: 15px;
     box-shadow: 0 4px 0 var(--edge-deep);
     transition: transform 0.08s, box-shadow 0.08s, background-color 0.12s, color 0.12s, border-color 0.12s;
   }
@@ -110,24 +110,22 @@
 
   .corner { position: fixed; inset: 0 0 auto 0; z-index: 30; display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; pointer-events: none; }
   .corner > * { pointer-events: auto; }
-  .whoami { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.92); border-radius: 4px; border: 3px solid var(--edge-deep); padding: 5px 11px 5px 7px; opacity: 0; transition: opacity 0.3s; }
+  .whoami { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.92); border-radius: 14px; border: 3px solid var(--edge-deep); padding: 5px 11px 5px 7px; opacity: 0; transition: opacity 0.3s; }
   .whoami.show { opacity: 1; }
   .whoami b { font-family: var(--pixel); font-size: 11px; }
   .icobtn { width: 40px; height: 40px; display: grid; place-items: center; font-size: 1.05rem; font-weight: 800; color: var(--cb); }
   .icobtn:hover { background: var(--cb); color: #fff; border-color: var(--cb-deep); box-shadow: 0 4px 0 var(--cb-deep); }
 
   /* ── 랜딩 ─────────────────────────────────── */
-  .land { position: relative; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 76px clamp(14px, 5vw, 60px) 64px; }
+  .land { position: relative; overflow: hidden; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 76px clamp(14px, 5vw, 60px) 64px; }
   .land > *:not(.wing) { position: relative; z-index: 1; }
-  .wing { position: absolute; z-index: 0; top: 50%; opacity: 0.9; animation: flap 4.6s ease-in-out infinite; }
-  .wing.l { left: 50%; transform: translate(-100%, -175%); transform-origin: right center; }
-  .wing.r { left: 50%; transform: translate(0, -175%) scaleX(-1); transform-origin: left center; }
-  @keyframes flap { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.06); } }
+  /* 로고가 구름 위에 앉는다. Where is COLOR 의 구성. */
+  .logocloud { position: absolute; z-index: 0; left: 50%; top: 50%; transform: translate(-50%, -100%); opacity: 0.96; }
 
   /* 포스터 프레임. 레퍼런스 세 장이 전부 이 테두리를 쓴다. */
-  .frame { position: absolute; inset: 12px; z-index: 0; border: 4px solid rgba(255,255,255,0.9); border-radius: 8px; pointer-events: none; }
-  .frame::before { content: ''; position: absolute; inset: 5px; border: 2px solid rgba(255,255,255,0.5); border-radius: 4px; }
-  .frame i { position: absolute; width: 10px; height: 10px; background: #fff; }
+  .frame { position: absolute; inset: 12px; z-index: 0; border: 4px solid rgba(255,255,255,0.9); border-radius: 22px; pointer-events: none; }
+  .frame::before { content: ''; position: absolute; inset: 5px; border: 2px solid rgba(255,255,255,0.5); border-radius: 17px; }
+  .frame i { position: absolute; width: 10px; height: 10px; background: #fff; border-radius: 50%; }
   .frame i:nth-child(1) { top: -7px; left: -7px; }
   .frame i:nth-child(2) { top: -7px; right: -7px; }
   .frame i:nth-child(3) { bottom: -7px; left: -7px; }
@@ -160,7 +158,7 @@
   .cta { margin-top: 34px; padding: 17px clamp(36px, 12vw, 54px); font-size: 22px; color: #fff; background: var(--cb); border-color: var(--cb-deep); box-shadow: 0 5px 0 var(--cb-deep); animation: rise 0.6s 0.72s cubic-bezier(0.16, 1.25, 0.4, 1) both; }
   .cta:hover { background: #FF66A9; }
   .cta:active { box-shadow: 0 0 0 var(--cb-deep); }
-  .land .note { margin-top: 18px; color: var(--sub); background: rgba(255,255,255,0.86); border-radius: 4px; padding: 9px 15px; animation: rise 0.6s 0.82s both; }
+  .land .note { margin-top: 18px; color: var(--sub); background: rgba(255,255,255,0.86); border-radius: 12px; padding: 9px 15px; animation: rise 0.6s 0.82s both; }
   @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 
   /* ── 캐릭터 선택 ──────────────────────────── */
@@ -173,7 +171,7 @@
   .chr.on { background: var(--ca-pale); border-color: var(--ca-deep); box-shadow: 0 4px 0 var(--ca-deep); }
   .nick { width: 100%; display: flex; flex-direction: column; gap: 8px; }
   .nick label { color: var(--sub); }
-  .nick input { width: 100%; padding: 14px 16px; font-size: 1.02rem; font-weight: 700; color: var(--ink); background: var(--card); border: 3px solid var(--edge-deep); border-radius: 4px; box-shadow: inset 0 2px 4px rgba(38,34,50,0.08); }
+  .nick input { width: 100%; padding: 14px 16px; font-size: 1.02rem; font-weight: 700; color: var(--ink); background: var(--card); border: 3px solid var(--edge-deep); border-radius: 15px; box-shadow: inset 0 2px 4px rgba(38,34,50,0.08); }
   .nick input::placeholder { color: #B9B4C7; font-weight: 500; }
   .nick input:focus { outline: none; border-color: var(--ca); }
   .pick .go2 { width: 100%; padding: 16px; font-size: 19px; color: #fff; background: var(--ca); border-color: var(--ca-deep); box-shadow: 0 5px 0 var(--ca-deep); }
@@ -187,12 +185,12 @@
 
   /* 픽셀 물약 게이지: 각진 테두리, 계단식 채움, 두 톤 하드컷 */
   .tube {
-    flex: 1; height: 22px; background: #fff; border: 3px solid var(--g-edge); border-radius: 3px;
+    flex: 1; height: 22px; background: #fff; border: 3px solid var(--g-edge); border-radius: 999px;
     overflow: hidden; box-shadow: inset 0 2px 0 rgba(38,34,50,0.08);
   }
   .tube > i {
     position: relative; display: block; height: 100%; width: 0;
-    background: linear-gradient(180deg, var(--g-light) 0 45%, var(--g-base) 45% 100%);
+    background: linear-gradient(180deg, var(--g-light) 0 45%, var(--g-base) 45% 100%); border-radius: 999px;
     transition: width 0.4s steps(6, end), background-color 0.5s;
   }
   .tube > i > u { position: absolute; right: 0; top: 0; bottom: 0; width: 3px; background: rgba(255,255,255,0.75); }
@@ -206,23 +204,22 @@
   .ask { font-family: var(--display); font-weight: 900; color: var(--ink); font-size: clamp(1.5rem, 4.8vw, 2.3rem); line-height: 1.3; letter-spacing: -0.038em; text-align: center; max-width: 22ch; margin: 0 auto; text-wrap: balance; }
   .scale { width: 100%; display: flex; flex-direction: column; gap: clamp(14px, 2.2vh, 20px); }
 
+  /* 꼬리를 세 번 고쳐도 어색해서 뺐다. 위아래 위치와 테두리 색으로 두 편을 나눈다. */
   .bub {
-    position: relative; width: fit-content; max-width: min(26ch, 88%);
-    padding: 13px 18px; border-radius: 20px;
+    width: fit-content; max-width: min(27ch, 90%);
+    padding: 14px 19px; border-radius: 22px;
     background: var(--card); color: var(--ink);
-    font-size: clamp(0.95rem, 2.4vw, 1.1rem); font-weight: 600; line-height: 1.5;
-    text-wrap: balance;
-    filter: drop-shadow(0 3px 5px rgba(38, 34, 50, 0.13));
+    font-size: clamp(0.95rem, 2.4vw, 1.1rem); font-weight: 600; line-height: 1.52;
+    text-align: left; text-wrap: balance;
+    border: 3px solid var(--ca-pale);
+    box-shadow: 0 3px 0 rgba(38, 34, 50, 0.06);
   }
-  .bub::after { content: ''; position: absolute; bottom: -6px; width: 13px; height: 11px; background-repeat: no-repeat; background-size: 13px 11px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='11' viewBox='0 0 13 11'%3E%3Cpath d='M13 0C13 6.1 7.2 11 0 11C6.1 10.2 10.2 6.1 10.2 0Z' fill='%23FFFFFF'/%3E%3C/svg%3E"); }
-  .bub.up { align-self: flex-start; border-bottom-left-radius: 7px; }
-  .bub.up::after { left: -6px; }
-  .bub.down { align-self: flex-end; text-align: right; border-bottom-right-radius: 7px; }
-  .bub.down::after { right: -6px; transform: scaleX(-1); }
+  .bub.up { align-self: flex-start; border-color: var(--ca-pale); }
+  .bub.down { align-self: flex-end; border-color: var(--cb-pale); }
 
   /* 네 칸: 픽셀 게임 버튼. 세기는 삼각형 개수로 보인다. */
   .cells { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(5px, 1.6vw, 8px); }
-  .cell { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 7px; padding: 11px 2px 11px; border-radius: 3px; }
+  .cell { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 7px; padding: 11px 2px 11px; border-radius: 15px; }
   .cell .arws { display: flex; flex-direction: column; gap: 2px; align-items: center; }
   .cell .tri { display: block; width: 13px; height: 7px; background: currentColor; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
   .cell.dn .tri { clip-path: polygon(0 0, 100% 0, 50% 100%); }
@@ -245,22 +242,22 @@
 
   /* ── 결과 ─────────────────────────────────── */
   .res { width: 100%; max-width: 640px; margin: 0 auto; padding: 72px clamp(14px, 5vw, 28px) 72px; display: flex; flex-direction: column; gap: 18px; }
-  .res .me { align-self: center; display: flex; align-items: center; gap: 9px; background: rgba(255,255,255,0.92); border: 3px solid var(--edge-deep); border-radius: 4px; padding: 7px 14px 7px 9px; }
+  .res .me { align-self: center; display: flex; align-items: center; gap: 9px; background: rgba(255,255,255,0.92); border: 3px solid var(--edge-deep); border-radius: 14px; padding: 7px 14px 7px 9px; }
   .res .me b { font-family: var(--pixel); font-size: 11px; }
   .res .me span { color: var(--sub); }
   .res h1 { font-family: var(--display); font-weight: 900; font-size: clamp(1.8rem, 7.4vw, 3rem); line-height: 1.22; letter-spacing: -0.045em; text-align: center; text-wrap: balance; margin-top: 4px; }
   .res h1 em { font-style: normal; color: var(--ca); }
   .res .lead { text-align: center; color: var(--sub); font-size: 0.94rem; margin-bottom: 4px; }
 
-  .panel { background: var(--card); border: 3px solid var(--edge-deep); border-radius: 4px; box-shadow: 0 4px 0 var(--edge-deep); padding: 20px 18px; display: flex; flex-direction: column; gap: 16px; }
+  .panel { background: var(--card); border: 3px solid var(--edge-deep); border-radius: 20px; box-shadow: 0 4px 0 var(--edge-deep); padding: 20px 18px; display: flex; flex-direction: column; gap: 16px; }
   .panel > h2 { font-family: var(--pixel); font-size: 13px; display: flex; align-items: center; gap: 7px; }
-  .panel > h2::before { content: ''; width: 8px; height: 8px; background: var(--cb); flex: none; }
+  .panel > h2::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--cb); flex: none; }
 
   .bars { display: flex; flex-direction: column; gap: 18px; }
   .bar .top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 7px; }
   .bar .nm { font-size: 0.87rem; font-weight: 700; }
   .bar .val { color: var(--sub); font-variant-numeric: tabular-nums; flex: none; }
-  .bar .tr { position: relative; height: 14px; background: #F2F0F8; border-radius: 3px; }
+  .bar .tr { position: relative; height: 14px; background: #F2F0F8; border-radius: 999px; }
   .bar .tr::before { content: ''; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 2px; margin-left: -1px; background: #C9C3DA; }
   .bar .tr i { position: absolute; top: 0; bottom: 0; min-width: 4px; }
   .bar .tr i.r { left: 50%; border-radius: 0 3px 3px 0; background: var(--ca); }
@@ -272,7 +269,7 @@
   .lines { display: flex; flex-direction: column; gap: 15px; }
   .lines p { font-size: 0.98rem; line-height: 1.78; }
 
-  .combo { background: #FFF7FB; border: 3px solid var(--cb); border-radius: 4px; box-shadow: 0 4px 0 var(--cb); padding: 20px 18px; display: flex; flex-direction: column; gap: 14px; }
+  .combo { background: #FFF7FB; border: 3px solid var(--cb); border-radius: 20px; box-shadow: 0 4px 0 var(--cb); padding: 20px 18px; display: flex; flex-direction: column; gap: 14px; }
   .combo h2 { font-family: var(--pixel); font-size: 13px; color: var(--b-strong); }
   .combo p { font-size: 0.96rem; line-height: 1.76; }
 
@@ -291,7 +288,7 @@
   .sheet { position: fixed; inset: 0; z-index: 50; display: none; }
   .sheet.live { display: block; }
   .sheet .veil { position: absolute; inset: 0; background: rgba(38, 34, 50, 0.42); }
-  .sheet .pane { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(430px, calc(100% - 28px)); max-height: min(80vh, 680px); overflow-y: auto; background: var(--card); border: 3px solid var(--edge-deep); border-radius: 4px; box-shadow: 0 5px 0 var(--edge-deep); padding: 20px 20px 22px; display: flex; flex-direction: column; gap: 14px; animation: zoom 0.2s steps(4, end) both; }
+  .sheet .pane { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(430px, calc(100% - 28px)); max-height: min(80vh, 680px); overflow-y: auto; background: var(--card); border: 3px solid var(--edge-deep); border-radius: 22px; box-shadow: 0 5px 0 var(--edge-deep); padding: 20px 20px 22px; display: flex; flex-direction: column; gap: 14px; animation: zoom 0.2s steps(4, end) both; }
   @keyframes zoom { from { opacity: 0; transform: translate(-50%, -50%) scale(0.92); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
   .sheet .head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
   .sheet h2 { font-family: var(--pixel); font-size: 16px; color: var(--ca); }
@@ -311,7 +308,6 @@
     .panel, .combo { padding: 17px 15px; }
     .acts button { flex: 1 1 100%; }
     .st5, .st6, .yl2, .cl4 { display: none; }
-    .wing { display: none; }
   }
   @media (max-width: 380px) {
     .pop3d { -webkit-text-stroke-width: 4px; }
@@ -345,7 +341,7 @@
 
   <section class="view" id="v-pick">
     <div class="pick">
-      <h1>누구로 할까요?</h1>
+      <h1>캐릭터를 골라주세요</h1>
       <p class="hint px">팀에서 나를 구분하는 표시가 돼요.</p>
       <div class="chars" id="chars"></div>
       <div class="nick">
@@ -564,31 +560,6 @@
       '....SSSS..SSSS..........'
     ]
   };
-  // 무지개 대신 날개. 한 장만 그리고 반대쪽은 좌우 반전해서 쓴다.
-  const WING = {
-    pal: { K: '#C9D8EE', W: '#FFFFFF', L: '#E6EFFB' },
-    grid: [
-      '.............K',
-      '...........KWK',
-      '.........KWWWK',
-      '.......KWWWWWK',
-      '.....KWWWWWWWK',
-      '...KWWWWWWWWWK',
-      '..KWWWWWWWWWWK',
-      '.KWWWWWWWWWWWK',
-      'KWWWWWWWWWWWWK',
-      'KWWWWWWWWWWWWK',
-      'KWLWWLWWLWWWWK',
-      '.KWWLWWLWWLWWK',
-      '.KWWWLWWLWWLWK',
-      '..KWWWWWWWWWWK',
-      '...KKWWWWWWWWK',
-      '.....KKWWWWWWK',
-      '.......KKWWWWK',
-      '.........KKKKK'
-    ]
-  };
-
   // 풍선과 하트. 색만 바꿔 여러 개를 만든다.
   const BALLOON_GRID = [
     '...KKK...', '.KKBHBKK.', 'KBBBHBBBK', 'KBBBBBBBK', 'KBBBBBBBK',
@@ -601,9 +572,28 @@
     grid: ['.KK.KK.', 'KPHKPPK', 'KPPPPPK', 'KPPPPPK', '.KPPPK.', '..KPK..', '...K...']
   };
 
+  /* prototype/sprites/{key}.png 가 있으면 그걸 쓰고, 없으면 위 격자를 그린다.
+     그림 파일을 넣기만 하면 커서와 세 화면에 한꺼번에 반영된다. */
+  const SPRITE_DIR = 'sprites/';
+  function charEl(i, scale) {
+    const art = CHARS[i];
+    const img = document.createElement('img');
+    img.alt = '';
+    img.width = art.grid[0].length * scale;
+    img.height = art.grid.length * scale;
+    img.style.imageRendering = 'pixelated';
+    img.addEventListener('error', () => img.replaceWith(sprite(art, scale)), { once: true });
+    img.src = SPRITE_DIR + art.key + '.png';
+    return img;
+  }
+
   function setCursor(i) {
-    const url = sprite(CHARS[i], 2).toDataURL('image/png');
-    document.documentElement.style.setProperty('--cur', `url(${url}) 8 2, auto`);
+    const art = CHARS[i];
+    const use = (u) => document.documentElement.style.setProperty('--cur', `url(${u}) 8 2, auto`);
+    const probe = new Image();
+    probe.addEventListener('load', () => use(SPRITE_DIR + art.key + '.png'), { once: true });
+    probe.addEventListener('error', () => use(sprite(art, 2).toDataURL('image/png')), { once: true });
+    probe.src = SPRITE_DIR + art.key + '.png';
   }
 
   (function decorate() {
@@ -615,11 +605,9 @@
       cv.className = cls;
       box.appendChild(cv);
     });
-    ['l', 'r'].forEach((side) => {
-      const w = sprite(WING, 5);
-      w.className = 'wing ' + side;
-      $('land').prepend(w);
-    });
+    const lc = sprite(CLOUD, 15);
+    lc.className = 'logocloud';
+    $('land').prepend(lc);
     // 랜딩 스티커
     [['bl1', balloon('#FFB3CF', '#E86A9C'), 4], ['bl2', balloon('#FFE9A8', '#E5B94A'), 3],
      ['bl3', balloon('#B6E3FF', '#5FA8DE'), 3], ['hs1', HEART, 4],
@@ -629,7 +617,7 @@
       $('land').prepend(cv);
     });
     // 아래에 네 마리
-    CHARS.forEach((c) => $('crew').appendChild(sprite(c, 3)));
+    CHARS.forEach((c, i) => $('crew').appendChild(charEl(i, 3)));
   })();
 
   [...document.querySelectorAll('.tube > i > b')].forEach((slot, k) => {
@@ -853,10 +841,7 @@
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'gbtn chr';
-    btn.appendChild(sprite(c, 4));
-    const nm = document.createElement('span');
-    nm.textContent = c.name;
-    btn.appendChild(nm);
+    btn.appendChild(charEl(i, 4));
     btn.addEventListener('click', () => {
       me.c = i; setCursor(i);
       [...charsBox.children].forEach((el, k) => el.classList.toggle('on', k === i));
@@ -869,7 +854,7 @@
     const w = $('whoami');
     if (me.c === null) { w.innerHTML = ''; return; }
     w.innerHTML = '';
-    w.appendChild(sprite(CHARS[me.c], 2));
+    w.appendChild(charEl(me.c, 2));
     const b = document.createElement('b');
     b.textContent = me.nick || CHARS[me.c].name;
     w.appendChild(b);
@@ -948,7 +933,7 @@
     const meBox = $('r-me');
     meBox.innerHTML = '';
     if (me.c !== null) {
-      meBox.appendChild(sprite(CHARS[me.c], 2));
+      meBox.appendChild(charEl(me.c, 2));
       const b = document.createElement('b');
       b.textContent = me.nick || CHARS[me.c].name;
       const s = document.createElement('span');
