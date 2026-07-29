@@ -14,7 +14,7 @@
 | `docs/spec.md` | 축 정의, 채점, 궁합 규칙, 결과 문구 조립 방식 |
 | `docs/questions.md` | 문항 30개 원본. **문체를 고칠 때는 이 파일이 기준입니다** |
 
-Vercel에서 Root Directory를 `prototype`으로 잡아 정적 배포합니다. main에 푸시하면 자동으로 다시 뜹니다.
+`vercel.json` 에서 `prototype` 을 출력 폴더로 지정해 정적 배포합니다. 주소는 <https://oshiete-test.vercel.app> 입니다.
 
 ## 검사 로직
 

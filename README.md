@@ -30,8 +30,8 @@ MBTI나 DiSC처럼 "당신은 D형입니다"로 끝내지 않고 서술로 내�
 
 - [docs/spec.md](docs/spec.md) — 축 정의, 채점 규칙, 궁합 판정 규칙, 결과 문구 조립 방식
 - [docs/questions.md](docs/questions.md) — 문항 30개 원본. 문체를 고칠 때는 이 파일이 기준입니다
-- [docs/handoff.md](docs/handoff.md) — 다른 PC에서 이어서 작업할 때 먼저 읽는 문서
-- [prototype/](prototype/) — 화면 프로토타입. `index.html`과 게임 틀 버전 `game.html` 두 개를 비교 중입니다
+- [CLAUDE.md](CLAUDE.md) — 구조와 규칙. 새 세션에서 이어받을 때 먼저 읽습니다
+- [prototype/index.html](prototype/index.html) — 이 한 파일이 서비스 전부입니다. 빌드 도구가 없습니다
 
 ## 3. 스택
 
@@ -52,7 +52,9 @@ MBTI나 DiSC처럼 "당신은 D형입니다"로 끝내지 않고 서술로 내�
 
 ## 5. 현재 상태
 
-문항 30개, 채점 규칙, 개인 결과 화면까지 돌아갑니다. 검사 화면은 게임 창 틀 버전([prototype/game.html](prototype/game.html))으로 가는 중이고, 기존 버전을 비교용으로 남겨 두었습니다.
+문항 30개, 채점 규칙, 개인 결과 화면까지 돌아갑니다. 검사 화면은 게임 창 틀로 정했고, 비교용으로 두었던 이전 버전은 지웠습니다.
+
+배포 주소는 <https://oshiete-test.vercel.app> 입니다.
 
 남은 것은 이렇습니다.
 
