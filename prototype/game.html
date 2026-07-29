@@ -652,36 +652,43 @@
     return cv;
   }
 
-  /* 날개는 격자로 못 찍는다. 앞날개뼈 곡선을 먼저 긋고,
-     그 위 여섯 점에서 깃털을 아래바깥으로 내린다. 뿌리는 굵어 붙고 끝은 갈라진다.
-     끝 절반은 옅은 파랑으로 찍어 깃털 갈라짐이 보이게 한다. */
-  function wingArt(right) {
-    const W = 23, H = 13, SX = 22, SY = 7, A = 16, B = 6.5, N = 6, TH = 1.7;
-    const g = Array.from({ length: H }, () => new Array(W).fill(' '));
-    const put = (cx, cy, r, ch) => {
-      for (let y = Math.floor(cy - r) - 1; y <= Math.ceil(cy + r) + 1; y++) {
-        for (let x = Math.floor(cx - r) - 1; x <= Math.ceil(cx + r) + 1; x++) {
-          if (x < 0 || x >= W || y < 0 || y >= H) continue;
-          if ((x - cx) * (x - cx) + (y - cy) * (y - cy) <= r * r) g[y][x] = ch;
-        }
-      }
-    };
-    for (let t = 0; t <= 1.0001; t += 0.02) {
-      put(SX - A * t, SY - B * Math.sin((t * Math.PI) / 2), TH + 0.3, 'W');
-    }
-    for (let i = 0; i < N; i++) {
-      const s = i / (N - 1);
-      const px = SX - A * s, py = SY - B * Math.sin((s * Math.PI) / 2);
-      const a = ((265 - 27 * s) * Math.PI) / 180;
-      const dx = Math.cos(a), dy = -Math.sin(a), L = 4.5 + 6.5 * s;
-      for (let t = 0; t <= L; t += 0.3) {
-        put(px + dx * t, py + dy * t, TH * (1 - 0.42 * (t / L)), t > 0.55 * L ? 'L' : 'W');
-      }
-    }
-    let grid = g.map((row) => row.join(''));
-    if (right) grid = grid.map((row) => [...row].reverse().join(''));
-    return { pal: { W: '#FFFFFF', L: '#DCE8FA' }, grid };
-  }
+  /* 통통한 만화 날개. 큰 깃 하나에 작은 깃 둘, 밑동에 말림.
+     깃털을 하나하나 계산해서 그렸을 때보다 이 쪽이 레퍼런스에 가깝다.
+     겹치는 깃마다 테두리가 남게 뒤에서 앞으로 덧그린 결과다. */
+  const WING_GRID = [
+    '.......................KKK..',
+    '.....................KKPPPK.',
+    '....................KPPPWPPK',
+    '..................KKPPWWWWPK',
+    '.................KPPPWWWWPPK',
+    '................KPPWWWWWPPK.',
+    '...............KPPWWWWWPPK..',
+    '.............KKPPWWWWWPPK...',
+    '............KPPPWWWWWPPK....',
+    '...........KPPWWWWWWPPK.....',
+    '..........KPPWWWWWWPPK......',
+    '.........KPPWWWWWWPPK.......',
+    '........KPPWWWWWWPPK........',
+    '.......KPPWWWWWWPPK.KKK.....',
+    '......KPPWWWWWWPPKKKPPPK....',
+    '.....KPPWWWWWWPPKPPKPWPPK...',
+    '.....KPWWWWWWPPKWWPKWWWPK...',
+    '.....KKKKWWWPPKWWWPPKWPPK...',
+    '....KPPPPKWPPKPWWWPPKPPK....',
+    '....KPKKPKPPKKPWWWPKKKK.....',
+    '....KPKKPKKK.KPPPPPK........',
+    '....KPPPPK....KKKKK.........',
+    '.....KKKK...................'
+  ];
+  const WING_PAL = {
+    pink: { K: '#FF9DC8', P: '#FFD9EC', W: '#FFFFFF' },
+    blue: { K: '#8FB6F0', P: '#D8E6FB', W: '#FFFFFF' }
+  };
+  /* 기본 격자는 오른쪽 위를 본다. 화면 왼쪽에 붙일 날개는 뒤집어 바깥을 보게 한다. */
+  const wingArt = (tone, flip) => ({
+    pal: WING_PAL[tone],
+    grid: flip ? WING_GRID.map((row) => [...row].reverse().join('')) : WING_GRID
+  });
 
   const CLOUD = {
     pal: { W: '#FFFFFF', L: '#EAF3FF', S: '#CFE3FA' },
@@ -755,11 +762,11 @@
     // 랜딩 스티커
     [['bl2', balloon('#FFE9A8', '#E5B94A'), 3], ['hs1', HEART, 3], ['hs2', HEART, 3],
      ['ss1', STAR_Y, 2], ['ss4', STAR, 2], ['ss7', STAR_Y, 3],
-     ['wg1', wingArt(false), 3], ['bl3', balloon('#B6E3FF', '#5FA8DE'), 4],
+     ['wg1', wingArt('pink', true), 3], ['bl3', balloon('#B6E3FF', '#5FA8DE'), 4],
      ['ss2', STAR_Y, 3], ['ss5', STAR_Y, 2],
-     ['bl4', balloon('#C8F0D8', '#6FBF8E'), 4], ['wg2', wingArt(true), 3],
+     ['bl4', balloon('#C8F0D8', '#6FBF8E'), 4], ['wg2', wingArt('blue', false), 2],
      ['hs3', HEART, 4], ['ss3', STAR, 3], ['ss6', STAR, 2], ['ss8', STAR, 2],
-     ['wg3', wingArt(false), 2], ['hs4', HEART, 3]].forEach(([cls, art, sc]) => {
+     ['wg3', wingArt('pink', true), 2], ['hs4', HEART, 3]].forEach(([cls, art, sc]) => {
       const cv = sprite(art, sc);
       cv.className = 'stk ' + cls;
       $('land').prepend(cv);
