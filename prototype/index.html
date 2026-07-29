@@ -199,39 +199,87 @@
   .pick .go2:hover:not([disabled]) { background: #3E6AFF; }
 
   /* ── 검사 ─────────────────────────────────── */
-  .test { flex: 1; display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 800px; margin: 0 auto; padding: 62px clamp(14px, 4vw, 32px) clamp(14px, 3vh, 26px); }
-  .prog { width: 100%; display: flex; align-items: center; gap: 10px; }
-  .prog .num { font-family: var(--pixel); font-size: 22px; color: var(--g-edge); line-height: 1; }
-  .prog .of { color: var(--sub); flex: none; }
+  .test { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 960px; margin: 0 auto; padding: 60px clamp(8px, 3vw, 26px) clamp(14px, 3vh, 26px); }
 
-  /* 픽셀 물약 게이지: 각진 테두리, 계단식 채움, 두 톤 하드컷 */
+  /* 게임 창. 배경은 라이트 파스텔 그대로 두고 그 위에 흰 창을 얹는다.
+     min-height 로 창을 세로로 밀어 놔야 검사 화면이 쪼그라들지 않는다. */
+  .gwin {
+    width: 100%; min-height: min(720px, calc(100dvh - 120px));
+    display: flex; flex-direction: column;
+    background: var(--card); border: 4px solid var(--edge-deep); border-radius: 20px;
+    box-shadow: 0 7px 0 var(--edge-deep); overflow: hidden;
+  }
+  .gbar {
+    flex: none; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 12px 16px; background: var(--g-base); color: #fff;
+    border-bottom: 4px solid var(--edge-deep); transition: background-color 0.5s;
+  }
+  .gbar .gt { font-size: 14px; letter-spacing: 0.04em; }
+  .gbar .gq { font-size: 13px; letter-spacing: 0.06em; color: rgba(255, 255, 255, 0.72); }
+  .gbar .gq b { font-size: 19px; color: #fff; }
+
+  /* 다섯 문항이 한 장. 캐릭터가 발판을 하나씩 밟고 지나간다. */
+  .gtrail { flex: none; display: flex; align-items: flex-end; gap: 14px; padding: 12px 18px 10px; border-bottom: 3px dashed var(--ca-pale); }
+  .gtrail .chap { font-size: 13px; color: var(--g-edge); padding-bottom: 2px; flex: none; }
+  .map { display: flex; align-items: flex-end; gap: 11px; height: 70px; }
+  .map .tile { position: relative; width: 30px; height: 10px; border-radius: 3px; background: #E7E3F0; }
+  .map .tile.done { background: var(--g-light); }
+  .map .tile.now { background: var(--g-base); }
+  .map .tile.now > * { position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); animation: hop 1.5s ease-in-out infinite; }
+
+  /* 확인 버튼은 없다. 구슬을 누르면 바로 넘어가니 버튼이 할 일이 없었다.
+     왼쪽에 키 안내, 오른쪽에 지금 고른 것. */
+  .gfoot { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 13px 17px; border-top: 3px dashed var(--ca-pale); }
+  .gfoot .keys { font-size: 11px; color: var(--sub); }
+  .gfoot .keys b { color: var(--g-edge); }
+  .gfoot .fr { display: flex; align-items: center; gap: 13px; }
+  .gfoot .sel { font-size: 11px; color: var(--sub); }
+  .gfoot .sel b { color: var(--a-strong); }
+  .gfoot .sel b.b { color: var(--b-strong); }
+  /* 이미 답한 문항으로 되돌아온 경우에만 나온다. 같은 답을 두고 넘어가는 길이다. */
+  .gfoot .nxt { flex: none; padding: 9px 16px; font-size: 13px; letter-spacing: 0.05em; color: #fff;
+    background: var(--ca); border-color: var(--ca-deep); box-shadow: 0 4px 0 var(--ca-deep); }
+  .gfoot .nxt:hover { background: #3E6AFF; }
+  .gfoot .nxt[hidden] { display: none; }
+
+  .undo { width: 100%; margin-top: 11px; display: flex; }
+  @media (max-width: 560px) {
+    .gfoot .keys { display: none; }
+    .map { height: 50px; gap: 8px; }
+    .map .tile { width: 22px; }
+  }
+
+  /* 게임의 경험치 바 자리. 창 안쪽 벽에 붙인다. */
   .tube {
-    flex: 1; height: 22px; background: #fff; border: 3px solid var(--g-edge); border-radius: 999px;
-    overflow: hidden; box-shadow: inset 0 2px 0 rgba(38,34,50,0.08);
+    flex: none; width: 100%; height: 15px; background: #F2F0F8;
+    border: 0; border-bottom: 3px solid var(--edge-deep); border-radius: 0;
+    overflow: hidden; box-shadow: inset 0 2px 0 rgba(38,34,50,0.06);
   }
   .tube > i {
     position: relative; display: block; height: 100%; width: 0;
-    background: linear-gradient(180deg, var(--g-light) 0 45%, var(--g-base) 45% 100%); border-radius: 999px;
+    background: linear-gradient(180deg, var(--g-light) 0 45%, var(--g-base) 45% 100%);
     transition: width 0.4s steps(6, end), background-color 0.5s;
   }
   .tube > i > u { position: absolute; right: 0; top: 0; bottom: 0; width: 3px; background: rgba(255,255,255,0.75); }
-  .tube > i > b { position: absolute; }
-  .tube > i > b:nth-of-type(1) { left: 26%; top: 3px; animation: tw 2.4s ease-in-out infinite; }
-  .tube > i > b:nth-of-type(2) { left: 62%; bottom: 3px; animation: tw 3.1s 1s ease-in-out infinite; }
   .tube > i.splash { animation: splash 0.42s steps(4, end); }
   @keyframes splash { 0% { transform: scaleY(1); } 50% { transform: scaleY(1.24); } 100% { transform: scaleY(1); } }
 
-  .mid { flex: 1; width: 100%; display: flex; flex-direction: column; justify-content: center; gap: clamp(26px, 5vh, 48px); padding-bottom: clamp(36px, 11vh, 120px); }
-  .ask { font-family: var(--display); font-weight: 900; color: var(--ink); font-size: clamp(1.5rem, 4.8vw, 2.3rem); line-height: 1.3; letter-spacing: -0.038em; text-align: center; max-width: 22ch; margin: 0 auto; text-wrap: balance; }
-  .scale { width: 100%; display: flex; flex-direction: column; gap: clamp(14px, 2.2vh, 20px); }
+  .mid { flex: 1; width: 100%; display: flex; flex-direction: column; justify-content: center; gap: clamp(24px, 4.4vh, 44px); padding: clamp(20px, 4vh, 36px) clamp(14px, 4vw, 34px) clamp(20px, 4vh, 34px); }
+  /* 문항도 픽셀 폰트 왼쪽 정렬이다. 가운데 정렬 + 프리텐다드 900 으로는
+     배치를 맞춰도 레퍼런스 화면처럼 안 보인다. */
+  .ask { font-family: var(--pixel); font-weight: 400; color: var(--ink); font-size: 22px;
+    line-height: 1.55; letter-spacing: 0; text-align: left; }
+  @media (min-width: 700px) { .ask { font-size: 33px; line-height: 1.44; } }
+  .scale { width: 100%; display: flex; flex-direction: column; gap: clamp(16px, 2.6vh, 24px); }
 
   /* 너비는 JS(hug)가 실제 글줄 길이를 재서 맞춘다. max-width 만 두면
      줄바꿈된 뒤에도 상자가 최대 너비로 남아 오른쪽이 비어 보인다. */
   .bub {
-    position: relative; width: fit-content; max-width: min(27ch, 88%);
-    padding: 14px 19px; border-radius: 21px;
-    background: var(--card); color: var(--ink);
-    font-size: clamp(0.95rem, 2.4vw, 1.1rem); font-weight: 600; line-height: 1.5;
+    position: relative; width: fit-content; max-width: min(30ch, 88%);
+    padding: 17px 22px; border-radius: 24px;
+    background: #FBFAFF; color: var(--ink);
+    font-size: clamp(1rem, 2.7vw, 1.22rem); font-weight: 600; line-height: 1.5;
     text-align: left; text-wrap: balance;
     filter: drop-shadow(0 3px 5px rgba(38, 34, 50, 0.13));
   }
@@ -245,46 +293,23 @@
   .bub.down { align-self: flex-end; border-bottom-right-radius: 7px; }
   .bub.down::after { right: -6px; transform: scaleX(-1); }
 
-  /* 저울대 위 구슬 넷. 네모 버튼 네 개를 나란히 두면 어떻게 꾸며도
-     설문 위젯으로 읽혀서, 하나로 이어진 눈금 위에 구슬을 얹는 형태로 바꿨다.
-     크기가 세기, 색이 어느 편인지를 나타내고 글자는 쓰지 않는다. */
-  .beam { position: relative; width: 100%; padding: 6px 0 2px; }
-  .beam .rail {
-    position: absolute; left: 9%; right: 9%; top: 50%; height: 10px; margin-top: -5px;
-    border-radius: 999px; background: linear-gradient(90deg, var(--ca) 0%, #E8EBFF 42%, #FFE7F1 58%, var(--cb) 100%);
-    opacity: 0.45;
-  }
-  .beam .rail::before, .beam .rail::after {
-    content: ''; position: absolute; top: -4px; width: 4px; height: 18px; border-radius: 2px; background: currentColor;
-  }
-  .beam .rail::before { left: -8px; color: var(--ca); }
-  .beam .rail::after { right: -8px; color: var(--cb); }
-  .beam .row { position: relative; display: flex; align-items: center; justify-content: space-between; padding: 0 3%; }
-  .orb {
-    position: relative; display: grid; place-items: center;
-    background: none; border: 0; box-shadow: none; border-radius: 50%;
-  }
-  .orb .ball {
-    display: block; border-radius: 50%; border: 4px solid #fff;
-    box-shadow: 0 4px 0 rgba(38, 34, 50, 0.13);
-    transition: transform 0.12s cubic-bezier(0.2, 1.4, 0.4, 1), box-shadow 0.12s;
-  }
-  .orb[data-k="0"] .ball { width: clamp(38px, 11vw, 52px); height: clamp(38px, 11vw, 52px); background: var(--ca); }
-  .orb[data-k="1"] .ball { width: clamp(26px, 7.4vw, 34px); height: clamp(26px, 7.4vw, 34px); background: #9DB2FF; }
-  .orb[data-k="2"] .ball { width: clamp(26px, 7.4vw, 34px); height: clamp(26px, 7.4vw, 34px); background: #FFA6C8; }
-  .orb[data-k="3"] .ball { width: clamp(38px, 11vw, 52px); height: clamp(38px, 11vw, 52px); background: var(--cb); }
-  .orb:hover .ball { transform: translateY(-4px) scale(1.06); box-shadow: 0 8px 0 rgba(38, 34, 50, 0.13); }
-  .orb .spark { position: absolute; opacity: 0; transition: opacity 0.12s; }
-  .orb.on .ball { transform: scale(1.14); box-shadow: 0 0 0 5px rgba(255,255,255,0.75), 0 4px 0 rgba(38,34,50,0.16); }
-  .orb.on .spark { opacity: 1; }
-  .beam .tip { margin-top: 12px; text-align: center; color: var(--sub); }
+  /* 눈금은 없애고 구슬만 남긴다. 구슬은 CSS 원이 아니라 canvas 다.
+     CSS 로 그리면 테두리가 매끈해서 픽셀로 안 보인다. */
+  .beam { position: relative; width: 100%; padding: 4px 0; }
+  /* 양끝 화살표가 어느 쪽이 어느 문장인지 대신 말해준다.
+     키보드 좌우 이동과도 같은 그림이다. */
+  .beam .line { display: flex; align-items: center; justify-content: center; gap: clamp(12px, 3vw, 32px); }
+  .beam .row { display: flex; align-items: center; justify-content: center; gap: clamp(10px, 2.4vw, 24px); }
+  .arw { display: flex; flex: none; }
+  .orb { display: grid; place-items: center; padding: 4px; background: none; border: 0; box-shadow: none; }
+  .orb canvas { display: block; }
+  .beam .tip { margin-top: 14px; text-align: center; color: var(--sub); }
   .beam .tip[hidden] { display: none; }
 
   .ask, .scale { animation: slide 0.3s steps(5, end) both; }
   @keyframes slide { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 
-  .foot { width: 100%; margin-top: auto; display: flex; justify-content: flex-start; }
-  .back { font-family: var(--pixel); font-size: 11px; color: var(--sub); }
+  .back { font-family: var(--pixel); font-size: 11px; color: var(--sub); flex: none; }
   .back:hover { color: var(--ca); }
   .back[hidden] { visibility: hidden; }
 
@@ -350,9 +375,7 @@
   }
   @media (max-width: 560px) {
     .test { padding-top: 56px; }
-    .bub { max-width: 90%; padding: 12px 15px; }
-    .cell { padding: 10px 1px; }
-    .cell .lab { font-size: 11px; }
+    .bub { max-width: 90%; padding: 14px 17px; }
     .panel, .combo { padding: 17px 15px; }
     .acts button { flex: 1 1 100%; }
     .st5, .st6, .yl2, .cl4 { display: none; }
@@ -363,8 +386,8 @@
     .chr { padding: 9px 0 7px; }
   }
   @media (max-height: 700px) {
-    .mid { gap: 20px; padding-bottom: 30px; }
-    .ask { font-size: clamp(1.4rem, 5vw, 1.9rem); }
+    .mid { gap: 20px; padding-top: 18px; padding-bottom: 18px; }
+    .ask { font-size: 22px; line-height: 1.5; }
   }
 </style>
 
@@ -402,25 +425,40 @@
 
   <section class="view" id="v-test">
     <div class="test">
-      <div class="prog">
-        <span class="num" id="num"></span><span class="of px">/ 30</span>
-        <span class="tube"><i id="fill"><u></u><b></b><b></b></i></span>
-      </div>
-      <div class="mid">
-        <h1 class="ask" id="ask"></h1>
-        <div class="scale">
-          <p class="bub up" id="s-a"></p>
-          <div class="beam">
-            <span class="rail" aria-hidden="true"></span>
-            <div class="row" id="orbs"></div>
-            <p class="tip px" id="tip">왼쪽은 위 문장, 오른쪽은 아래 문장이에요. 클수록 확실히.</p>
-          </div>
-          <p class="bub down" id="s-b"></p>
+      <div class="gwin">
+        <header class="gbar">
+          <span class="gt px">▶ 다음 상황에서 나는?</span>
+          <span class="gq px">Q <b id="num"></b> / 30</span>
+        </header>
+        <span class="tube"><i id="fill"><u></u></i></span>
+        <div class="gtrail">
+          <span class="chap px" id="chap"></span>
+          <span class="map" id="map" aria-hidden="true"></span>
         </div>
+        <div class="mid">
+          <h1 class="ask" id="ask"></h1>
+          <div class="scale">
+            <p class="bub up" id="s-a"></p>
+            <div class="beam">
+              <div class="line">
+                <span class="arw" id="arw-l" aria-hidden="true"></span>
+                <div class="row" id="orbs"></div>
+                <span class="arw" id="arw-r" aria-hidden="true"></span>
+              </div>
+              <p class="tip px" id="tip">왼쪽은 위 문장, 오른쪽은 아래 문장이에요. 클수록 확실히.</p>
+            </div>
+            <p class="bub down" id="s-b"></p>
+          </div>
+        </div>
+        <footer class="gfoot">
+          <span class="keys px"><b>← →</b> 이동 &nbsp;&nbsp;<b>SPACE</b> 선택</span>
+          <div class="fr">
+            <span class="sel px" id="sel">선택: 없음</span>
+            <button class="gbtn pxbtn nxt" id="nxt" hidden>▶ 다음</button>
+          </div>
+        </footer>
       </div>
-      <div class="foot">
-        <button class="back" id="back" hidden>◀ 앞으로</button>
-      </div>
+      <div class="undo"><button class="back" id="back" hidden>◀ 앞으로</button></div>
     </div>
   </section>
 
@@ -737,10 +775,6 @@
     CHARS.forEach((c, i) => $('crew').appendChild(charEl(i, 3)));
   })();
 
-  [...document.querySelectorAll('.tube > i > b')].forEach((slot, k) => {
-    slot.appendChild(sprite(STAR, k === 0 ? 2 : 1));
-  });
-
   function fan(el, text, spread, lift, delay0) {
     el.innerHTML = '';
     const chars = [...text];
@@ -997,10 +1031,89 @@
     if (views.test.classList.contains('live')) { hug($('s-a')); hug($('s-b')); }
   });
 
+  /* 구슬. 원의 방정식으로 격자를 채워 계단이 남게 찍는다.
+     속은 항상 차 있고, 고른 것에만 흰 체크가 들어간다. r 이 세기다. */
+  const ORB = [
+    { r: 8, col: '#2B5BFF', deep: '#0F2FC9' },
+    { r: 6, col: '#7E9BFF', deep: '#3E6AFF' },
+    { r: 6, col: '#FFA6C8', deep: '#FF5CA3' },
+    { r: 8, col: '#FF4D9A', deep: '#C7105E' }
+  ];
+  const CHK = ['......X', '.....XX', 'X...XX.', 'XX.XX..', '.XXXX..', '..XX...'];
+  const orbScale = () => (innerWidth < 480 ? 2 : innerWidth < 780 ? 3 : 4);
+
+  const ARROW = ['.....K', '....KK', '...KKK', '..KKKK', '.KKKKK',
+    'KKKKKK', '.KKKKK', '..KKKK', '...KKK', '....KK', '.....K'];
+  const flipGrid = (g) => g.map((row) => [...row].reverse().join(''));
+  const arrowArt = (col, right) => ({ pal: { K: col }, grid: right ? flipGrid(ARROW) : ARROW });
+
+  function pxOrb(k, state, sc) {
+    const o = ORB[k], r = o.r, W = r * 2 + 1;
+    const cv = document.createElement('canvas');
+    cv.width = W * sc; cv.height = W * sc;
+    const g = cv.getContext('2d');
+    for (let y = 0; y < W; y++) {
+      for (let x = 0; x < W; x++) {
+        const d = Math.sqrt((x - r) * (x - r) + (y - r) * (y - r));
+        if (d > r + 0.5) continue;
+        g.fillStyle = state === 1 && d > r - 2 ? o.deep : o.col;
+        g.fillRect(x * sc, y * sc, sc, sc);
+      }
+    }
+    if (state === 2) {
+      g.fillStyle = '#FFFFFF';
+      const ox = Math.round((W - CHK[0].length) / 2), oy = Math.round((W - CHK.length) / 2);
+      CHK.forEach((row, y) => [...row].forEach((c, x) => {
+        if (c === 'X') g.fillRect((ox + x) * sc, (oy + y) * sc, sc, sc);
+      }));
+    }
+    return cv;
+  }
+
+  /* 지금 커서가 놓인 구슬. 고른 것과는 다르다. */
+  let cur = null;
+
+  function drawOrbs() {
+    const sc = orbScale(), p = picks[at];
+    $('arw-l').replaceChildren(sprite(arrowArt(ORB[0].col, false), sc));
+    $('arw-r').replaceChildren(sprite(arrowArt(ORB[3].col, true), sc));
+    [...$('orbs').children].forEach((btn, k) => {
+      const c = CELLS[k];
+      const on = p && p.side === c.side && p.s === c.s;
+      btn.replaceChildren(pxOrb(k, on ? 2 : k === cur ? 1 : 0, sc));
+    });
+  }
+  function selLabel() {
+    const el = $('sel');
+    if (cur === null) { el.textContent = '선택: 없음'; return; }
+    const c = CELLS[cur];
+    el.innerHTML = '선택: <b class="' + c.side + '">' + (c.side === 'a' ? '위' : '아래')
+      + ' · ' + c.label + '</b>';
+  }
+  function focusOrb(k) {
+    cur = (k + CELLS.length) % CELLS.length;
+    drawOrbs(); selLabel();
+  }
+  addEventListener('resize', () => {
+    if (views.test.classList.contains('live')) drawOrbs();
+  });
+
   function paint() {
     const item = Q[at];
-    sky(Math.floor(at / 5));
+    const ch = Math.floor(at / 5);
+    sky(ch);
     $('num').textContent = String(at + 1).padStart(2, '0');
+    $('chap').textContent = (ch + 1) + '장';
+
+    const mp = $('map');
+    mp.innerHTML = '';
+    for (let i = 0; i < 5; i++) {
+      const t = document.createElement('span');
+      const here = i === at % 5;
+      t.className = 'tile' + (i < at % 5 ? ' done' : here ? ' now' : '');
+      if (here && me.c !== null) t.appendChild(charEl(me.c, innerWidth < 560 ? 2 : 3));
+      mp.appendChild(t);
+    }
 
     const f = $('fill');
     f.style.width = (((at + 1) / Q.length) * 100) + '%';
@@ -1019,31 +1132,38 @@
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'orb';
-      btn.dataset.k = k;
       btn.setAttribute('aria-label', (c.side === 'a' ? '위 문장' : '아래 문장') + ' · ' + c.label);
-      const ball = document.createElement('span');
-      ball.className = 'ball';
-      const sp = sprite(STAR, 2);
-      sp.className = 'spark';
-      btn.append(ball, sp);
-      const p = picks[at];
-      if (p && p.side === c.side && p.s === c.s) btn.classList.add('on');
-      btn.addEventListener('click', () => choose(c, btn));
+      btn.addEventListener('mouseenter', () => focusOrb(k));
+      btn.addEventListener('click', () => { focusOrb(k); commit(); });
       row.appendChild(btn);
     });
+
+    const done = picks[at];
+    const k0 = done ? CELLS.findIndex((c) => c.side === done.side && c.s === done.s) : -1;
+    cur = k0 >= 0 ? k0 : null;
+    drawOrbs(); selLabel();
+
     $('tip').hidden = at !== 0;
 
     $('back').hidden = at === 0;
+    const nx = $('nxt');
+    nx.hidden = !picks[at];
+    nx.textContent = at === Q.length - 1 ? '▶ 결과 보기' : '▶ 다음';
     [$('ask'), document.querySelector('.scale')].forEach((el) => {
       el.style.animation = 'none'; void el.offsetWidth; el.style.animation = '';
     });
   }
 
-  function choose(c, btn) {
+  function step() { if (at < Q.length - 1) { at++; paint(); } else finish(); }
+
+  /* 커서에 놓인 답을 확정하고 넘어간다.
+     정답 연출은 넣지 않는다. 잘한 답이 있는 것처럼 보이면 답을 꾸미게 된다. */
+  function commit() {
+    if (cur === null) return;
+    const c = CELLS[cur];
     picks[at] = { side: c.side, s: c.s };
-    $('orbs').querySelectorAll('.orb').forEach((b) => b.classList.remove('on'));
-    btn.classList.add('on');
-    setTimeout(() => { if (at < Q.length - 1) { at++; paint(); } else finish(); }, 210);
+    drawOrbs();
+    setTimeout(step, 200);
   }
 
   function tally() {
@@ -1119,6 +1239,7 @@
   $('go').addEventListener('click', () => { show('pick'); nickIn.focus(); });
   $('go2').addEventListener('click', () => { show('test'); paint(); });
   $('back').addEventListener('click', () => { if (at > 0) { at--; paint(); } });
+  $('nxt').addEventListener('click', step);
 
   addEventListener('keydown', (e) => {
     if ($('sheet').classList.contains('live')) { if (e.key === 'Escape') sheet(false); return; }
@@ -1126,7 +1247,10 @@
     if (views.pick.classList.contains('live') && e.key === 'Enter' && !$('go2').disabled) { $('go2').click(); return; }
     if (!views.test.classList.contains('live')) return;
     const n = Number(e.key);
-    if (n >= 1 && n <= 4) $('orbs').children[n - 1].click();
+    if (n >= 1 && n <= 4) { focusOrb(n - 1); commit(); return; }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); focusOrb(cur === null ? 0 : cur - 1); return; }
+    if (e.key === 'ArrowRight') { e.preventDefault(); focusOrb(cur === null ? CELLS.length - 1 : cur + 1); return; }
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); commit(); return; }
     if (e.key === 'Backspace') { e.preventDefault(); $('back').click(); }
   });
 
