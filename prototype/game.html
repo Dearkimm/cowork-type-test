@@ -227,18 +227,15 @@
   .map .tile.now { background: var(--g-base); }
   .map .tile.now > * { position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); animation: hop 1.5s ease-in-out infinite; }
 
-  /* 아래 칸은 레퍼런스처럼 두 줄이다. 왼쪽에 키 안내와 선택 표시, 오른쪽에 확인. */
-  .gfoot { flex: none; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px;
-    padding: 12px 17px 13px; border-top: 3px dashed var(--ca-pale); }
-  .gfoot .hints { display: flex; flex-direction: column; gap: 6px; }
+  /* 확인 버튼은 없다. 구슬을 누르면 바로 넘어가니 버튼이 할 일이 없었다.
+     왼쪽에 키 안내, 오른쪽에 지금 고른 것. */
+  .gfoot { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 13px 17px; border-top: 3px dashed var(--ca-pale); }
   .gfoot .keys { font-size: 11px; color: var(--sub); }
   .gfoot .keys b { color: var(--g-edge); }
   .gfoot .sel { font-size: 11px; color: var(--sub); }
   .gfoot .sel b { color: var(--a-strong); }
   .gfoot .sel b.b { color: var(--b-strong); }
-  .gfoot .ok { flex: none; padding: 13px 24px; font-size: 15px; letter-spacing: 0.06em; color: #fff;
-    background: var(--ca); border-color: var(--ca-deep); box-shadow: 0 4px 0 var(--ca-deep); }
-  .gfoot .ok:hover:not([disabled]) { background: #3E6AFF; }
 
   .undo { width: 100%; margin-top: 11px; display: flex; }
   @media (max-width: 560px) {
@@ -448,11 +445,8 @@
           </div>
         </div>
         <footer class="gfoot">
-          <div class="hints">
-            <span class="keys px"><b>← →</b> 이동 &nbsp;&nbsp;<b>SPACE</b> 선택</span>
-            <span class="sel px" id="sel">선택: 없음</span>
-          </div>
-          <button class="gbtn pxbtn ok" id="ok" disabled>▶ 확인</button>
+          <span class="keys px"><b>← →</b> 이동 &nbsp;&nbsp;<b>SPACE</b> 선택</span>
+          <span class="sel px" id="sel">선택: 없음</span>
         </footer>
       </div>
       <div class="undo"><button class="back" id="back" hidden>◀ 앞으로</button></div>
@@ -1044,11 +1038,10 @@
   }
   function selLabel() {
     const el = $('sel');
-    if (cur === null) { el.textContent = '선택: 없음'; $('ok').disabled = true; return; }
+    if (cur === null) { el.textContent = '선택: 없음'; return; }
     const c = CELLS[cur];
     el.innerHTML = '선택: <b class="' + c.side + '">' + (c.side === 'a' ? '위' : '아래')
       + ' · ' + c.label + '</b>';
-    $('ok').disabled = false;
   }
   function focusOrb(k) {
     cur = (k + CELLS.length) % CELLS.length;
@@ -1193,7 +1186,6 @@
 
   $('go').addEventListener('click', () => { show('pick'); nickIn.focus(); });
   $('go2').addEventListener('click', () => { show('test'); paint(); });
-  $('ok').addEventListener('click', commit);
   $('back').addEventListener('click', () => { if (at > 0) { at--; paint(); } });
 
   addEventListener('keydown', (e) => {
