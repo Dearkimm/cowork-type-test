@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>오시에테 — 제목용 글꼴 비교</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Jua&family=Do+Hyeon&family=Gothic+A1:wght@900&family=Noto+Sans+KR:wght@900&display=swap">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  * { margin: 0; padding: 0; }
+  ul { list-style-position: outside; }
+
+  :root {
+    --base: #EAF1FF;
+    --ca: #1B49FF;
+    --cb: #FF2E7E;
+    --ink: #14131A;
+    --sub: #6C6979;
+    --card: #FFFFFF;
+    --body: "Pretendard Variable", Pretendard, "Malgun Gothic", system-ui, sans-serif;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  }
+
+  body {
+    background: var(--base); color: var(--ink); font-family: var(--body);
+    line-height: 1.65; word-break: keep-all; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 56px 22px 90px; display: flex; flex-direction: column; gap: 40px; }
+
+  header { display: flex; flex-direction: column; gap: 12px; }
+  header h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; }
+  header p { color: var(--sub); font-size: 0.95rem; max-width: 62ch; }
+
+  .card { background: var(--card); padding: 26px 24px 28px; display: flex; flex-direction: column; gap: 18px; }
+  .card > .meta { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .card .name { font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.1em; color: var(--cb); }
+  .card .note { font-size: 0.82rem; color: var(--sub); }
+
+  .demo { display: flex; flex-direction: column; gap: 14px; }
+  .logo { font-size: 3.4rem; line-height: 0.9; letter-spacing: -0.06em; color: var(--ca); }
+  .ask { font-size: 2rem; line-height: 1.2; letter-spacing: -0.045em; }
+  .tag { font-size: 1.5rem; line-height: 1.25; letter-spacing: -0.04em; }
+  .tag em { font-style: normal; color: var(--cb); }
+  .cells { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; max-width: 460px; }
+  .cell { padding: 13px 4px; text-align: center; font-size: 0.9rem; font-weight: 800; }
+  .cell:nth-child(1) { background: var(--ca); color: #fff; }
+  .cell:nth-child(2) { background: #D6DEFF; color: var(--ca); }
+  .cell:nth-child(3) { background: #FFDCE8; color: var(--cb); }
+  .cell:nth-child(4) { background: var(--cb); color: #fff; }
+
+  /* 후보별 글꼴 */
+  .f-now  .logo, .f-now  .ask, .f-now  .tag, .f-now  .cell { font-family: "Pretendard Variable", Pretendard, sans-serif; font-weight: 900; }
+  .f-bhs  .logo, .f-bhs  .ask, .f-bhs  .tag, .f-bhs  .cell { font-family: "Black Han Sans", sans-serif; font-weight: 400; }
+  .f-jua  .logo, .f-jua  .ask, .f-jua  .tag, .f-jua  .cell { font-family: "Jua", sans-serif; font-weight: 400; }
+  .f-dh   .logo, .f-dh   .ask, .f-dh   .tag, .f-dh   .cell { font-family: "Do Hyeon", sans-serif; font-weight: 400; }
+  .f-ga1  .logo, .f-ga1  .ask, .f-ga1  .tag, .f-ga1  .cell { font-family: "Gothic A1", sans-serif; font-weight: 900; }
+  .f-noto .logo, .f-noto .ask, .f-noto .tag, .f-noto .cell { font-family: "Noto Sans KR", sans-serif; font-weight: 900; }
+
+  .tail { border-top: 1px solid rgba(20,19,26,0.12); padding-top: 24px; display: flex; flex-direction: column; gap: 14px; }
+  .tail h2 { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.02em; }
+  .tail p, .tail li { font-size: 0.9rem; color: var(--sub); max-width: 66ch; }
+  .tail ul { display: flex; flex-direction: column; gap: 8px; padding-left: 1.2em; }
+  .tail code { font-family: var(--mono); font-size: 0.84rem; background: var(--card); padding: 2px 6px; color: var(--ink); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>제목용 글꼴 후보</h1>
+    <p>같은 문장을 여섯 개 글꼴로 놓았습니다. 위에서 두 번째 줄(질문)이 검사 화면에서 가장 크게 나오는 글자이니 그걸 기준으로 보시면 됩니다. 본문 글꼴은 프리텐다드로 고정이고 여기서 고르는 건 제목·로고용입니다.</p>
+  </header>
+
+  <section class="card f-now">
+    <div class="meta"><span class="name">현재 — Pretendard 900</span><span class="note">깔끔하지만 각지고 딱딱합니다. 지금 마음에 안 든다고 하신 게 이것입니다.</span></div>
+    <div class="demo">
+      <div class="logo">おしえて</div>
+      <div class="ask">회의가 내 생각과 다른 결론으로 흐를 때</div>
+      <div class="tag">어떻게 일하는지 <em>알려줘</em></div>
+      <div class="cells"><div class="cell">확실히</div><div class="cell">조금</div><div class="cell">조금</div><div class="cell">확실히</div></div>
+    </div>
+  </section>
+
+  <section class="card f-bhs">
+    <div class="meta"><span class="name">Black Han Sans</span><span class="note">아주 굵고 좁습니다. 자막 임팩트는 가장 강한데 긴 문장에서는 답답해집니다.</span></div>
+    <div class="demo">
+      <div class="logo">おしえて</div>
+      <div class="ask">회의가 내 생각과 다른 결론으로 흐를 때</div>
+      <div class="tag">어떻게 일하는지 <em>알려줘</em></div>
+      <div class="cells"><div class="cell">확실히</div><div class="cell">조금</div><div class="cell">조금</div><div class="cell">확실히</div></div>
+    </div>
+  </section>
+
+  <section class="card f-jua">
+    <div class="meta"><span class="name">Jua</span><span class="note">모서리가 둥글고 부드럽습니다. 캡처의 자막 결에 가장 가깝지만 어리게 보일 수 있습니다.</span></div>
+    <div class="demo">
+      <div class="logo">おしえて</div>
+      <div class="ask">회의가 내 생각과 다른 결론으로 흐를 때</div>
+      <div class="tag">어떻게 일하는지 <em>알려줘</em></div>
+      <div class="cells"><div class="cell">확실히</div><div class="cell">조금</div><div class="cell">조금</div><div class="cell">확실히</div></div>
+    </div>
+  </section>
+
+  <section class="card f-dh">
+    <div class="meta"><span class="name">Do Hyeon</span><span class="note">굵고 단정합니다. Jua보다 어른스럽고 Black Han Sans보다 읽기 편합니다.</span></div>
+    <div class="demo">
+      <div class="logo">おしえて</div>
+      <div class="ask">회의가 내 생각과 다른 결론으로 흐를 때</div>
+      <div class="tag">어떻게 일하는지 <em>알려줘</em></div>
+      <div class="cells"><div class="cell">확실히</div><div class="cell">조금</div><div class="cell">조금</div><div class="cell">확실히</div></div>
+    </div>
+  </section>
+
+  <section class="card f-ga1">
+    <div class="meta"><span class="name">Gothic A1 900</span><span class="note">프리텐다드와 비슷한 계열입니다. 비교용으로만 넣었습니다.</span></div>
+    <div class="demo">
+      <div class="logo">おしえて</div>
+      <div class="ask">회의가 내 생각과 다른 결론으로 흐를 때</div>
+      <div class="tag">어떻게 일하는지 <em>알려줘</em></div>
+      <div class="cells"><div class="cell">확실히</div><div class="cell">조금</div><div class="cell">조금</div><div class="cell">확실히</div></div>
+    </div>
+  </section>
+
+  <section class="card f-noto">
+    <div class="meta"><span class="name">Noto Sans KR 900</span><span class="note">가장 무난합니다. 개성이 없는 쪽이라 아마 탈락일 것입니다.</span></div>
+    <div class="demo">
+      <div class="logo">おしえて</div>
+      <div class="ask">회의가 내 생각과 다른 결론으로 흐를 때</div>
+      <div class="tag">어떻게 일하는지 <em>알려줘</em></div>
+      <div class="cells"><div class="cell">확실히</div><div class="cell">조금</div><div class="cell">조금</div><div class="cell">확실히</div></div>
+    </div>
+  </section>
+
+  <div class="tail">
+    <h2>알아두실 것</h2>
+    <ul>
+      <li><strong>히라가나가 안 나오는 글꼴이 있습니다.</strong> 한글 전용 글꼴에는 かな가 없어서 <code>おしえて</code>만 다른 글꼴로 떨어집니다. 위에서 로고 줄이 갑자기 다른 모양이면 그 경우입니다. 로고는 어차피 따로 다뤄야 하니, 이미지로 뽑거나 일본어 글꼴을 로고에만 별도로 지정하면 됩니다.</li>
+      <li><strong>여기 여섯 개는 전부 Google Fonts라 무료입니다.</strong> 라이선스 걱정 없이 바로 쓸 수 있습니다.</li>
+      <li><strong>제나가 원래 말씀하신 HG꼬딕씨, HU 특선영화, 에스코어드림, 지마켓 산스는 여기 없습니다.</strong> 이건 폰트 파일을 받아서 <code>prototype/fonts/</code> 에 넣고 <code>@font-face</code>로 잡아야 합니다. 파일 주시면 이 페이지에 같이 올려서 비교하겠습니다. 웹 사용 라이선스는 그때 원문을 확인하겠습니다.</li>
+      <li>고르시면 <code>prototype/index.html</code>의 <code>--display</code> 한 줄만 바꿉니다.</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>
