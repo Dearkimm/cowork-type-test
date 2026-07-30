@@ -66,6 +66,8 @@
   :focus-visible { outline: 3px solid var(--cb); outline-offset: 4px; }
   .px { font-family: var(--pixel); font-size: 11px; line-height: 1.6; }
   canvas { image-rendering: pixelated; }
+  /* 좁은 칸 안에서도 폭이 눌리면 안 된다. 리셋의 max-width 를 되돌린다. */
+  .chrimg { max-width: none; }
 
   /* ── 배경 ─────────────────────────────────── */
   .sky { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
@@ -140,7 +142,7 @@
   .icobtn:hover { background: var(--cb); color: #fff; border-color: var(--cb-deep); box-shadow: 0 4px 0 var(--cb-deep); }
 
   /* ── 랜딩 ─────────────────────────────────── */
-  .land { position: relative; overflow: hidden; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 60px clamp(14px, 5vw, 60px) clamp(170px, 34vh, 380px); }
+  .land { position: relative; overflow: hidden; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 64px clamp(14px, 5vw, 60px) clamp(140px, 22vh, 280px); }
   .land > .bob, .land > .tag, .land > .cta { position: relative; z-index: 1; }
   /* 로고가 구름 위에 앉는다. Where is COLOR 의 구성. */
   .logocloud { position: absolute; z-index: 0; left: 50%; top: 50%; transform: translate(-50%, -100%); opacity: 0.96; }
@@ -749,6 +751,7 @@
   function charEl(i, scale) {
     const art = CHARS[i];
     const img = document.createElement('img');
+    img.className = 'chrimg';
     img.alt = '';
     img.width = art.grid[0].length * scale;
     img.height = art.grid.length * scale;
@@ -880,7 +883,7 @@
       say: [
         '의견이 갈릴 때 먼저 물러나 듣습니다. 반대 의견이 없는 게 아니라, 그 자리에서 부딪히는 것보다 나중에 따로 정리하는 쪽을 택합니다. 회의에서는 조용하지만 끝난 뒤에 생각이 정리되어 나오는 편이고, 그래서 결정이 이미 굳은 다음에 이야기가 시작되는 일이 있습니다.',
         '밀어붙일 때와 물러날 때를 상황에 따라 나눕니다. 사소한 안건에서는 대체로 흐름을 따라가고, 중요하다고 판단한 것에만 목소리를 냅니다. 그래서 이 사람이 말을 꺼내면 팀이 한 번 멈춰서 듣는 편입니다.',
-        '할 말은 그 자리에서 합니다. 결론이 굳기 전에 짚어두려고 해서 회의 흐름을 한 번 세우기도 합니다. 나중에 따로 말하는 것보다 그 순간에 정리하는 편이 낫다고 보는 쪽입니다.'
+        '할 말은 그 자리에서 합니다. 결론이 굳기 전에 짚어두려고 해서 회의 분위기를 한 번 환기하기도 합니다. 나중에 따로 말하는 것보다 그 순간에 정리하는 편이 낫다고 보는 쪽입니다.'
       ],
       use: [
         '동의한 것처럼 보여도 다 동의한 건 아닙니다. 회의가 끝난 뒤 따로 한 번 물어봐 주세요.',
