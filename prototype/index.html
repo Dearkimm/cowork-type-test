@@ -854,9 +854,10 @@
   .gbar .gt { font-size: 14px; letter-spacing: 0.04em; }
   .gbar .gq { font-size: 13px; letter-spacing: 0.06em; color: rgba(255, 255, 255, 0.72); }
   .gbar .gq b { font-size: 19px; color: #fff; }
-  /* 창 바깥 오른쪽 위. 하늘 위에 바로 얹혀서 잉크색으로 쓴다. */
-  .ghome { align-self: flex-end; font-size: 12px; color: var(--ink); padding: 4px 2px; margin-bottom: 6px; }
-  .ghome:hover { text-decoration: underline; text-underline-offset: 3px; }
+  /* 창 바깥 오른쪽 위. 항상 밑줄, 색은 옅게. */
+  .ghome { align-self: flex-end; font-size: 12px; color: var(--sub); opacity: 0.75;
+    text-decoration: underline; text-underline-offset: 3px; padding: 4px 2px; margin-bottom: 6px; }
+  .ghome:hover { opacity: 1; }
 
   /* 다섯 문항이 한 장. 캐릭터가 발판을 하나씩 밟고 지나간다. */
   .gtrail { flex: none; display: flex; align-items: flex-end; gap: 14px; padding: 12px 18px 10px; border-bottom: 3px dashed var(--ca-pale); }
@@ -1079,7 +1080,7 @@
 
   <section class="view" id="v-test">
     <div class="test">
-      <button class="ghome px" id="home" type="button">◀ 처음으로</button>
+      <button class="ghome px" id="home" type="button">처음으로</button>
       <div class="gwin">
         <header class="gbar">
           <span class="gt px">▶ 다음 상황에서 나는?</span>
@@ -2308,9 +2309,9 @@
   let homeArm = 0;
   $('home').addEventListener('click', () => {
     const answered = picks.filter(Boolean).length;
-    if (answered < 10 || homeArm) { clearTimeout(homeArm); homeArm = 0; $('home').textContent = '◀ 처음으로'; goHome(); return; }
+    if (answered < 10 || homeArm) { clearTimeout(homeArm); homeArm = 0; $('home').textContent = '처음으로'; goHome(); return; }
     $('home').textContent = '답이 사라져요. 한 번 더!';
-    homeArm = setTimeout(() => { homeArm = 0; $('home').textContent = '◀ 처음으로'; }, 3000);
+    homeArm = setTimeout(() => { homeArm = 0; $('home').textContent = '처음으로'; }, 3000);
   });
 
   function sheet(open) { $('sheet').classList.toggle('live', open); }
