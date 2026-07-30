@@ -89,10 +89,14 @@
   @keyframes drift { 0% { transform: translateX(0); } 100% { transform: translateX(26px); } }
 
   /* ── 제목과 태그라인 ──────────────────────── */
-  /* maple-lettering.html 에서 고른 설정 그대로다. 겹쳐 그린 테두리라
-     그림자 목록이 길다. 안쪽부터 스티커(흰 띠) · 아웃라인 · 드롭섀도 순이다.
-     한 덩어리로 그려야 뒷글자 테두리가 앞글자를 덮지 않는다.
-     그래서 글자를 하나씩 쪼개 넣던 방식을 버렸다. */
+  /* maple-lettering.html 에서 고른 설정 그대로다. 안쪽부터
+     스티커(흰 띠) · 아웃라인 · 드롭섀도 순으로 겹쳐 그린다.
+     한 덩어리로 그려야 뒷글자 테두리가 앞글자 속을 안 덮는다.
+     그래서 글자를 하나씩 쪼개 넣던 방식을 버렸다.
+
+     제목은 66px 로 그려 두고 zoom 으로 키운다. 큰 크기에 맞춰
+     좌표를 다시 뽑으면 198px 에서 그림자가 4400 개가 되어 못 쓴다.
+     zoom 은 배수만 쓴다. 1.5 배 같은 값에서는 픽셀이 뭉개진다. */
   .lock {
     font-family: var(--pixel);
     font-size: 66px;
@@ -637,9 +641,12 @@
       9px 9px #3B4A8C,
       12px 12px #6B7BB8;
   }
+  @media (min-width: 760px)  { .lock { zoom: 2; } }
+  @media (min-width: 1200px) { .lock { zoom: 3; } }
+
   .land .tag {
     font-family: var(--pixel);
-    font-size: 33px;
+    font-size: 22px;
     letter-spacing: 2px;
     text-indent: 2px;
     line-height: 1.3;
@@ -647,130 +654,32 @@
     -webkit-font-smoothing: none;
     font-smooth: never;
     color: #FF6FA3;
-    margin-top: clamp(22px, 4vh, 40px);
+    margin-top: clamp(26px, 5vh, 52px);
     text-shadow:
-      -4px -4px #FFFFFF,
-      -3px -4px #FFFFFF,
-      -2px -4px #FFFFFF,
-      -1px -4px #FFFFFF,
-      0px -4px #FFFFFF,
-      1px -4px #FFFFFF,
-      2px -4px #FFFFFF,
-      3px -4px #FFFFFF,
-      4px -4px #FFFFFF,
-      -4px -3px #FFFFFF,
-      -3px -3px #FFFFFF,
-      -2px -3px #FFFFFF,
-      -1px -3px #FFFFFF,
-      0px -3px #FFFFFF,
-      1px -3px #FFFFFF,
-      2px -3px #FFFFFF,
-      3px -3px #FFFFFF,
-      4px -3px #FFFFFF,
-      -4px -2px #FFFFFF,
-      -3px -2px #FFFFFF,
       -2px -2px #FFFFFF,
       -1px -2px #FFFFFF,
       0px -2px #FFFFFF,
       1px -2px #FFFFFF,
       2px -2px #FFFFFF,
-      3px -2px #FFFFFF,
-      4px -2px #FFFFFF,
-      -4px -1px #FFFFFF,
-      -3px -1px #FFFFFF,
       -2px -1px #FFFFFF,
       -1px -1px #FFFFFF,
       0px -1px #FFFFFF,
       1px -1px #FFFFFF,
       2px -1px #FFFFFF,
-      3px -1px #FFFFFF,
-      4px -1px #FFFFFF,
-      -4px 0px #FFFFFF,
-      -3px 0px #FFFFFF,
       -2px 0px #FFFFFF,
       -1px 0px #FFFFFF,
       1px 0px #FFFFFF,
       2px 0px #FFFFFF,
-      3px 0px #FFFFFF,
-      4px 0px #FFFFFF,
-      -4px 1px #FFFFFF,
-      -3px 1px #FFFFFF,
       -2px 1px #FFFFFF,
       -1px 1px #FFFFFF,
       0px 1px #FFFFFF,
       1px 1px #FFFFFF,
       2px 1px #FFFFFF,
-      3px 1px #FFFFFF,
-      4px 1px #FFFFFF,
-      -4px 2px #FFFFFF,
-      -3px 2px #FFFFFF,
       -2px 2px #FFFFFF,
       -1px 2px #FFFFFF,
       0px 2px #FFFFFF,
       1px 2px #FFFFFF,
       2px 2px #FFFFFF,
-      3px 2px #FFFFFF,
-      4px 2px #FFFFFF,
-      -4px 3px #FFFFFF,
-      -3px 3px #FFFFFF,
-      -2px 3px #FFFFFF,
-      -1px 3px #FFFFFF,
-      0px 3px #FFFFFF,
-      1px 3px #FFFFFF,
-      2px 3px #FFFFFF,
-      3px 3px #FFFFFF,
-      4px 3px #FFFFFF,
-      -4px 4px #FFFFFF,
-      -3px 4px #FFFFFF,
-      -2px 4px #FFFFFF,
-      -1px 4px #FFFFFF,
-      0px 4px #FFFFFF,
-      1px 4px #FFFFFF,
-      2px 4px #FFFFFF,
-      3px 4px #FFFFFF,
-      4px 4px #FFFFFF,
-      -6px -6px #8C1F47,
-      -5px -6px #8C1F47,
-      -4px -6px #8C1F47,
-      -3px -6px #8C1F47,
-      -2px -6px #8C1F47,
-      -1px -6px #8C1F47,
-      0px -6px #8C1F47,
-      1px -6px #8C1F47,
-      2px -6px #8C1F47,
-      3px -6px #8C1F47,
-      4px -6px #8C1F47,
-      5px -6px #8C1F47,
-      6px -6px #8C1F47,
-      -6px -5px #8C1F47,
-      -5px -5px #8C1F47,
-      -4px -5px #8C1F47,
-      -3px -5px #8C1F47,
-      -2px -5px #8C1F47,
-      -1px -5px #8C1F47,
-      0px -5px #8C1F47,
-      1px -5px #8C1F47,
-      2px -5px #8C1F47,
-      3px -5px #8C1F47,
-      4px -5px #8C1F47,
-      5px -5px #8C1F47,
-      6px -5px #8C1F47,
-      -6px -4px #8C1F47,
-      -5px -4px #8C1F47,
-      -4px -4px #8C1F47,
-      -3px -4px #8C1F47,
-      -2px -4px #8C1F47,
-      -1px -4px #8C1F47,
-      0px -4px #8C1F47,
-      1px -4px #8C1F47,
-      2px -4px #8C1F47,
-      3px -4px #8C1F47,
-      4px -4px #8C1F47,
-      5px -4px #8C1F47,
-      6px -4px #8C1F47,
-      -6px -3px #8C1F47,
-      -5px -3px #8C1F47,
-      -4px -3px #8C1F47,
       -3px -3px #8C1F47,
       -2px -3px #8C1F47,
       -1px -3px #8C1F47,
@@ -778,12 +687,6 @@
       1px -3px #8C1F47,
       2px -3px #8C1F47,
       3px -3px #8C1F47,
-      4px -3px #8C1F47,
-      5px -3px #8C1F47,
-      6px -3px #8C1F47,
-      -6px -2px #8C1F47,
-      -5px -2px #8C1F47,
-      -4px -2px #8C1F47,
       -3px -2px #8C1F47,
       -2px -2px #8C1F47,
       -1px -2px #8C1F47,
@@ -791,12 +694,6 @@
       1px -2px #8C1F47,
       2px -2px #8C1F47,
       3px -2px #8C1F47,
-      4px -2px #8C1F47,
-      5px -2px #8C1F47,
-      6px -2px #8C1F47,
-      -6px -1px #8C1F47,
-      -5px -1px #8C1F47,
-      -4px -1px #8C1F47,
       -3px -1px #8C1F47,
       -2px -1px #8C1F47,
       -1px -1px #8C1F47,
@@ -804,24 +701,12 @@
       1px -1px #8C1F47,
       2px -1px #8C1F47,
       3px -1px #8C1F47,
-      4px -1px #8C1F47,
-      5px -1px #8C1F47,
-      6px -1px #8C1F47,
-      -6px 0px #8C1F47,
-      -5px 0px #8C1F47,
-      -4px 0px #8C1F47,
       -3px 0px #8C1F47,
       -2px 0px #8C1F47,
       -1px 0px #8C1F47,
       1px 0px #8C1F47,
       2px 0px #8C1F47,
       3px 0px #8C1F47,
-      4px 0px #8C1F47,
-      5px 0px #8C1F47,
-      6px 0px #8C1F47,
-      -6px 1px #8C1F47,
-      -5px 1px #8C1F47,
-      -4px 1px #8C1F47,
       -3px 1px #8C1F47,
       -2px 1px #8C1F47,
       -1px 1px #8C1F47,
@@ -829,12 +714,6 @@
       1px 1px #8C1F47,
       2px 1px #8C1F47,
       3px 1px #8C1F47,
-      4px 1px #8C1F47,
-      5px 1px #8C1F47,
-      6px 1px #8C1F47,
-      -6px 2px #8C1F47,
-      -5px 2px #8C1F47,
-      -4px 2px #8C1F47,
       -3px 2px #8C1F47,
       -2px 2px #8C1F47,
       -1px 2px #8C1F47,
@@ -842,12 +721,6 @@
       1px 2px #8C1F47,
       2px 2px #8C1F47,
       3px 2px #8C1F47,
-      4px 2px #8C1F47,
-      5px 2px #8C1F47,
-      6px 2px #8C1F47,
-      -6px 3px #8C1F47,
-      -5px 3px #8C1F47,
-      -4px 3px #8C1F47,
       -3px 3px #8C1F47,
       -2px 3px #8C1F47,
       -1px 3px #8C1F47,
@@ -855,49 +728,7 @@
       1px 3px #8C1F47,
       2px 3px #8C1F47,
       3px 3px #8C1F47,
-      4px 3px #8C1F47,
-      5px 3px #8C1F47,
-      6px 3px #8C1F47,
-      -6px 4px #8C1F47,
-      -5px 4px #8C1F47,
-      -4px 4px #8C1F47,
-      -3px 4px #8C1F47,
-      -2px 4px #8C1F47,
-      -1px 4px #8C1F47,
-      0px 4px #8C1F47,
-      1px 4px #8C1F47,
-      2px 4px #8C1F47,
-      3px 4px #8C1F47,
-      4px 4px #8C1F47,
-      5px 4px #8C1F47,
-      6px 4px #8C1F47,
-      -6px 5px #8C1F47,
-      -5px 5px #8C1F47,
-      -4px 5px #8C1F47,
-      -3px 5px #8C1F47,
-      -2px 5px #8C1F47,
-      -1px 5px #8C1F47,
-      0px 5px #8C1F47,
-      1px 5px #8C1F47,
-      2px 5px #8C1F47,
-      3px 5px #8C1F47,
-      4px 5px #8C1F47,
-      5px 5px #8C1F47,
-      6px 5px #8C1F47,
-      -6px 6px #8C1F47,
-      -5px 6px #8C1F47,
-      -4px 6px #8C1F47,
-      -3px 6px #8C1F47,
-      -2px 6px #8C1F47,
-      -1px 6px #8C1F47,
-      0px 6px #8C1F47,
-      1px 6px #8C1F47,
-      2px 6px #8C1F47,
-      3px 6px #8C1F47,
-      4px 6px #8C1F47,
-      5px 6px #8C1F47,
-      6px 6px #8C1F47,
-      8px 8px #B03063;
+      4px 4px #B03063;
   }
 
   .bob { animation: bob 3.6s ease-in-out infinite; }
@@ -1936,7 +1767,8 @@
   const lock = $('lock');
   addEventListener('pointermove', (e) => {
     if (!views.land.classList.contains('live')) return;
-    lock.style.transform = `translate3d(${(e.clientX / innerWidth - 0.5) * 12}px, ${(e.clientY / innerHeight - 0.5) * 7}px, 0)`;
+    const z = +getComputedStyle(lock).zoom || 1;
+    lock.style.transform = `translate3d(${(e.clientX / innerWidth - 0.5) * 12 / z}px, ${(e.clientY / innerHeight - 0.5) * 7 / z}px, 0)`;
   });
 
   const charsBox = $('chars');
