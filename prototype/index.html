@@ -2063,6 +2063,33 @@
     return '';
   }
 
+  /* 유형 이름. 가장 치우친 축의 극이 명사가 되고 두 번째 축의 극이
+     수식어가 된다. 다섯 축 × 두 극이라 명사 열 개·수식어 열 개로
+     쉰한 가지 이름이 나온다(두 축 40 + 한 축 10 + 균형 1).
+     이름은 손잡이일 뿐이고 본체는 아래 서술이다. 이름을 위해 새 단어를
+     만들면 서술과 어긋나기 시작해서, 축의 극 문구와 같은 결로만 지었다. */
+  const TYPE_NOUN = [
+    ['경청가', '선봉장'],   // 의견이 갈릴 때: 먼저 듣는 / 먼저 말하는
+    ['조율가', '해결사'],   // 일과 사람: 사람을 먼저 / 일을 먼저
+    ['스프린터', '장인'],   // 결과물: 빠르게 / 끝까지
+    ['후원자', '길잡이'],   // 맡길 때: 기다리는 / 확인하는
+    ['개척자', '설계자']    // 시작 전: 가서 맞추는 / 미리 알아두는
+  ];
+  const TYPE_ADJ = [
+    ['먼저 듣는', '먼저 말하는'],
+    ['사람부터 보는', '일부터 보는'],
+    ['빠르게 내보내는', '끝까지 다듬는'],
+    ['믿고 맡기는', '확인하며 가는'],
+    ['부딪히며 맞추는', '미리 준비하는']
+  ];
+  function typeName(named, bands) {
+    if (named.length === 0) return { adj: '유연한', noun: '올라운더' };
+    const n0 = named[0], p0 = bands[n0.i] === 2 ? 1 : 0;
+    if (named.length === 1) return { adj: TYPE_ADJ[n0.i][p0], noun: TYPE_NOUN[n0.i][p0] };
+    const n1 = named[1], p1 = bands[n1.i] === 2 ? 1 : 0;
+    return { adj: TYPE_ADJ[n1.i][p1], noun: TYPE_NOUN[n0.i][p0] };
+  }
+
   /* 성향과 반대로 답한 문항. 축이 한쪽으로 기울었는데 특정 상황에서만
      반대쪽을 골랐다면, 그 상황이 이 사람의 예외 조건이다. 문항과 답을
      그대로 인용한다. 실제로 고른 문장이라 점수 풀이보다 구체적이다. */
@@ -2134,10 +2161,10 @@
        축 순서대로 늘어놓으면 다섯 개의 판정이 나열된 것처럼 읽힌다. */
     const order = scores.map((v, i) => ({ i, d: Math.abs(v - MID) })).sort((p, q) => q.d - p.d);
     const named = order.filter((o) => bands[o.i] !== 1).slice(0, 2);
-    const head = named.length ? named : [order[0]];
 
-    $('r-title').innerHTML = head
-      .map((o) => `<em>${COPY[o.i].pole[bands[o.i]]}</em>`).join(', ') + ' 사람';
+    const tn = typeName(named, bands);
+    $('r-title').innerHTML = `<em>${tn.adj}</em> ${tn.noun}`;
+    me.type = tn.adj + ' ' + tn.noun;
 
     /* 축 이름 뒤에 조사를 붙이면 [일과 사람 사이에서]에서 처럼 겹친다.
        이름을 그대로 두고 서술어만 바꿔 문장을 만든다. */
@@ -2252,7 +2279,8 @@
 
   $('share').addEventListener('click', async () => {
     try {
-      await navigator.clipboard.writeText(location.href);
+      await navigator.clipboard.writeText((me.type ? `오시에테 · ${me.type}
+` : '') + location.href);
       $('toast').textContent = '내 결과 링크를 복사했어요. 이 링크를 연 사람은 내 결과를 봅니다.';
     } catch {
       $('toast').textContent = '주소창의 링크를 복사해서 보내주세요.';
