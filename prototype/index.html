@@ -56,6 +56,9 @@
 
   html { min-height: 100%; }
   html, body, input, a { cursor: var(--cur); }
+  /* 마우스를 뒤따라오는 캐릭터. 포인터 이벤트를 막지 않아야
+     밑에 있는 버튼이 눌린다. */
+  .chase { position: fixed; left: 0; top: 0; z-index: 80; pointer-events: none; transition: opacity 0.25s; }
   /* 버튼은 손 모양으로 바꾼다. 전에는 전부 화살표라 눌러도 되는 건지
      알 수가 없었다. 시작 버튼은 올렸을 때 한 단계 더 큰 손이 뜬다. */
   button:not([disabled]) { cursor: var(--hand); }
@@ -1482,13 +1485,28 @@
     return img;
   }
 
+  /* 캐릭터는 커서 그림이 아니라 페이지 요소로 그려서 따라다니게 한다.
+     캡처 도구는 OS 커서를 안 찍기 때문에, 커서로 두면 스크린샷마다
+     캐릭터가 사라진다. 페이지 요소는 화면의 일부라 그대로 찍힌다.
+     화살표를 조금 뒤따라오게 해서 실제 포인터와 겹치지 않는다. */
+  const chase = { el: null, x: -80, y: -80, tx: -80, ty: -80 };
   function setCursor(i) {
-    const art = CHARS[i];
-    const use = (u) => document.documentElement.style.setProperty('--cur', `url(${u}) 8 2, auto`);
-    const probe = new Image();
-    probe.addEventListener('load', () => use(SPRITE_DIR + art.key + '.png'), { once: true });
-    probe.addEventListener('error', () => use(sprite(art, 2).toDataURL('image/png')), { once: true });
-    probe.src = SPRITE_DIR + art.key + '.png';
+    if (matchMedia('(hover: none)').matches) return;   // 터치 화면에는 포인터가 없다
+    if (!chase.el) {
+      chase.el = document.createElement('div');
+      chase.el.className = 'chase';
+      document.body.appendChild(chase.el);
+      addEventListener('pointermove', (e) => { chase.tx = e.clientX + 13; chase.ty = e.clientY + 15; });
+      document.documentElement.addEventListener('pointerleave', () => { chase.el.style.opacity = '0'; });
+      document.documentElement.addEventListener('pointerenter', () => { chase.el.style.opacity = '1'; });
+      (function step() {
+        chase.x += (chase.tx - chase.x) * 0.24;
+        chase.y += (chase.ty - chase.y) * 0.24;
+        chase.el.style.transform = `translate3d(${chase.x}px, ${chase.y}px, 0)`;
+        requestAnimationFrame(step);
+      })();
+    }
+    chase.el.replaceChildren(charEl(i, 2));
   }
 
   const CLOUD_LOGO = cloudArt(120, 46, 12345, 'puff');
