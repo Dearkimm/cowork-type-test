@@ -90,12 +90,14 @@
   @keyframes float { 0%, 100% { transform: translateY(0); opacity: 0.55; } 50% { transform: translateY(-12px); opacity: 0.95; } }
 
   /* ── 입체 글씨 ────────────────────────────── */
+  /* 제목도 픽셀 글꼴이다. 크기는 원본 11px 의 정수배로만 올린다.
+     그 사이 값에서는 계단이 흐려져서 매끈하게 보인다. */
   .pop3d {
-    font-family: var(--display); font-weight: 900; color: #fff;
+    font-family: var(--pixel); font-weight: 400; color: #fff;
     text-shadow: 0 2px 0 var(--ca-deep), 0 4px 0 var(--ca-deep), 0 6px 0 var(--ca-deep), 0 9px 14px rgba(38,34,50,0.22);
-    -webkit-text-stroke: 5px var(--ca-deep); paint-order: stroke fill; letter-spacing: -0.02em;
+    -webkit-text-stroke: 6px var(--ca-deep); paint-order: stroke fill; letter-spacing: 0;
   }
-  .pop3d.b { text-shadow: 0 2px 0 var(--cb-deep), 0 4px 0 var(--cb-deep), 0 6px 0 var(--cb-deep), 0 9px 14px rgba(38,34,50,0.22); -webkit-text-stroke-color: var(--cb-deep); }
+  .pop3d.b { text-shadow: 0 2px 0 var(--cb-deep), 0 4px 0 var(--cb-deep), 0 6px 0 var(--cb-deep), 0 9px 14px rgba(38,34,50,0.22); -webkit-text-stroke-color: var(--cb-deep); -webkit-text-stroke-width: 3px; }
 
   /* ── 픽셀 버튼 ────────────────────────────── */
   .gbtn {
@@ -121,7 +123,7 @@
   .icobtn:hover { background: var(--cb); color: #fff; border-color: var(--cb-deep); box-shadow: 0 4px 0 var(--cb-deep); }
 
   /* ── 랜딩 ─────────────────────────────────── */
-  .land { position: relative; overflow: hidden; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 76px clamp(14px, 5vw, 60px) 64px; }
+  .land { position: relative; overflow: hidden; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 76px clamp(14px, 5vw, 60px) 128px; }
   .land > *:not(.wing) { position: relative; z-index: 1; }
   /* 로고가 구름 위에 앉는다. Where is COLOR 의 구성. */
   .logocloud { position: absolute; z-index: 0; left: 50%; top: 50%; transform: translate(-50%, -100%); opacity: 0.96; }
@@ -162,17 +164,21 @@
   .bow { position: absolute; z-index: 0; left: 50%; top: 50%; transform: translate(-50%, -195%); opacity: 0.8; }
 
   /* 아래에 네 마리를 세워 화면을 채운다 */
-  .crew { display: flex; align-items: flex-end; justify-content: center; gap: clamp(6px, 2.2vw, 18px); margin-top: clamp(20px, 4vh, 40px); }
+  /* 캐릭터 줄을 흐름에서 빼야 로고 묶음이 화면 가운데로 온다. */
+  .crew { position: absolute; left: 0; right: 0; bottom: clamp(16px, 3.5vh, 34px); z-index: 1; display: flex; align-items: flex-end; justify-content: center; gap: clamp(6px, 2.2vw, 18px); }
   .crew canvas { animation: hop 2.8s ease-in-out infinite; }
   .crew canvas:nth-child(2) { animation-delay: 0.35s; }
   .crew canvas:nth-child(3) { animation-delay: 0.7s; }
   .crew canvas:nth-child(4) { animation-delay: 1.05s; }
   @keyframes hop { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
 
-  .lock { font-size: clamp(3.3rem, 17vw, 9.6rem); line-height: 1; white-space: nowrap; will-change: transform; }
+  .lock { font-size: 55px; line-height: 1; white-space: nowrap; will-change: transform; }
+  @media (min-width: 500px) { .lock { font-size: 88px; } }
+  @media (min-width: 820px) { .lock { font-size: 143px; } }
   .lock span { display: inline-block; opacity: 0; animation: pop 0.7s cubic-bezier(0.16, 1.3, 0.4, 1) both; }
   @keyframes pop { from { opacity: 0; } to { opacity: 1; } }
-  .land .tag { font-size: clamp(1.15rem, 5vw, 2.2rem); line-height: 1; white-space: nowrap; margin-top: clamp(18px, 3.4vh, 34px); }
+  .land .tag { font-size: 22px; line-height: 1; white-space: nowrap; margin-top: clamp(20px, 3.6vh, 36px); }
+  @media (min-width: 820px) { .land .tag { font-size: 33px; } }
   .land .tag span { display: inline-block; opacity: 0; animation: pop 0.6s cubic-bezier(0.16, 1.3, 0.4, 1) both; }
 
   .cta { margin-top: 34px; padding: 17px clamp(36px, 12vw, 54px); font-size: 24px; color: #fff;
@@ -303,7 +309,7 @@
   .arw { display: flex; flex: none; }
   .orb { display: grid; place-items: center; padding: 4px; background: none; border: 0; box-shadow: none; }
   .orb canvas { display: block; }
-  .beam .tip { margin-top: 14px; text-align: center; color: var(--sub); }
+  .beam .tip { margin-top: 13px; text-align: center; color: var(--sub); font-size: 9px; opacity: 0.42; }
   .beam .tip[hidden] { display: none; }
 
   .ask, .scale { animation: slide 0.3s steps(5, end) both; }
@@ -382,6 +388,7 @@
   }
   @media (max-width: 380px) {
     .pop3d { -webkit-text-stroke-width: 4px; }
+    .pop3d.b { -webkit-text-stroke-width: 2px; }
     .chars { gap: 5px; }
     .chr { padding: 9px 0 7px; }
   }
@@ -413,7 +420,7 @@
   <section class="view" id="v-pick">
     <div class="pick">
       <h1>캐릭터를 골라주세요</h1>
-      <p class="hint px">팀에서 나를 구분하는 표시가 돼요.</p>
+      <p class="hint px">화면에서 나를 구분하는 표시가 돼요.</p>
       <div class="chars" id="chars"></div>
       <div class="nick">
         <label class="px" for="nick-in">별명 (여덟 자까지)</label>
@@ -445,7 +452,7 @@
                 <div class="row" id="orbs"></div>
                 <span class="arw" id="arw-r" aria-hidden="true"></span>
               </div>
-              <p class="tip px" id="tip">왼쪽은 위 문장, 오른쪽은 아래 문장이에요. 클수록 확실히.</p>
+              <p class="tip px" id="tip">왼쪽은 위 문장, 오른쪽은 아래 문장이에요</p>
             </div>
             <p class="bub down" id="s-b"></p>
           </div>
@@ -656,29 +663,24 @@
      깃털을 하나하나 계산해서 그렸을 때보다 이 쪽이 레퍼런스에 가깝다.
      겹치는 깃마다 테두리가 남게 뒤에서 앞으로 덧그린 결과다. */
   const WING_GRID = [
-    '.......................KKK..',
-    '.....................KKPPPK.',
-    '....................KPPPWPPK',
-    '..................KKPPWWWWPK',
-    '.................KPPPWWWWPPK',
-    '................KPPWWWWWPPK.',
-    '...............KPPWWWWWPPK..',
-    '.............KKPPWWWWWPPK...',
-    '............KPPPWWWWWPPK....',
-    '...........KPPWWWWWWPPK.....',
-    '..........KPPWWWWWWPPK......',
-    '.........KPPWWWWWWPPK.......',
-    '........KPPWWWWWWPPK........',
-    '.......KPPWWWWWWPPK.KKK.....',
-    '......KPPWWWWWWPPKKKPPPK....',
-    '.....KPPWWWWWWPPKPPKPWPPK...',
-    '.....KPWWWWWWPPKWWPKWWWPK...',
-    '.....KKKKWWWPPKWWWPPKWPPK...',
-    '....KPPPPKWPPKPWWWPPKPPK....',
-    '....KPKKPKPPKKPWWWPKKKK.....',
-    '....KPKKPKKK.KPPPPPK........',
-    '....KPPPPK....KKKKK.........',
-    '.....KKKK...................'
+    '.....................KK..',
+    '...................KKPK..',
+    '.................KKPPK...',
+    '...............KKPPPK....',
+    '.............KKPPPPK.....',
+    '...........KKPPPWPPK.....',
+    '.........KKPPPWWPPK.KK...',
+    '.......KKPPPWWWPPKKKPK...',
+    '.....KKPPPWWWWPPKKPPK....',
+    '...KKPPPWWWWWWPKPPPPKKK..',
+    '..KPPPWWWWWWWPPKPWPKKPK..',
+    '.KPPWWWWWWWWPPKPWPPKPK...',
+    'KPPWWWWWWWWPPKWWPPKPPK...',
+    'KPWWWWWWWWWPKWWWPKPPK....',
+    'KPWWWWWWWWPPKWWPPKPK.....',
+    'KPWWWWWWWPPKWWWPKPK......',
+    'KPPPPPPPPPKPPPPPKKK......',
+    '.KKKKKKKKK.KKKKK.........'
   ];
   const WING_PAL = {
     pink: { K: '#FF9DC8', P: '#FFD9EC', W: '#FFFFFF' },
@@ -820,13 +822,13 @@
       { q: '문서를 쓸 때', a: '형식과 표현을 정돈하는 데 시간을 써요', b: '요점이 잘 보이면 형식은 넘겨요', hi: 'a' },
       { q: '마감에 맞췄지만 아쉬운 부분이 남았을 때', a: '제출이 끝났으니 다음 업무로 넘어가요', b: '제출 후에도 아쉬운 부분을 계속 수정해요', hi: 'b' },
       { q: '둘 중 더 신경 쓰이는 쪽', a: '결과물에 허술한 부분이 남는 게 신경 쓰여요', b: '진행이 느려서 일정이 밀리는 게 신경 쓰여요', hi: 'a' },
-      { q: '중요하지 않은 잡무를 맡았을 때', a: '빠르게 처리하고 중요한 일로 넘어가요', b: '이것도 결과물이라 제 기준까지는 맞춰요', hi: 'b' },
+      { q: '중요하지 않은 잡무를 맡았을 때', a: '빠르게 처리하고 중요한 일로 넘어가요', b: '이것도 결과물이라 내 기준까지는 맞춰요', hi: 'b' },
       { q: '검토를 부탁받았을 때', a: '급한 부분을 우선적으로 보고 빠르게 돌려줘요', b: '전체적으로 보고 정리해서 돌려줘요', hi: 'b' }
     ],
     [
       { q: '맡긴 일이 진행 중일 때', a: '중간중간 진척 상황을 체크해요', b: '맡은 사람에게 온전히 맡겨요', hi: 'a' },
       { q: '공동 문서에서 남이 쓴 문장이 어색할 때', a: '내용이 맞으면 그냥 둬요', b: '손을 봐서 다듬어요', hi: 'b' },
-      { q: '내 방식과 다르게 처리됐지만 목적은 달성됐을 때', a: '왜 그렇게 했는지 확인하고 조정해요', b: '그대로 둬요', hi: 'a' },
+      { q: '요청한 일이 결과는 좋은데, 처리 방식이 내 생각과 달랐을 때', a: '왜 그 방식을 택했는지 이유를 물어봐요', b: '원하는 결과가 나왔으니 따로 묻지 않아요', hi: 'a' },
       { q: '내가 하면 30분, 맡기면 하루 걸리는 일', a: '맡기고 내 시간은 다른 데 써요', b: '그냥 내가 하는 게 속 편해요', hi: 'b' },
       { q: '일을 나눌 때', a: '방식까지 정해서 넘겨요', b: '목표만 정하고 방식은 맡겨요', hi: 'a' },
       { q: '팀원이 요청은 안 했는데 헤매는 것 같을 때', a: '먼저 방법을 알려줘요', b: '스스로 할 시간을 주고 기다려요', hi: 'a' }
@@ -834,7 +836,7 @@
     [
       { q: '처음 하는 업무나 처음 가는 자리 앞에서', a: '미리 조사해서 준비해 둬요', b: '가서 상황 보고 맞춰요', hi: 'a' },
       { q: '일정이 갑자기 바뀌었을 때', a: '불편하긴 하지만 금방 적응해요', b: '계획을 다시 정리해야 마음이 놓여요', hi: 'b' },
-      { q: '프로젝트 시작 단계에서', a: '전체 계획을 세워두고 시작해요', b: '일단 시작하고 하면서 잡아가요', hi: 'a' },
+      { q: '프로젝트 시작 단계에서', a: '전체 계획을 세워두고 시작해요', b: '일단 시작하고, 하면서 잡아가요', hi: 'a' },
       { q: '내가 모르는 채로 진행되는 일이 팀에 있을 때', a: '맡은 사람을 믿고 신경 쓰지 않아요', b: '흐름은 알고 있어야 마음이 놓여요', hi: 'b' },
       { q: '회의 전에', a: '안건과 배경을 미리 확인해 둬요', b: '일단 들어가서 파악해요', hi: 'a' },
       { q: '정보가 부족한 상태에서 결정해야 할 때', a: '일단 있는 정보로 방향을 잡고 진행하면서 수정해요', b: '조금이라도 더 알아본 뒤에 정해요', hi: 'b' }
@@ -852,7 +854,7 @@
 
   const COPY = [
     {
-      pole: ['먼저 듣는', '할 말은 하는'],
+      pole: ['먼저 듣는', '중요할 때만 나서는', '먼저 말하는'],
       say: [
         '의견이 갈릴 때 먼저 물러나 듣습니다. 반대 의견이 없는 게 아니라, 그 자리에서 부딪히는 것보다 나중에 따로 정리하는 쪽을 택합니다. 회의에서는 조용하지만 끝난 뒤에 생각이 정리되어 나오는 편이고, 그래서 결정이 이미 굳은 다음에 이야기가 시작되는 일이 있습니다.',
         '밀어붙일 때와 물러날 때를 상황에 따라 나눕니다. 사소한 안건에서는 대체로 흐름을 따라가고, 중요하다고 판단한 것에만 목소리를 냅니다. 그래서 이 사람이 말을 꺼내면 팀이 한 번 멈춰서 듣는 편입니다.',
@@ -865,7 +867,7 @@
       ]
     },
     {
-      pole: ['사람부터 보는', '결과부터 보는'],
+      pole: ['사람을 먼저 보는', '사람과 일을 오가는', '일을 먼저 보는'],
       say: [
         '일보다 사람 상태를 먼저 봅니다. 분위기가 굳으면 진도보다 그걸 먼저 풀려고 하고, 지적할 일이 있어도 말을 어떻게 꺼낼지부터 생각합니다. 팀이 오래 붙어 있을 때 이 성향이 크게 작용하고, 대신 일정이 급할 때는 결정이 한 박자 늦어집니다.',
         '사람과 결과 사이에서 균형을 잡습니다. 급할 때는 일 쪽으로, 여유가 있을 때는 사람 쪽으로 기웁니다. 어느 한쪽에 고정되어 있지 않아서, 지금 무엇이 급한지 알려주면 알아서 맞추는 편입니다.',
@@ -878,9 +880,9 @@
       ]
     },
     {
-      pole: ['빠르게 내보내는', '끝까지 다듬는'],
+      pole: ['빠르게 내보내는', '힘을 나눠 쓰는', '끝까지 다듬는'],
       say: [
-        '완성도보다 속도를 먼저 챕니다. 80%에서 내보내고 피드백으로 고치는 편이 빠르다고 보고, 형식보다 요점이 전달되는지를 기준으로 삼습니다. 팀에서 가장 먼저 무언가를 만들어 오는 역할이 되기 쉽고, 올린 것이 초안이라는 걸 함께 말해주면 오해가 줄어듭니다.',
+        '완성도보다 속도를 먼저 챙깁니다. 80%에서 내보내고 피드백으로 고치는 편이 빠르다고 보고, 형식보다 요점이 전달되는지를 기준으로 삼습니다. 팀에서 가장 먼저 무언가를 만들어 오는 역할이 되기 쉽고, 올린 것이 초안이라는 걸 함께 말해주면 오해가 줄어듭니다.',
         '중요한 것과 그렇지 않은 것을 나눠서 힘을 씁니다. 전부 완벽하게 하려고는 하지 않고, 어디까지가 이번 범위인지 정해지면 그 안에서 조절합니다. 범위가 흐릿할 때만 판단이 흔들립니다.',
         '마감을 지켰더라도 자기 기준에 못 미치면 그냥 넘기기 어렵습니다. 형식과 표현까지 손을 보고, 제출한 뒤에도 아쉬운 부분이 계속 남습니다. 결과물의 마지막 10%를 책임지는 사람이 되는 대신, 그 10%에 들어간 시간은 남에게 잘 보이지 않습니다.'
       ],
@@ -891,7 +893,7 @@
       ]
     },
     {
-      pole: ['믿고 맡기는', '직접 챕기는'],
+      pole: ['넘기고 기다리는', '큰 흐름만 보는', '넘기고 확인하는'],
       say: [
         '맡긴 일은 상대에게 온전히 넘깁니다. 방식이 자기와 달라도 목적이 달성되면 그대로 두고, 굳이 확인하지 않습니다. 같이 일하는 사람이 자기 방식으로 해볼 여지가 넓어지고, 대신 방향이 어긋났을 때 발견이 늦습니다.',
         '맡기긴 하는데 큰 흐름은 보고 있습니다. 세부까지 들어가지는 않고, 결과가 크게 틀어질 것 같을 때만 개입합니다. 확인과 기다림 사이에서 선을 잡는 편입니다.',
@@ -904,7 +906,7 @@
       ]
     },
     {
-      pole: ['상황 보고 맞추는', '미리 알아두는'],
+      pole: ['가서 맞추는', '필요한 만큼 준비하는', '미리 알아두는'],
       say: [
         '계획보다 현장에서 맞춥니다. 정보가 부족해도 일단 정하고 나중에 고치는 쪽이고, 일정이 바뀌어도 크게 흔들리지 않습니다. 착수가 빠른 대신 같은 결정을 두 번 하게 되는 경우가 생깁니다.',
         '필요한 만큼 준비하고 시작합니다. 전부 알아본 뒤에 움직이지도, 아무것도 모른 채 들어가지도 않습니다. 준비 시간을 스스로 조절하는 편이라 일정 변화에 비교적 잘 붙습니다.',
@@ -931,7 +933,7 @@
     { when: (b) => b[1] === 2 && b[0] === 0, text: '결과를 보면서도 앞에 나서지는 않습니다. 판단은 이미 서 있는데 말이 안 나오는 경우가 많으니, 물어봐 주면 나옵니다.' },
     { when: (b) => b[3] === 0 && b[2] === 2, text: '자기 결과물에는 엄격한데 남의 것에는 손대지 않습니다. 기준을 말로 알려주지 않으면 팀은 그 기준을 모른 채 지나갑니다.' },
     { when: (b) => b[4] === 2 && b[0] === 0, text: '미리 다 알아보고 들어가는데 그 자리에서 말은 아낍니다. 준비한 내용이 쓰이지 못하고 끝나는 경우가 생깁니다.' },
-    { when: (b) => b[1] === 0 && b[2] === 2, text: '사람도 챕기고 결과물도 다듬습니다. 둘 다 시간이 드는 일이라 본인 일정이 가장 먼저 밀립니다.' },
+    { when: (b) => b[1] === 0 && b[2] === 2, text: '사람도 챙기고 결과물도 다듬습니다. 둘 다 시간이 드는 일이라 본인 일정이 가장 먼저 밀립니다.' },
     { when: (b) => b[0] === 0 && b[1] === 0, text: '앞에 나서지 않고 사람을 먼저 봅니다. 팀 분위기가 편해지는 쪽이고, 정작 본인이 불편한 것은 끝까지 말하지 않는 경우가 많습니다.' },
     { when: (b) => b[2] === 0 && b[3] === 2, text: '자기 결과물은 빠르게 내보내면서 남의 것은 확인합니다. 기준이 자기와 남에게 다르게 적용되는 것처럼 보일 수 있어서, 무엇을 보는지 먼저 말해두면 오해가 줄어듭니다.' },
     { when: (b) => b[4] === 0 && b[3] === 2, text: '준비 없이 시작하면서 진행 중에는 자주 확인합니다. 계획 대신 중간 점검으로 방향을 잡는 방식이라, 팀에게는 갑작스러운 확인으로 느껴질 수 있습니다.' },
@@ -1178,8 +1180,6 @@
 
   function render(scores) {
     const bands = scores.map(band);
-    let top = 0, gap = -1;
-    scores.forEach((s, i) => { const d = Math.abs(s - MID); if (d > gap) { gap = d; top = i; } });
 
     const meBox = $('r-me');
     meBox.innerHTML = '';
@@ -1196,34 +1196,39 @@
       meBox.appendChild(s);
     }
 
-    $('r-title').innerHTML = bands[top] === 1
-      ? '한쪽으로 <em>치우치지 않은</em> 사람'
-      : `<em>${COPY[top].pole[bands[top] === 2 ? 1 : 0]}</em> 사람`;
+    /* 치우친 순서. 제목·막대·서술이 모두 이 순서를 따른다.
+       축 순서대로 늘어놓으면 다섯 개의 판정이 나열된 것처럼 읽힌다. */
+    const order = scores.map((v, i) => ({ i, d: Math.abs(v - MID) })).sort((p, q) => q.d - p.d);
+    const named = order.filter((o) => bands[o.i] !== 1).slice(0, 2);
+    const head = named.length ? named : [order[0]];
 
-    const strong = bands.filter((v) => v !== 1).length;
-    $('r-lead').textContent = strong === 0
-      ? '다섯 가지가 모두 중간대에 있습니다.'
-      : `다섯 가지 중 ${strong}가지가 한쪽으로 뚜렷하게 기울어 있습니다.`;
+    $('r-title').innerHTML = head
+      .map((o) => `<em>${COPY[o.i].pole[bands[o.i]]}</em>`).join(', ') + ' 사람';
 
-    $('r-bars').innerHTML = AXES.map((ax, i) => {
-      const s = scores[i];
+    $('r-lead').textContent = named.length === 0
+      ? '어느 쪽으로도 크게 기울지 않습니다. 정해진 방식에 묶여 있지 않아서, 팀에서 비어 있는 자리를 메우는 역할이 잘 맞습니다.'
+      : named.length === 1
+        ? `${AXES[named[0].i].nm}에서 성향이 가장 뚜렷합니다. 아래 서술도 그 순서로 놓았습니다.`
+        : `${AXES[named[0].i].nm}와 ${AXES[named[1].i].nm}에서 성향이 가장 뚜렷합니다. 아래 서술도 그 순서로 놓았습니다.`;
+
+    $('r-bars').innerHTML = order.map(({ i }) => {
+      const ax = AXES[i], s = scores[i];
       const right = s >= MID;
       const w = (Math.abs(s - MID) / MID) * 50;
       return `<div class="bar">
         <div class="top"><span class="nm">${ax.nm}</span><span class="val px">${s} / ${MAX}</span></div>
         <div class="tr"><i class="${right ? 'r' : 'l'}" style="width:${w}%"></i></div>
-        <div class="poles px"><span>${COPY[i].pole[0]}</span><span>${COPY[i].pole[1]}</span></div>
+        <div class="poles px"><span>${COPY[i].pole[0]}</span><span>${COPY[i].pole[2]}</span></div>
       </div>`;
     }).join('');
 
-    $('r-lines').innerHTML = scores.map((s, i) => `<p>${COPY[i].say[bands[i]]}</p>`).join('');
+    $('r-lines').innerHTML = order.map(({ i }) => `<p>${COPY[i].say[bands[i]]}</p>`).join('');
 
     const hits = COMBO.filter((c) => c.when(bands)).slice(0, 3);
     $('r-combo').hidden = hits.length === 0;
     $('r-combo-body').innerHTML = hits.map((c) => `<p>${c.text}</p>`).join('');
 
-    $('r-use').innerHTML = scores.map((s, i) => ({ i, d: Math.abs(s - MID) }))
-      .sort((p, q) => q.d - p.d).slice(0, 3)
+    $('r-use').innerHTML = order.slice(0, 3)
       .map(({ i }) => `<li>${COPY[i].use[bands[i]]}</li>`).join('');
   }
 
