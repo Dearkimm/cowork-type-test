@@ -1005,6 +1005,8 @@
   .acts button { font-family: var(--pixel); font-size: 16px; padding: 15px 20px; flex: 1 1 auto; }
   .acts .primary { background: var(--ca); color: #fff; border-color: var(--ca-deep); box-shadow: 0 4px 0 var(--ca-deep); }
   .acts .primary:hover { background: #3E6AFF; }
+  .acts .pink { background: var(--cb); border-color: var(--cb-deep); box-shadow: 0 4px 0 var(--cb-deep); }
+  .acts .pink:hover { background: #FF66A9; }
   .toast { color: var(--sub); min-height: 1.4em; }
   .disc { color: var(--sub); line-height: 1.7; }
 
@@ -1137,11 +1139,12 @@
         <ul id="r-use"></ul>
       </div>
       <div class="acts">
-        <button class="gbtn primary" id="share">팀원 초대하기</button>
+        <button class="gbtn primary" id="share">개인 결과 공유</button>
+        <button class="gbtn primary pink" id="team">팀 만들기</button>
         <button class="gbtn" id="again">다시 하기</button>
       </div>
       <p class="toast px" id="toast"></p>
-      <p class="disc px">지금은 링크에 결과가 담기는 것까지만 됩니다. 방장 포함 네 명이 모여 팀 결과가 나오는 부분은 데이터베이스를 붙인 뒤에 동작합니다.</p>
+      <p class="disc px">개인 결과 공유는 지금도 됩니다. 팀 만들기는 준비 중입니다. 팀 하나에 링크 하나가 생기고, 방장 포함 네 명까지 같은 링크로 들어옵니다.</p>
     </div>
   </section>
 </div>
@@ -2239,10 +2242,15 @@
   $('share').addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText(location.href);
-      $('toast').textContent = '링크를 복사했어요. 팀원에게 보내주세요.';
+      $('toast').textContent = '내 결과 링크를 복사했어요. 이 링크를 연 사람은 내 결과를 봅니다.';
     } catch {
       $('toast').textContent = '주소창의 링크를 복사해서 보내주세요.';
     }
+  });
+  /* 팀은 상태를 저장할 곳이 생긴 뒤에 연다. 팀 하나에 URL 하나가
+     원칙이라 링크에 실어 보내는 방식으로는 안 된다. */
+  $('team').addEventListener('click', () => {
+    $('toast').textContent = '팀 기능은 준비 중이에요. 지금은 개인 결과 공유만 됩니다.';
   });
   $('again').addEventListener('click', () => {
     at = 0; picks = new Array(Q.length).fill(null);
