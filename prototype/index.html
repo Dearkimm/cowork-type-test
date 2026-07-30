@@ -746,7 +746,7 @@
     box-shadow: 0 4px 0 var(--edge-deep);
     transition: transform 0.08s, box-shadow 0.08s, background-color 0.12s, color 0.12s, border-color 0.12s;
   }
-  .gbtn:hover:not([disabled]) { transform: translateY(-2px); box-shadow: 0 6px 0 var(--edge-deep); }
+  .gbtn:hover:not([disabled]) { border-color: var(--ca-deep); }
   .gbtn:active:not([disabled]) { transform: translateY(4px); box-shadow: 0 0 0 var(--edge-deep); }
   .gbtn[disabled] { opacity: 0.45; }
   .pxbtn { font-family: var(--pixel); letter-spacing: 0.02em; }
@@ -786,35 +786,62 @@
   .land .tag { animation: pop 0.6s 0.46s cubic-bezier(0.16, 1.3, 0.4, 1) both; }
   @keyframes pop { from { opacity: 0; } to { opacity: 1; } }
 
-  /* 글자는 갈무리14 볼드다. 획 굵기는 폰트와 크기에서 얻고 테두리는 2px 만
-     두른다. 더 두껍게 하면 A 와 R 의 속공간이 막혀서 오히려 안 읽힌다. */
+  /* 획을 불리는 건 흰 띠를 글자 둘레에 두르는 방식이다. maple-lettering 의
+     스티커와 같다. -webkit-text-stroke 로는 안쪽으로도 파고들어서 A 와 R 의
+     속공간이 먼저 막힌다. 띠는 바깥으로만 번져서 같은 굵기에서 더 읽힌다.
+     버튼 크기는 예전 그대로다. 글자만 굵어졌다. */
   .cta {
-    margin-top: 34px; padding: 16px clamp(38px, 12vw, 60px);
+    margin-top: 34px; padding: 15px clamp(34px, 11vw, 52px);
     font-family: var(--pixel-fat); font-weight: 700;
-    font-size: 42px; letter-spacing: 6px; text-indent: 6px;
-    color: #fff; -webkit-text-stroke: 2px #fff; paint-order: stroke fill;
-    text-shadow: 0 4px 0 var(--cb-deep);
+    font-size: 28px; letter-spacing: 5px; text-indent: 5px;
+    line-height: 1; color: #fff;
     background: var(--cb); border-color: var(--cb-deep);
     box-shadow: 0 5px 0 var(--cb-deep);
     animation: rise 0.6s 0.72s cubic-bezier(0.16, 1.25, 0.4, 1) both;
+    text-shadow:
+      -2px -2px #FFFFFF,
+      -1px -2px #FFFFFF,
+      0px -2px #FFFFFF,
+      1px -2px #FFFFFF,
+      2px -2px #FFFFFF,
+      -2px -1px #FFFFFF,
+      -1px -1px #FFFFFF,
+      0px -1px #FFFFFF,
+      1px -1px #FFFFFF,
+      2px -1px #FFFFFF,
+      -2px 0px #FFFFFF,
+      -1px 0px #FFFFFF,
+      1px 0px #FFFFFF,
+      2px 0px #FFFFFF,
+      -2px 1px #FFFFFF,
+      -1px 1px #FFFFFF,
+      0px 1px #FFFFFF,
+      1px 1px #FFFFFF,
+      2px 1px #FFFFFF,
+      -2px 2px #FFFFFF,
+      -1px 2px #FFFFFF,
+      0px 2px #FFFFFF,
+      1px 2px #FFFFFF,
+      2px 2px #FFFFFF;
   }
-  /* 올리면 떠오르면서 조금씩 흔들린다. 눌러도 되는 것이라고 알려 준다. */
+  /* 올리면 제자리에서 좌우로만 움찔한다. 자리를 옮기면 눌러야 할 데가
+     흔들려서 오히려 누르기 어려워진다. */
   .cta:hover:not([disabled]) {
     opacity: 1; cursor: var(--hand-lg);
     background: #FF66A9;
-    box-shadow: 0 9px 0 var(--cb-deep), 0 0 0 7px rgba(255,110,163,0.24);
-    animation: wiggle 0.9s ease-in-out infinite;
+    box-shadow: 0 5px 0 var(--cb-deep), 0 0 0 7px rgba(255,110,163,0.26);
+    animation: wiggle 0.7s ease-in-out infinite;
   }
   @keyframes wiggle {
-    0%, 100% { transform: translateY(-3px) rotate(0deg); }
-    30%      { transform: translateY(-5px) rotate(-1.4deg); }
-    70%      { transform: translateY(-5px) rotate(1.4deg); }
+    0%, 100% { transform: rotate(0deg); }
+    25%       { transform: rotate(-1.6deg); }
+    75%       { transform: rotate(1.6deg); }
   }
-  /* 누르면 그림자 두께만큼 그대로 내려앉는다. 색도 한 단계 진해진다. */
+  /* 누를 때만 움직인다. 그림자 두께만큼 그대로 내려앉는다. */
   .cta:active:not([disabled]) {
     animation: none; transform: translateY(5px);
     background: #FF3D93;
-    box-shadow: 0 0 0 var(--cb-deep), 0 0 0 7px rgba(255,110,163,0.32);
+    box-shadow: 0 0 0 var(--cb-deep), 0 0 0 7px rgba(255,110,163,0.34);
   }
   .land .note { margin-top: 0; color: var(--sub); background: rgba(255,255,255,0.86); border-radius: 12px; padding: 9px 15px; animation: rise 0.6s 0.82s both; }
   @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
