@@ -72,23 +72,37 @@
   /* ── 배경 ─────────────────────────────────── */
   .sky { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
   .sky canvas { position: absolute; }
-  .cl1 { left: -26px; bottom: 26px; }
-  .cl2 { right: -34px; bottom: 96px; opacity: 0.9; }
-  .cl3 { left: 28vw; top: 11vh; opacity: 0.7; }
-  .cl4 { right: 15vw; top: 30vh; opacity: 0.5; }
-  .cl5 { left: 46vw; bottom: 6px; opacity: 0.8; }
+  /* 아래를 구름으로 메운다. 흰 띠를 깔고 그 위에 구름을 겹쳐
+     한 덩어리로 보이게 한다. 레퍼런스의 구름 지평선이 이 구조다. */
+  .deck { position: absolute; left: 0; right: 0; bottom: 0; height: clamp(90px, 15vh, 150px);
+    background: linear-gradient(180deg, rgba(255,255,255,0) 0%, #FFFFFF 46%, #FFFFFF 100%); }
+  .bank { position: absolute; left: 0; right: 0; bottom: clamp(70px, 12vh, 120px); height: 0; }
+  .bank canvas { position: absolute; bottom: 0; }
+
+  /* 멀리 있는 구름은 옅게, 가까운 구름은 진하게 */
+  .cl1 { left: -3vw; top: 12vh; opacity: 0.55; }
+  .cl2 { right: -2vw; top: 20vh; opacity: 0.42; }
+  .cl3 { left: 26vw; top: 8vh; opacity: 0.6; }
+  .cl4 { right: 22vw; top: 32vh; opacity: 0.34; }
+  .cl5 { left: 8vw; top: 40vh; opacity: 0.3; }
+
+  /* 구름 발판. 밑이 평평해서 딛고 선 것처럼 보인다. */
+  .pf1 { left: 3vw; top: 46vh; opacity: 0.95; }
+  .pf2 { right: 5vw; top: 38vh; opacity: 0.9; }
+  .pf3 { left: 30vw; top: 62vh; opacity: 0.85; }
+  .pf4 { right: 27vw; top: 56vh; opacity: 0.8; }
   .st1 { left: 6vw; top: 17vh; animation: tw 3.6s ease-in-out infinite; }
   .st2 { right: 9vw; top: 25vh; animation: tw 4.4s 0.9s ease-in-out infinite; }
-  .st3 { left: 15vw; bottom: 30vh; animation: tw 4s 1.6s ease-in-out infinite; }
-  .st4 { right: 30vw; bottom: 22vh; animation: tw 4.8s 0.5s ease-in-out infinite; }
+  .st3 { left: 15vw; top: 28vh; animation: tw 4s 1.6s ease-in-out infinite; }
+  .st4 { right: 30vw; top: 36vh; animation: tw 4.8s 0.5s ease-in-out infinite; }
   .st5 { left: 41vw; top: 8vh; animation: tw 5.2s 2.2s ease-in-out infinite; }
   .st6 { right: 20vw; top: 46vh; animation: tw 3.9s 1.1s ease-in-out infinite; }
-  .yl1 { right: 6vw; bottom: 38vh; animation: float 5.4s ease-in-out infinite; }
+  .yl1 { right: 6vw; top: 22vh; animation: float 5.4s ease-in-out infinite; }
   .yl2 { left: 9vw; top: 44vh; animation: float 6.2s 1.3s ease-in-out infinite; }
   .yl3 { left: 52vw; top: 4vh; animation: float 5.8s 0.6s ease-in-out infinite; }
-  .st7 { left: 44vw; bottom: 5vh; animation: tw 4.2s 1.7s ease-in-out infinite; }
-  .st8 { left: 63vw; bottom: 13vh; animation: tw 3.8s 0.4s ease-in-out infinite; }
-  .yl4 { left: 31vw; bottom: 27vh; animation: float 5.5s 2.3s ease-in-out infinite; }
+  .st7 { left: 44vw; top: 30vh; animation: tw 4.2s 1.7s ease-in-out infinite; }
+  .st8 { left: 63vw; top: 44vh; animation: tw 3.8s 0.4s ease-in-out infinite; }
+  .yl4 { left: 31vw; top: 18vh; animation: float 5.5s 2.3s ease-in-out infinite; }
   @keyframes tw { 0%, 100% { opacity: 0.2; transform: scale(0.7); } 50% { opacity: 1; transform: scale(1.1); } }
   @keyframes float { 0%, 100% { transform: translateY(0); opacity: 0.55; } 50% { transform: translateY(-12px); opacity: 0.95; } }
 
@@ -156,30 +170,17 @@
   .frame i:nth-child(3) { bottom: -7px; left: -7px; }
   .frame i:nth-child(4) { bottom: -7px; right: -7px; }
 
-  /* 스티커. 로고 주변을 채운다. */
+  /* 스티커. 별만 남긴다. 풍선·하트·날개는 뺐다. */
   .land canvas.stk { position: absolute; z-index: 0; }
-  /* 위·중간·아래 세 띠로 나눈다. 큰 스프라이트를 아래쪽에 두어야
-     위로 쏠린 느낌이 사라진다. 가운데 세로줄은 로고와 캐릭터 자리라 비운다. */
-  .bl2 { left: 42%; top: 3%; animation: float 6.1s 0.8s ease-in-out infinite; }
-  .hs1 { left: 27%; top: 8%; animation: float 4.8s 0.4s ease-in-out infinite; }
-  .hs2 { right: 25%; top: 6%; animation: float 5.1s 1.1s ease-in-out infinite; }
   .ss1 { left: 16%; top: 12%; animation: tw 3.2s ease-in-out infinite; }
-  .ss4 { right: 36%; top: 16%; animation: tw 3.4s 0.6s ease-in-out infinite; }
-  .ss7 { left: 58%; top: 7%; animation: tw 4.3s 1.4s ease-in-out infinite; }
-
-  .wg1 { left: 6%; top: 26%; animation: float 5.2s ease-in-out infinite; }
-  .bl3 { right: 6%; top: 24%; animation: float 5.6s 1.6s ease-in-out infinite; }
   .ss2 { right: 19%; top: 38%; animation: tw 4.1s 1.2s ease-in-out infinite; }
+  .ss3 { right: 16%; bottom: 32%; animation: tw 3.7s 2s ease-in-out infinite; }
+  .ss4 { right: 36%; top: 16%; animation: tw 3.4s 0.6s ease-in-out infinite; }
   .ss5 { left: 20%; top: 43%; animation: tw 4.6s 1.8s ease-in-out infinite; }
+  .ss6 { left: 33%; bottom: 34%; animation: tw 3.9s 2.6s ease-in-out infinite; }
+  .ss7 { left: 58%; top: 7%; animation: tw 4.3s 1.4s ease-in-out infinite; }
+  .ss8 { right: 32%; bottom: 38%; animation: tw 3.6s 2.4s ease-in-out infinite; }
 
-  .bl4 { left: 4%; bottom: 25%; animation: float 6.6s 0.5s ease-in-out infinite; }
-  .wg2 { right: 4%; bottom: 20%; animation: float 5.9s 2.1s ease-in-out infinite; }
-  .hs3 { left: 14%; bottom: 9%; animation: float 5.7s 1.9s ease-in-out infinite; }
-  .ss3 { right: 16%; bottom: 8%; animation: tw 3.7s 2s ease-in-out infinite; }
-  .ss6 { left: 33%; bottom: 4%; animation: tw 3.9s 2.6s ease-in-out infinite; }
-  .ss8 { right: 32%; bottom: 6%; animation: tw 3.6s 2.4s ease-in-out infinite; }
-  .wg3 { left: 25%; bottom: 31%; animation: float 6.3s 1.4s ease-in-out infinite; }
-  .hs4 { right: 23%; bottom: 33%; animation: float 5.4s 0.9s ease-in-out infinite; }
   .bow { position: absolute; z-index: 0; left: 50%; top: 50%; transform: translate(-50%, -195%); opacity: 0.8; }
 
   /* 아래에 네 마리를 세워 화면을 채운다 */
@@ -187,10 +188,11 @@
      로고·태그라인·START 묶음이 화면 가운데로 온다. 따로 두면 겹친다. */
   .landfoot { position: absolute; left: 0; right: 0; bottom: clamp(12px, 2.6vh, 26px); z-index: 1; display: flex; flex-direction: column; align-items: center; gap: clamp(8px, 1.6vh, 14px); }
   .crew { display: flex; align-items: flex-end; justify-content: center; gap: clamp(6px, 2.2vw, 18px); }
-  .crew canvas { animation: hop 2.8s ease-in-out infinite; }
-  .crew canvas:nth-child(2) { animation-delay: 0.35s; }
-  .crew canvas:nth-child(3) { animation-delay: 0.7s; }
-  .crew canvas:nth-child(4) { animation-delay: 1.05s; }
+  /* canvas 로만 지정하면 PNG 를 넣은 캐릭터는 안 움직인다. */
+  .crew > * { animation: hop 2.8s ease-in-out infinite; }
+  .crew > *:nth-child(2) { animation-delay: 0.35s; }
+  .crew > *:nth-child(3) { animation-delay: 0.7s; }
+  .crew > *:nth-child(4) { animation-delay: 1.05s; }
   @keyframes hop { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
 
   .lock { font-size: 56px; line-height: 1; white-space: nowrap; will-change: transform; }
@@ -683,39 +685,6 @@
     return cv;
   }
 
-  /* 통통한 만화 날개. 큰 깃 하나에 작은 깃 둘, 밑동에 말림.
-     깃털을 하나하나 계산해서 그렸을 때보다 이 쪽이 레퍼런스에 가깝다.
-     겹치는 깃마다 테두리가 남게 뒤에서 앞으로 덧그린 결과다. */
-  const WING_GRID = [
-    '.....................KK..',
-    '...................KKPK..',
-    '.................KKPPK...',
-    '...............KKPPPK....',
-    '.............KKPPPPK.....',
-    '...........KKPPPWPPK.....',
-    '.........KKPPPWWPPK.KK...',
-    '.......KKPPPWWWPPKKKPK...',
-    '.....KKPPPWWWWPPKKPPK....',
-    '...KKPPPWWWWWWPKPPPPKKK..',
-    '..KPPPWWWWWWWPPKPWPKKPK..',
-    '.KPPWWWWWWWWPPKPWPPKPK...',
-    'KPPWWWWWWWWPPKWWPPKPPK...',
-    'KPWWWWWWWWWPKWWWPKPPK....',
-    'KPWWWWWWWWPPKWWPPKPK.....',
-    'KPWWWWWWWPPKWWWPKPK......',
-    'KPPPPPPPPPKPPPPPKKK......',
-    '.KKKKKKKKK.KKKKK.........'
-  ];
-  const WING_PAL = {
-    pink: { K: '#FF9DC8', P: '#FFD9EC', W: '#FFFFFF' },
-    blue: { K: '#8FB6F0', P: '#D8E6FB', W: '#FFFFFF' }
-  };
-  /* 기본 격자는 오른쪽 위를 본다. 화면 왼쪽에 붙일 날개는 뒤집어 바깥을 보게 한다. */
-  const wingArt = (tone, flip) => ({
-    pal: WING_PAL[tone],
-    grid: flip ? WING_GRID.map((row) => [...row].reverse().join('')) : WING_GRID
-  });
-
   const CLOUD = {
     pal: { W: '#FFFFFF', L: '#EAF3FF', S: '#CFE3FA' },
     grid: [
@@ -733,16 +702,20 @@
       '....SSSS..SSSS..........'
     ]
   };
-  // 풍선과 하트. 색만 바꿔 여러 개를 만든다.
-  const BALLOON_GRID = [
-    '...KKK...', '.KKBHBKK.', 'KBBBHBBBK', 'KBBBBBBBK', 'KBBBBBBBK',
-    'KBBBBBBBK', '.KBBBBBK.', '..KBBBK..', '...KBK...', '....K....',
-    '....S....', '.....S...', '....S....', '.....S...'
-  ];
-  const balloon = (base, dark) => ({ pal: { K: dark, B: base, H: '#FFFFFF', S: '#C9D8EE' }, grid: BALLOON_GRID });
-  const HEART = {
-    pal: { K: '#E86A9C', P: '#FF9DC4', H: '#FFFFFF' },
-    grid: ['.KK.KK.', 'KPHKPPK', 'KPPPPPK', 'KPPPPPK', '.KPPPK.', '..KPK..', '...K...']
+  /* 구름 발판. 위는 뭉게뭉게, 밑은 평평하다. */
+  const PLATFORM = {
+    pal: { W: '#FFFFFF', L: '#EDF4FF', S: '#D3E4F8' },
+    grid: [
+      '......WWWW..........WWW.........',
+      '...WWWWWWWWWW....WWWWWWWWW......',
+      '..WWWWWWWWWWWWWWWWWWWWWWWWWW....',
+      '.WWWWWWWWWWWWWWWWWWWWWWWWWWWWW..',
+      'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW.',
+      'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
+      'LLLWWWWWWWWWWWWWWWWWWWWWWWWWWWLL',
+      'LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL',
+      '.SSSSSSSSSSSSSSSSSSSSSSSSSSSSSS.'
+    ]
   };
 
   /* prototype/sprites/{key}.png 가 있으면 그걸 쓰고, 없으면 위 격자를 그린다.
@@ -772,32 +745,45 @@
 
   (function decorate() {
     const box = $('sky');
-    [['cl1', CLOUD, 6], ['cl2', CLOUD, 5], ['cl3', CLOUD, 3], ['cl4', CLOUD, 4], ['cl5', CLOUD, 4],
-     ['st1', STAR, 3], ['st2', STAR, 2], ['st3', STAR, 3], ['st4', STAR, 2], ['st5', STAR, 2], ['st6', STAR, 2],
-     ['st7', STAR, 2], ['st8', STAR, 3], ['yl1', STAR_Y, 4], ['yl2', STAR_Y, 3],
-     ['yl3', STAR_Y, 3], ['yl4', STAR_Y, 3]].forEach(([cls, art, sc]) => {
-      const cv = sprite(art, sc);
-      cv.className = cls;
-      box.appendChild(cv);
+    const deck = document.createElement('div');
+    deck.className = 'deck';
+    const bank = document.createElement('div');
+    bank.className = 'bank';
+    /* 아래 구름 띠. 좌우로 겹쳐 놓아 한 줄로 이어 보이게 한다. */
+    [[-4, 11, 0], [8, 9, 14], [20, 12, -6], [33, 8, 18], [44, 11, 4],
+     [57, 9, 16], [68, 12, -4], [80, 8, 20], [90, 11, 6]].forEach(([left, sc, lift]) => {
+      const cv = sprite(CLOUD, sc);
+      cv.style.left = left + 'vw';
+      cv.style.bottom = lift + 'px';
+      bank.appendChild(cv);
     });
+    box.append(deck, bank);
+
+    [['cl1', CLOUD, 7], ['cl2', CLOUD, 6], ['cl3', CLOUD, 4], ['cl4', CLOUD, 5], ['cl5', CLOUD, 4],
+     ['pf1', PLATFORM, 5], ['pf2', PLATFORM, 4], ['pf3', PLATFORM, 3], ['pf4', PLATFORM, 3],
+     ['st1', STAR, 3], ['st2', STAR, 2], ['st3', STAR, 3], ['st4', STAR, 2], ['st5', STAR, 2],
+     ['st6', STAR, 2], ['st7', STAR, 2], ['st8', STAR, 3],
+     ['yl1', STAR_Y, 4], ['yl2', STAR_Y, 3], ['yl3', STAR_Y, 3], ['yl4', STAR_Y, 3]]
+      .forEach(([cls, art, sc]) => {
+        const cv = sprite(art, sc);
+        cv.className = cls;
+        box.appendChild(cv);
+      });
+
     const lc = sprite(CLOUD, 15);
     lc.className = 'logocloud';
     $('land').prepend(lc);
     const bow = rainbow(3);
     bow.className = 'bow';
     $('land').prepend(bow);
-    // 랜딩 스티커
-    [['bl2', balloon('#FFE9A8', '#E5B94A'), 3], ['hs1', HEART, 3], ['hs2', HEART, 3],
-     ['ss1', STAR_Y, 2], ['ss4', STAR, 2], ['ss7', STAR_Y, 3],
-     ['wg1', wingArt('pink', true), 3], ['bl3', balloon('#B6E3FF', '#5FA8DE'), 4],
-     ['ss2', STAR_Y, 3], ['ss5', STAR_Y, 2],
-     ['bl4', balloon('#C8F0D8', '#6FBF8E'), 4], ['wg2', wingArt('blue', false), 2],
-     ['hs3', HEART, 4], ['ss3', STAR, 3], ['ss6', STAR, 2], ['ss8', STAR, 2],
-     ['wg3', wingArt('pink', true), 2], ['hs4', HEART, 3]].forEach(([cls, art, sc]) => {
-      const cv = sprite(art, sc);
-      cv.className = 'stk ' + cls;
-      $('land').prepend(cv);
-    });
+    // 랜딩 스티커는 별만 남긴다
+    [['ss1', STAR_Y, 2], ['ss2', STAR_Y, 3], ['ss3', STAR, 3], ['ss4', STAR, 2],
+     ['ss5', STAR_Y, 2], ['ss6', STAR, 2], ['ss7', STAR_Y, 3], ['ss8', STAR, 2]]
+      .forEach(([cls, art, sc]) => {
+        const cv = sprite(art, sc);
+        cv.className = 'stk ' + cls;
+        $('land').prepend(cv);
+      });
     // 아래에 네 마리
     CHARS.forEach((c, i) => $('crew').appendChild(charEl(i, 3)));
   })();
