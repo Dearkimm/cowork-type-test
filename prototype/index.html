@@ -1113,7 +1113,7 @@
         <div class="bars" id="r-bars"></div>
       </div>
       <div class="panel sure" id="r-sure" hidden>
-        <h2>가장 확신 있던 답</h2>
+        <h2>망설임 없던 답</h2>
         <div id="r-sure-body"></div>
       </div>
       <div class="panel">
@@ -2129,9 +2129,9 @@
         const off = offbeats(i, bands[i] === 2);
         if (off.length === 1) {
           const o = off[0];
-          exc = `<p class="exc">다만 [${o.q}]만 예외입니다. 여기서는 「${o.pick}」${o.sure ? ' 쪽을, 그것도 [확실히]로' : ' 쪽을'} 고르셨습니다.</p>`;
+          exc = `<p class="exc">[${o.q}]에서만 반대쪽인 「${o.pick}」를 골랐습니다.${o.sure ? ' [확실히]였습니다.' : ''}</p>`;
         } else if (off.length === 2) {
-          exc = `<p class="exc">다만 [${off[0].q}]와 [${off[1].q}]에서는 반대쪽이었습니다. 이 두 상황이 이 성향의 경계선입니다.</p>`;
+          exc = `<p class="exc">[${off[0].q}]와 [${off[1].q}]에서는 반대쪽을 골랐습니다.</p>`;
         }
       }
       return (ev ? `<p class="ev">${ev}</p>` : '') + `<p>${COPY[i].say[bands[i]]}</p>` + exc;
@@ -2141,7 +2141,7 @@
     const su = surest(order, bands);
     $('r-sure').hidden = !su;
     if (su) $('r-sure-body').innerHTML =
-      `<p class="q">${su.q}</p><p class="a">「${su.pick}」</p><p class="tail">서른 문항 중 가장 망설임 없이 고르신 답입니다.</p>`;
+      `<p class="q">${su.q}</p><p class="a">「${su.pick}」</p><p class="tail">성향이 가장 뚜렷한 축에서 [확실히]로 답한 문항입니다.</p>`;
 
     const hits = COMBO.filter((c) => c.when(bands)).slice(0, 4);
     $('r-combo').hidden = hits.length === 0;
