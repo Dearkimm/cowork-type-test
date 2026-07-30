@@ -42,7 +42,6 @@
     /* 메이플 커서(.ani)에서 뽑았다. 브라우저는 .ani 를 못 읽어서
        프레임을 PNG 로 꺼내 썼다. 뒤 숫자는 손끝 기준점이다. */
     --hand: url(sprites/cursor/maple.png) 5 3, pointer;
-    --hand-lg: url(sprites/cursor/maple2x.png) 10 6, pointer;
 
     --display: "Pretendard JP Variable", "Pretendard Variable", Pretendard,
       "Yu Gothic", YuGothic, "Hiragino Kaku Gothic ProN", Meiryo,
@@ -767,7 +766,7 @@
 
   /* ── 랜딩 ─────────────────────────────────── */
   .land { position: relative; overflow: hidden; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 64px clamp(14px, 5vw, 60px) clamp(140px, 22vh, 280px); }
-  .land > .bob, .land > .tag, .land > .cta { position: relative; z-index: 1; }
+  .land > .bob, .land > .tag, .land > .ctarise { position: relative; z-index: 1; }
   .landfoot { pointer-events: none; }
   /* 로고가 구름 위에 앉는다. Where is COLOR 의 구성. */
   .logocloud { position: absolute; z-index: 0; left: 50%; top: 50%; transform: translate(-50%, -100%); opacity: 0.96; }
@@ -791,15 +790,14 @@
   /* 획을 불리는 건 흰 띠를 글자 둘레에 두르는 방식이다. maple-lettering 의
      스티커와 같다. -webkit-text-stroke 로는 안쪽으로도 파고들어서 A 와 R 의
      속공간이 먼저 막힌다. 띠는 바깥으로만 번져서 같은 굵기에서 더 읽힌다.
-     버튼 크기는 예전 그대로다. 글자만 굵어졌다. */
+     왼쪽 아래에 진한 자국을 하나 둬서 레퍼런스의 두께감을 맞췄다. */
   .cta {
-    margin-top: 34px; padding: 15px clamp(34px, 11vw, 52px);
+    padding: 15px clamp(30px, 10vw, 48px);
     font-family: var(--pixel-fat); font-weight: 700;
-    font-size: 28px; letter-spacing: 5px; text-indent: 5px;
+    font-size: 28px; letter-spacing: 10px; text-indent: 10px;
     line-height: 1; color: #fff;
     background: var(--cb); border-color: var(--cb-deep);
     box-shadow: 0 5px 0 var(--cb-deep);
-    animation: rise 0.6s 0.72s cubic-bezier(0.16, 1.25, 0.4, 1) both;
     text-shadow:
       -2px -2px #FFFFFF,
       -1px -2px #FFFFFF,
@@ -824,22 +822,23 @@
       -1px 2px #FFFFFF,
       0px 2px #FFFFFF,
       1px 2px #FFFFFF,
-      2px 2px #FFFFFF;
+      2px 2px #FFFFFF,
+      -2px 3px #C7105E;
   }
-  /* 올리면 제자리에서 좌우로만 움찔한다. 자리를 옮기면 눌러야 할 데가
-     흔들려서 오히려 누르기 어려워진다. */
+  /* 등장 연출은 바깥 껍데기가 맡는다. 버튼 자신에게 걸어 두면 마우스를
+     뗄 때마다 이 애니메이션이 처음부터 다시 돌아서 0.72초 동안 사라진다. */
+  .ctarise { margin-top: 34px; animation: rise 0.6s 0.72s cubic-bezier(0.16, 1.25, 0.4, 1) both; }
+  /* 올리면 제자리에서 위아래로만 잘게 떤다. 자리는 안 바뀐다. */
   .cta:hover:not([disabled]) {
-    opacity: 1; cursor: var(--hand-lg);
     background: #FF66A9;
     box-shadow: 0 5px 0 var(--cb-deep), 0 0 0 7px rgba(255,110,163,0.26);
-    animation: wiggle 0.7s ease-in-out infinite;
+    animation: buzz 0.16s steps(2, end) infinite;
   }
-  @keyframes wiggle {
-    0%, 100% { transform: rotate(0deg); }
-    25%       { transform: rotate(-1.6deg); }
-    75%       { transform: rotate(1.6deg); }
+  @keyframes buzz {
+    0%, 100% { transform: translateY(-1px); }
+    50%       { transform: translateY(1px); }
   }
-  /* 누를 때만 움직인다. 그림자 두께만큼 그대로 내려앉는다. */
+  /* 누를 때는 그림자 두께만큼 그대로 내려앉는다. */
   .cta:active:not([disabled]) {
     animation: none; transform: translateY(5px);
     background: #FF3D93;
@@ -1068,7 +1067,7 @@
     <div class="land" id="land">
       <div class="bob"><div class="lock" id="lock">おしえて</div></div>
       <p class="tag" id="tagline">업무 스타일을 알려줘!</p>
-      <button class="gbtn pxbtn cta" id="go">START</button>
+      <span class="ctarise"><button class="gbtn pxbtn cta" id="go">START</button></span>
       <div class="landfoot">
         <p class="note px">30문항 · 3분 · 로그인 없음</p>
       </div>
