@@ -854,9 +854,9 @@
   .gbar .gt { font-size: 14px; letter-spacing: 0.04em; }
   .gbar .gq { font-size: 13px; letter-spacing: 0.06em; color: rgba(255, 255, 255, 0.72); }
   .gbar .gq b { font-size: 19px; color: #fff; }
-  .gbar .gside { display: flex; align-items: center; gap: 14px; }
-  .ghome { font-size: 12px; color: rgba(255, 255, 255, 0.85); padding: 4px 2px; }
-  .ghome:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+  /* 창 바깥 오른쪽 위. 하늘 위에 바로 얹혀서 잉크색으로 쓴다. */
+  .ghome { align-self: flex-end; font-size: 12px; color: var(--ink); padding: 4px 2px; margin-bottom: 6px; }
+  .ghome:hover { text-decoration: underline; text-underline-offset: 3px; }
 
   /* 다섯 문항이 한 장. 캐릭터가 발판을 하나씩 밟고 지나간다. */
   .gtrail { flex: none; display: flex; align-items: flex-end; gap: 14px; padding: 12px 18px 10px; border-bottom: 3px dashed var(--ca-pale); }
@@ -1079,13 +1079,11 @@
 
   <section class="view" id="v-test">
     <div class="test">
+      <button class="ghome px" id="home" type="button">◀ 처음으로</button>
       <div class="gwin">
         <header class="gbar">
           <span class="gt px">▶ 다음 상황에서 나는?</span>
-          <span class="gside">
-            <span class="gq px">Q <b id="num"></b> / 30</span>
-            <button class="ghome px" id="home" type="button">◀ 처음으로</button>
-          </span>
+          <span class="gq px">Q <b id="num"></b> / 30</span>
         </header>
         <span class="tube"><i id="fill"><u></u></i></span>
         <div class="gtrail">
