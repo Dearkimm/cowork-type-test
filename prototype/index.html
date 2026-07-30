@@ -863,6 +863,9 @@
   .map .tile.done { background: var(--g-light); }
   .map .tile.now { background: var(--g-base); }
   .map .tile.now > * { position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); animation: hop 1.5s ease-in-out infinite; }
+  .onstone { display: block; }
+  .onstone .sweat { position: absolute; right: -11px; top: -7px; animation: drip 1.5s ease-in infinite; }
+  @keyframes drip { 0% { opacity: 0; transform: translateY(-3px); } 25% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(7px); } }
 
   /* 확인 버튼은 없다. 구슬을 누르면 바로 넘어가니 버튼이 할 일이 없었다.
      왼쪽에 키 안내, 오른쪽에 지금 고른 것. */
@@ -1487,6 +1490,17 @@
     return img;
   }
 
+  /* 땀방울. 검사 후반부에 발판 위 캐릭터 머리 옆에 붙는다. */
+  const SWEAT = {
+    pal: { B: '#6FB9F7', W: '#FFFFFF' },
+    grid: ['..B..', '..B..', '.BBB.', 'BBWBB', 'BBWBB', '.BBB.']
+  };
+  function sweatEl() {
+    const cv = sprite(SWEAT, 2);
+    cv.className = 'sweat';
+    return cv;
+  }
+
   function setCursor(i) {
     const art = CHARS[i];
     const use = (u) => document.documentElement.style.setProperty('--cur', `url(${u}) 8 2, auto`);
@@ -1936,7 +1950,7 @@
     const ch = Math.floor(at / 5);
     sky(ch);
     $('num').textContent = String(at + 1).padStart(2, '0');
-    $('chap').textContent = (ch + 1) + '장' + (at >= 15 ? ' · 절반 지남' : '');
+    $('chap').textContent = (ch + 1) + '장';
 
     const mp = $('map');
     mp.innerHTML = '';
@@ -1944,7 +1958,15 @@
       const t = document.createElement('span');
       const here = i === at % 5;
       t.className = 'tile' + (i < at % 5 ? ' done' : here ? ' now' : '');
-      if (here && me.c !== null) t.appendChild(charEl(me.c, innerWidth < 560 ? 2 : 3));
+      if (here && me.c !== null) {
+        const wrap = document.createElement('span');
+        wrap.className = 'onstone';
+        wrap.appendChild(charEl(me.c, innerWidth < 560 ? 2 : 3));
+        // 후반부에는 캐릭터가 땀을 흘린다. 절반 지남 글자보다 이쪽이
+        // 진행감을 준다. 끝나면 결과 화면 캐릭터에는 안 붙는다.
+        if (at >= 15) wrap.appendChild(sweatEl());
+        t.appendChild(wrap);
+      }
       mp.appendChild(t);
     }
 
