@@ -1084,7 +1084,7 @@
           <span class="gt px">▶ 다음 상황에서 나는?</span>
           <span class="gside">
             <span class="gq px">Q <b id="num"></b> / 30</span>
-            <button class="ghome px" id="home" type="button">🏠 처음으로</button>
+            <button class="ghome px" id="home" type="button">◀ 처음으로</button>
           </span>
         </header>
         <span class="tube"><i id="fill"><u></u></i></span>
@@ -2306,12 +2306,13 @@
   /* 답이 하나라도 있으면 한 번 되묻는다. 실수로 눌러 30문항이
      날아가는 게 이 버튼의 유일한 위험이다. 모달 대신 버튼 글씨가
      바뀌고, 3초 안에 한 번 더 누르면 나간다. */
+  /* 열 문항쯤 왔을 때부터만 되묻는다. 초반에는 날려도 아까울 게 없다. */
   let homeArm = 0;
   $('home').addEventListener('click', () => {
-    const answered = picks.some(Boolean);
-    if (!answered || homeArm) { clearTimeout(homeArm); homeArm = 0; $('home').textContent = '🏠 처음으로'; goHome(); return; }
+    const answered = picks.filter(Boolean).length;
+    if (answered < 10 || homeArm) { clearTimeout(homeArm); homeArm = 0; $('home').textContent = '◀ 처음으로'; goHome(); return; }
     $('home').textContent = '답이 사라져요. 한 번 더!';
-    homeArm = setTimeout(() => { homeArm = 0; $('home').textContent = '🏠 처음으로'; }, 3000);
+    homeArm = setTimeout(() => { homeArm = 0; $('home').textContent = '◀ 처음으로'; }, 3000);
   });
 
   function sheet(open) { $('sheet').classList.toggle('live', open); }
