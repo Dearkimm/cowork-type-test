@@ -71,7 +71,11 @@
 
   /* ── 배경 ─────────────────────────────────── */
   .sky { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
-  .sky canvas { position: absolute; }
+  .sky > * { position: absolute; }
+  .sky img { image-rendering: pixelated; }
+  /* 지평선 그림은 가로로 이어 붙인다. 화면이 넓어도 끊기지 않는다. */
+  .horizon { left: 0; right: 0; bottom: 0; background-repeat: repeat-x;
+    background-position: left bottom; image-rendering: pixelated; }
 
   /* 바닥에 흰 띠를 깔았더니 구름이 그 위에 일렬로 선 것처럼 보였다.
      띠를 없애고 구름 덩어리를 높이가 다 다르게 겹쳐서 지평선을 만든다. */
@@ -137,13 +141,6 @@
   .logocloud { position: absolute; z-index: 0; left: 50%; top: 50%; transform: translate(-50%, -100%); opacity: 0.96; }
 
   /* 포스터 프레임. 레퍼런스 세 장이 전부 이 테두리를 쓴다. */
-  .frame { position: absolute; inset: 12px; z-index: 0; border: 4px solid rgba(255,255,255,0.9); border-radius: 22px; pointer-events: none; }
-  .frame::before { content: ''; position: absolute; inset: 5px; border: 2px solid rgba(255,255,255,0.5); border-radius: 17px; }
-  .frame i { position: absolute; width: 10px; height: 10px; background: #fff; border-radius: 50%; }
-  .frame i:nth-child(1) { top: -7px; left: -7px; }
-  .frame i:nth-child(2) { top: -7px; right: -7px; }
-  .frame i:nth-child(3) { bottom: -7px; left: -7px; }
-  .frame i:nth-child(4) { bottom: -7px; right: -7px; }
 
   .bow { position: absolute; z-index: 0; left: 50%; top: 50%; transform: translate(-50%, -195%); opacity: 0.8; }
 
@@ -402,7 +399,6 @@
 
   <section class="view live" id="v-land">
     <div class="land" id="land">
-      <div class="frame" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
       <div class="bob"><div class="lock pop3d" id="lock" aria-label="오시에테"></div></div>
       <p class="tag pop3d b" id="tagline" aria-label="업무 스타일을 알려줘"></p>
       <button class="gbtn pxbtn cta" id="go">START</button>
@@ -826,6 +822,26 @@
   /* prototype/sprites/{key}.png 가 있으면 그걸 쓰고, 없으면 위 격자를 그린다.
      그림 파일을 넣기만 하면 커서와 세 화면에 한꺼번에 반영된다. */
   const SPRITE_DIR = 'sprites/';
+
+  /* 배경도 그림 파일이 있으면 그걸 쓴다. 요소마다 파일이 따로라서
+     각자 다른 속도로 떠다니게 할 수 있다. 배경 전체를 한 장으로 만들면
+     그때는 못 움직인다. 파일이 없으면 계산해서 그린 격자를 쓴다.
+     그림은 원래 크기의 두 배로 보여준다. 칸 하나가 화면에서 2px 이다. */
+  const BG_DIR = 'sprites/bg/';
+  const BG_SCALE = 2;
+  function bgSwap(node, key) {
+    if (!key) return node;
+    const img = new Image();
+    img.addEventListener('load', () => {
+      img.style.cssText = node.style.cssText;
+      img.className = node.className;
+      img.width = img.naturalWidth * BG_SCALE;
+      img.height = img.naturalHeight * BG_SCALE;
+      node.replaceWith(img);
+    }, { once: true });
+    img.src = BG_DIR + key + '.png';
+    return node;
+  }
   function charEl(i, scale) {
     const art = CHARS[i];
     const img = document.createElement('img');
@@ -852,12 +868,29 @@
 
   (function decorate() {
     const box = $('sky');
-    const put = (art, sc, css) => {
+    const put = (art, sc, css, key) => {
       const cv = sprite(art, sc);
       Object.assign(cv.style, css);
       box.appendChild(cv);
-      return cv;
+      return bgSwap(cv, key);
     };
+
+    /* 지평선 그림 한 장이 들어오면 계산해서 그린 덩어리를 걷어내고
+       그걸 가로로 이어 붙인다. 넓은 화면에서도 끊기지 않는다. */
+    const massEls = [];
+    (function tryHorizon() {
+      const probe = new Image();
+      probe.addEventListener('load', () => {
+        massEls.forEach((el) => el.remove());
+        const strip = document.createElement('div');
+        strip.className = 'horizon';
+        strip.style.height = (probe.naturalHeight * BG_SCALE) + 'px';
+        strip.style.backgroundImage = `url(${BG_DIR}horizon.png)`;
+        strip.style.backgroundSize = 'auto ' + (probe.naturalHeight * BG_SCALE) + 'px';
+        box.appendChild(strip);
+      }, { once: true });
+      probe.src = BG_DIR + 'horizon.png';
+    })();
 
     /* 지평선. 크기와 높이를 크게 벌린 덩어리 여덟을 겹친다.
        비슷한 크기를 나란히 두면 톱니처럼 한 줄로 보인다.
@@ -865,40 +898,42 @@
     [[-12, 190, 120, -30, 0.7], [6, 130, 62, -14, 0.8], [20, 240, 152, -40, 0.68],
      [40, 150, 80, -18, 0.84], [54, 210, 134, -34, 0.72], [70, 130, 54, -10, 0.88],
      [82, 220, 108, -26, 0.78], [96, 150, 92, -22, 0.74]]
-      .forEach(([l, w, h, b, op], n) => put(cloudArt(w, h, 701 + n * 89, 'mass'), 2, {
+      .forEach(([l, w, h, b, op], n) => massEls.push(put(cloudArt(w, h, 701 + n * 89, 'mass'), 2, {
         left: l + 'vw', bottom: b + 'px', opacity: String(op)
-      }));
+      })));
     // 앞줄. 진하게 두어 지평선에 깊이를 만든다
     [[-6, 170, 68, -22], [28, 130, 46, -12], [60, 190, 82, -26], [86, 150, 58, -16]]
-      .forEach(([l, w, h, b], n) => put(cloudArt(w, h, 1301 + n * 61, 'mass'), 2, {
+      .forEach(([l, w, h, b], n) => massEls.push(put(cloudArt(w, h, 1301 + n * 61, 'mass'), 2, {
         left: l + 'vw', bottom: b + 'px'
-      }));
+      })));
 
     /* 딛고 설 만한 구름 발판 넷. 높이를 다 다르게 둔다. */
-    const PLATS = [[3, 46, 88, 34], [63, 32, 72, 30], [33, 57, 64, 26], [82, 66, 54, 24]];
-    const pf = PLATS.map(([l, t, w, h], n) => put(cloudArt(w, h, 311 + n * 53, 'flat'), 2, {
+    const PLATS = [[3, 46, 88, 34, 'a'], [63, 32, 72, 30, 'b'], [33, 57, 64, 26, 'a'], [82, 66, 54, 24, 'b']];
+    const pf = PLATS.map(([l, t, w, h, k], n) => put(cloudArt(w, h, 311 + n * 53, 'flat'), 2, {
       left: l + 'vw', top: t + 'vh',
       animation: `float ${10 + n * 2}s ease-in-out infinite`, animationDelay: (n * 0.9) + 's'
-    }));
+    }, 'plat-' + k));
 
     /* 첫 번째 발판 위에 기둥, 세 번째 위에 표지판. */
-    const onTop = (art, sc, ref, dx) => {
+    const onTop = (art, sc, ref, dx, key) => {
       const cv = sprite(art, sc);
       cv.style.left = `calc(${ref.style.left} + ${dx}px)`;
       cv.style.top = `calc(${ref.style.top} - ${art.grid.length * sc - 14}px)`;
       cv.style.animation = ref.style.animation;
       cv.style.animationDelay = ref.style.animationDelay;
       box.appendChild(cv);
+      bgSwap(cv, key);
     };
-    onTop(PILLAR, 3, pf[0], 34);
-    onTop(SIGN, 3, pf[2], 32);
+    onTop(PILLAR, 3, pf[0], 34, 'pillar');
+    onTop(SIGN, 3, pf[2], 32, 'sign');
 
     /* 멀리 흘러가는 구름. 옅게 두어 하늘에 깊이를 만든다. */
-    [[4, 11, 66, 34], [55, 7, 86, 42], [27, 25, 50, 26], [79, 18, 72, 36], [41, 41, 46, 24]]
-      .forEach(([l, t, w, h], n) => put(cloudArt(w, h, 91 + n * 37, 'puff'), 2, {
+    [[4, 11, 66, 34, 'a'], [55, 7, 86, 42, 'b'], [27, 25, 50, 26, 'c'],
+     [79, 18, 72, 36, 'a'], [41, 41, 46, 24, 'c']]
+      .forEach(([l, t, w, h, k], n) => put(cloudArt(w, h, 91 + n * 37, 'puff'), 2, {
         left: l + 'vw', top: t + 'vh', opacity: '0.5',
         animation: `drift ${26 + n * 7}s ease-in-out infinite alternate`
-      }));
+      }, 'cloud-' + k));
 
     /* 별 여섯. 구름 사이 빈 하늘에만 둔다. */
     [[13, 16], [92, 22], [25, 8], [70, 28], [47, 13], [59, 47]]
