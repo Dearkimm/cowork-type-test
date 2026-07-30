@@ -1593,7 +1593,7 @@
 
   /* ── 축과 문항 ────────────────────────────── */
   const AXES = [
-    { nm: '의견이 갈릴 때' }, { nm: '일과 사람 사이에서' }, { nm: '결과물을 낼 때' },
+    { nm: '의견이 갈릴 때' }, { nm: '일과 사람 사이' }, { nm: '결과물을 낼 때' },
     { nm: '일을 맡길 때' }, { nm: '시작하기 전에' }
   ];
 
@@ -1998,28 +1998,24 @@
     return out;
   }
 
-  const NUM = ['하나', '둘', '셋', '넷', '다섯', '여섯'];
-  function evidence(i, st) {
+  /* 응답 근거. 예전에는 축마다 두 문장씩 붙여서 다섯 번 거의 같은 말이
+     반복됐다. 눈에 띄는 경우에만, 그것도 한 마디로 줄인다.
+     여섯 중 넷은 흔해서 알려 줄 것이 없으니 아예 쓰지 않는다. */
+  function evidence(st) {
     if (!st || st.n < 6) return '';
-    const high = st.hi >= 3;
-    const same = high ? st.hi : 6 - st.hi;
-    const word = COPY[i].pole[high ? 2 : 0];
-    let a;
-    if (st.hi === 3) {
-      a = '여섯 문항이 정확히 반으로 갈렸습니다. 이 부분은 성향보다 그때의 상황이 정합니다.';
-    } else if (same === 6) {
-      a = `여섯 문항 모두 [${word}] 쪽이었습니다. 상황이 바뀌어도 잘 흔들리지 않는 자리입니다.`;
-    } else if (same === 5) {
-      a = `여섯 중 다섯에서 [${word}] 쪽을 고르셨습니다.`;
-    } else {
-      a = `여섯 중 넷은 [${word}] 쪽, 둘은 반대쪽이었습니다. 기본은 이쪽이지만 상황에 따라 넘어갑니다.`;
-    }
-    let b = '';
-    if (st.sure >= 5) b = ` [확실히]를 ${NUM[st.sure - 1]} 번 골라서 망설임이 거의 없었습니다.`;
-    else if (st.sure <= 1) b = st.sure === 0
-      ? ' [확실히]는 한 번도 고르지 않으셔서 세게 굳어 있는 쪽은 아닙니다.'
-      : ' [확실히]는 한 번뿐이라 세게 굳어 있는 쪽은 아닙니다.';
-    return a + b;
+    const same = Math.max(st.hi, 6 - st.hi);
+    if (same === 6) return '여섯 문항 모두 같은 쪽이었습니다.';
+    if (same === 5) return '여섯 중 다섯이 같은 쪽이었습니다.';
+    if (same === 3) return '반반으로 갈렸습니다. 성향보다 그때 상황이 정하는 대목입니다.';
+    return '';
+  }
+
+  /* 망설임은 축마다 따로 말할 것이 아니라 서른 문항 전체를 한 번에 본다. */
+  function hesitation(st) {
+    const sure = st.reduce((a, o) => a + o.sure, 0);
+    if (sure >= 24) return ` 서른 문항 중 [확실히]를 ${sure}번 고르셨습니다. 망설인 대목이 거의 없습니다.`;
+    if (sure <= 6) return ` 서른 문항 중 [확실히]는 ${sure}번뿐이었습니다. 어느 쪽으로도 세게 굳어 있지 않습니다.`;
+    return '';
   }
 
   function tally() {
@@ -2059,11 +2055,16 @@
     $('r-title').innerHTML = head
       .map((o) => `<em>${COPY[o.i].pole[bands[o.i]]}</em>`).join(', ') + ' 사람';
 
-    $('r-lead').textContent = named.length === 0
+    /* 축 이름 뒤에 조사를 붙이면 [일과 사람 사이에서]에서 처럼 겹친다.
+       이름을 그대로 두고 서술어만 바꿔 문장을 만든다. */
+    const st = axisStats();
+    const nm = (o) => `[${AXES[o.i].nm}]`;
+    $('r-lead').textContent = (named.length === 0
       ? '어느 쪽으로도 크게 기울지 않습니다. 정해진 방식에 묶여 있지 않아서, 팀에서 비어 있는 자리를 메우는 역할이 잘 맞습니다.'
       : named.length === 1
-        ? `${AXES[named[0].i].nm}에서 성향이 가장 뚜렷합니다. 아래 서술도 그 순서로 놓았습니다.`
-        : `${AXES[named[0].i].nm}와 ${AXES[named[1].i].nm}에서 성향이 가장 뚜렷합니다. 아래 서술도 그 순서로 놓았습니다.`;
+        ? `성향이 가장 뚜렷한 대목은 ${nm(named[0])}입니다. 아래 서술도 그 순서로 놓았습니다.`
+        : `성향이 가장 뚜렷한 대목은 ${nm(named[0])}와 ${nm(named[1])}입니다. 아래 서술도 그 순서로 놓았습니다.`)
+      + hesitation(st);
 
     $('r-bars').innerHTML = order.map(({ i }) => {
       const ax = AXES[i], s = scores[i];
@@ -2076,9 +2077,13 @@
       </div>`;
     }).join('');
 
-    const st = axisStats();
+    /* 같은 근거 문장이 두 축에서 겹치면 뒤엣것은 버린다.
+       똑같은 말이 두 번 나오면 읽는 사람이 대충 만든 것으로 본다. */
+    const said = new Set();
     $('r-lines').innerHTML = order.map(({ i }) => {
-      const ev = evidence(i, st[i]);
+      let ev = evidence(st[i]);
+      if (ev && said.has(ev)) ev = '';
+      if (ev) said.add(ev);
       return (ev ? `<p class="ev">${ev}</p>` : '') + `<p>${COPY[i].say[bands[i]]}</p>`;
     }).join('');
 
