@@ -964,6 +964,11 @@
   .panel > h2::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--cb); flex: none; }
 
   .lines .ev { font-family: var(--pixel); font-size: 11px; line-height: 1.85; color: var(--g-edge); margin-bottom: 5px; }
+  /* 예외 문장. 본문보다 한 톤 눌러서 덧말로 읽히게 한다. */
+  .lines .exc { font-size: 0.92rem; line-height: 1.75; color: var(--sub); margin-top: -7px; padding-left: 13px; border-left: 3px solid var(--edge); }
+  .sure .q { font-family: var(--pixel); font-size: 11px; color: var(--sub); margin-bottom: 7px; }
+  .sure .a { font-size: 1.05rem; font-weight: 700; line-height: 1.6; }
+  .sure .tail { font-size: 0.88rem; color: var(--sub); margin-top: 7px; }
   .bars { display: flex; flex-direction: column; gap: 18px; }
   .bar .top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 7px; }
   .bar .nm { font-size: 0.87rem; font-weight: 700; }
@@ -1106,6 +1111,10 @@
       <div class="panel">
         <h2>어디로 기울어 있나</h2>
         <div class="bars" id="r-bars"></div>
+      </div>
+      <div class="panel sure" id="r-sure" hidden>
+        <h2>가장 확신 있던 답</h2>
+        <div id="r-sure-body"></div>
       </div>
       <div class="panel">
         <h2>이렇게 일해요</h2>
@@ -1654,7 +1663,7 @@
       pole: ['먼저 듣는', '중요할 때만 나서는', '먼저 말하는'],
       say: [
         '의견이 갈릴 때 먼저 물러나 듣습니다. 반대 의견이 없는 게 아니라, 그 자리에서 부딪히는 것보다 나중에 따로 정리하는 쪽을 택합니다. 회의에서는 조용하지만 끝난 뒤에 생각이 정리되어 나오는 편이고, 그래서 결정이 이미 굳은 다음에 이야기가 시작되는 일이 있습니다.',
-        '밀어붙일 때와 물러날 때를 상황에 따라 나눕니다. 사소한 안건에서는 대체로 흐름을 따라가고, 중요하다고 판단한 것에만 목소리를 냅니다. 그래서 이 사람이 말을 꺼내면 팀이 한 번 멈춰서 듣는 편입니다.',
+        '밀어붙일 때와 물러날 때를 상황에 따라 나눕니다. 사소한 안건에서는 대체로 흐름을 따라가고, 중요하다고 판단한 것에만 목소리를 냅니다. 말수 자체보다 [언제 말하는지]가 이 사람을 읽는 단서입니다.',
         '할 말은 그 자리에서 합니다. 결론이 굳기 전에 짚어두려고 해서 회의 분위기를 한 번 환기하기도 합니다. 나중에 따로 말하는 것보다 그 순간에 정리하는 편이 낫다고 보는 쪽입니다.'
       ],
       use: [
@@ -2010,6 +2019,37 @@
     return '';
   }
 
+  /* 성향과 반대로 답한 문항. 축이 한쪽으로 기울었는데 특정 상황에서만
+     반대쪽을 골랐다면, 그 상황이 이 사람의 예외 조건이다. 문항과 답을
+     그대로 인용한다. 실제로 고른 문장이라 점수 풀이보다 구체적이다. */
+  function offbeats(i, high) {
+    const out = [];
+    Q.forEach((item, k) => {
+      const p = picks[k];
+      if (!p || item.x !== i) return;
+      const onLean = (p.side === item.hi) === high;
+      if (!onLean) out.push({ q: item.q, pick: p.side === 'a' ? item.a : item.b, sure: p.s === 2 });
+    });
+    return out.sort((a, b) => (b.sure ? 1 : 0) - (a.sure ? 1 : 0));
+  }
+
+  /* 가장 망설임 없이 고른 답. 치우친 축 안에서 [확실히]로 답한 문항을
+     하나 골라 그대로 보여준다. */
+  function surest(order, bands) {
+    for (const { i } of order) {
+      if (bands[i] === 1) continue;
+      const high = bands[i] === 2;
+      for (let k = 0; k < Q.length; k++) {
+        const item = Q[k], p = picks[k];
+        if (!p || item.x !== i || p.s !== 2) continue;
+        if ((p.side === item.hi) === high) {
+          return { q: item.q, pick: p.side === 'a' ? item.a : item.b };
+        }
+      }
+    }
+    return null;
+  }
+
   /* 망설임은 축마다 따로 말할 것이 아니라 서른 문항 전체를 한 번에 본다. */
   function hesitation(st) {
     const sure = st.reduce((a, o) => a + o.sure, 0);
@@ -2084,8 +2124,24 @@
       let ev = evidence(st[i]);
       if (ev && said.has(ev)) ev = '';
       if (ev) said.add(ev);
-      return (ev ? `<p class="ev">${ev}</p>` : '') + `<p>${COPY[i].say[bands[i]]}</p>`;
+      let exc = '';
+      if (bands[i] !== 1) {
+        const off = offbeats(i, bands[i] === 2);
+        if (off.length === 1) {
+          const o = off[0];
+          exc = `<p class="exc">다만 [${o.q}]만 예외입니다. 여기서는 「${o.pick}」${o.sure ? ' 쪽을, 그것도 [확실히]로' : ' 쪽을'} 고르셨습니다.</p>`;
+        } else if (off.length === 2) {
+          exc = `<p class="exc">다만 [${off[0].q}]와 [${off[1].q}]에서는 반대쪽이었습니다. 이 두 상황이 이 성향의 경계선입니다.</p>`;
+        }
+      }
+      return (ev ? `<p class="ev">${ev}</p>` : '') + `<p>${COPY[i].say[bands[i]]}</p>` + exc;
     }).join('');
+
+    /* 가장 확신 있던 답 하나를 그대로 보여준다. */
+    const su = surest(order, bands);
+    $('r-sure').hidden = !su;
+    if (su) $('r-sure-body').innerHTML =
+      `<p class="q">${su.q}</p><p class="a">「${su.pick}」</p><p class="tail">서른 문항 중 가장 망설임 없이 고르신 답입니다.</p>`;
 
     const hits = COMBO.filter((c) => c.when(bands)).slice(0, 4);
     $('r-combo').hidden = hits.length === 0;
