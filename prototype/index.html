@@ -39,8 +39,10 @@
     --g-light: #A9BEFF;
     --g-edge: #2E4FC4;
     --cur: auto;
-    --hand: pointer;
-    --hand-lg: pointer;
+    /* 메이플 커서(.ani)에서 뽑았다. 브라우저는 .ani 를 못 읽어서
+       프레임을 PNG 로 꺼내 썼다. 뒤 숫자는 손끝 기준점이다. */
+    --hand: url(sprites/cursor/maple.png) 5 3, pointer;
+    --hand-lg: url(sprites/cursor/maple2x.png) 10 6, pointer;
 
     --display: "Pretendard JP Variable", "Pretendard Variable", Pretendard,
       "Yu Gothic", YuGothic, "Hiragino Kaku Gothic ProN", Meiryo,
@@ -1499,36 +1501,6 @@
     img.src = SPRITE_DIR + art.key + '.png';
     return img;
   }
-
-  /* 손 모양 커서. 눌러도 되는 자리를 손으로 알려 준다.
-     시작 버튼에서는 한 단계 큰 것을 쓴다. 커서 그림은 128px 을 넘으면
-     브라우저가 무시하니 배율을 2와 3까지만 쓴다. */
-  const HAND = {
-    pal: { K: '#2E3A5C', W: '#FFFFFF' },
-    grid: [
-      '..KK........',
-      '.KWWK.......',
-      '.KWWK.......',
-      '.KWWK.......',
-      '.KWWK.......',
-      '.KWWKKK.....',
-      '.KWWKWWKKK..',
-      '.KWWKWWKWWK.',
-      '.KWWKWWKWWKK',
-      'KKWWWWWWWWWK',
-      'KWWWWWWWWWWK',
-      'KWWWWWWWWWWK',
-      '.KWWWWWWWWWK',
-      '.KWWWWWWWWK.',
-      '..KWWWWWWWK.',
-      '..KKKKKKKKK.'
-    ]
-  };
-  (function handCursor() {
-    const root = document.documentElement;
-    root.style.setProperty('--hand', `url(${sprite(HAND, 2).toDataURL('image/png')}) 5 1, pointer`);
-    root.style.setProperty('--hand-lg', `url(${sprite(HAND, 3).toDataURL('image/png')}) 8 2, pointer`);
-  })();
 
   function setCursor(i) {
     const art = CHARS[i];
