@@ -864,8 +864,8 @@
   .map .tile.now { background: var(--g-base); }
   .map .tile.now > * { position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); animation: hop 1.5s ease-in-out infinite; }
   .onstone { display: block; }
-  .onstone .sweat { position: absolute; right: -11px; top: -7px; animation: drip 1.5s ease-in infinite; }
-  @keyframes drip { 0% { opacity: 0; transform: translateY(-3px); } 25% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(7px); } }
+  .onstone .sweat { position: absolute; right: 1px; top: -5px; animation: bead 1.1s ease-in-out infinite; }
+  @keyframes bead { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(2px) scale(1.06); } }
 
   /* 확인 버튼은 없다. 구슬을 누르면 바로 넘어가니 버튼이 할 일이 없었다.
      왼쪽에 키 안내, 오른쪽에 지금 고른 것. */
@@ -1495,8 +1495,19 @@
 
   /* 땀방울. 검사 후반부에 발판 위 캐릭터 머리 옆에 붙는다. */
   const SWEAT = {
-    pal: { B: '#6FB9F7', W: '#FFFFFF' },
-    grid: ['..B..', '..B..', '.BBB.', 'BBWBB', 'BBWBB', '.BBB.']
+    pal: { D: '#2E7CD6', B: '#5FB2F8', W: '#EAF6FF' },
+    grid: [
+      '...D...',
+      '..DBD..',
+      '..DBD..',
+      '.DBBBD.',
+      '.DBBBD.',
+      'DBWBBBD',
+      'DBWBBBD',
+      'DBBBBBD',
+      '.DBBBD.',
+      '..DDD..'
+    ]
   };
   function sweatEl() {
     const cv = sprite(SWEAT, 2);
