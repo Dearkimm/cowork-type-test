@@ -854,6 +854,9 @@
   .gbar .gt { font-size: 14px; letter-spacing: 0.04em; }
   .gbar .gq { font-size: 13px; letter-spacing: 0.06em; color: rgba(255, 255, 255, 0.72); }
   .gbar .gq b { font-size: 19px; color: #fff; }
+  .gbar .gside { display: flex; align-items: center; gap: 14px; }
+  .ghome { font-size: 12px; color: rgba(255, 255, 255, 0.85); padding: 4px 2px; }
+  .ghome:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
 
   /* 다섯 문항이 한 장. 캐릭터가 발판을 하나씩 밟고 지나간다. */
   .gtrail { flex: none; display: flex; align-items: flex-end; gap: 14px; padding: 12px 18px 10px; border-bottom: 3px dashed var(--ca-pale); }
@@ -1079,7 +1082,10 @@
       <div class="gwin">
         <header class="gbar">
           <span class="gt px">▶ 다음 상황에서 나는?</span>
-          <span class="gq px">Q <b id="num"></b> / 30</span>
+          <span class="gside">
+            <span class="gq px">Q <b id="num"></b> / 30</span>
+            <button class="ghome px" id="home" type="button">🏠 처음으로</button>
+          </span>
         </header>
         <span class="tube"><i id="fill"><u></u></i></span>
         <div class="gtrail">
@@ -2291,10 +2297,21 @@
   $('team').addEventListener('click', () => {
     $('toast').textContent = '팀 기능은 준비 중이에요. 지금은 개인 결과 공유만 됩니다.';
   });
-  $('again').addEventListener('click', () => {
+  function goHome() {
     at = 0; picks = new Array(Q.length).fill(null);
     history.replaceState(null, '', location.pathname);
     sky(0); show('land');
+  }
+  $('again').addEventListener('click', goHome);
+  /* 답이 하나라도 있으면 한 번 되묻는다. 실수로 눌러 30문항이
+     날아가는 게 이 버튼의 유일한 위험이다. 모달 대신 버튼 글씨가
+     바뀌고, 3초 안에 한 번 더 누르면 나간다. */
+  let homeArm = 0;
+  $('home').addEventListener('click', () => {
+    const answered = picks.some(Boolean);
+    if (!answered || homeArm) { clearTimeout(homeArm); homeArm = 0; $('home').textContent = '🏠 처음으로'; goHome(); return; }
+    $('home').textContent = '답이 사라져요. 한 번 더!';
+    homeArm = setTimeout(() => { homeArm = 0; $('home').textContent = '🏠 처음으로'; }, 3000);
   });
 
   function sheet(open) { $('sheet').classList.toggle('live', open); }
