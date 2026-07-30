@@ -54,7 +54,7 @@
     min-height: 100dvh;
     font-family: var(--body);
     color: var(--ink);
-    background: linear-gradient(180deg, #BDDFFF 0%, #E4F1FF 56%, #FFFFFF 100%);
+    background: linear-gradient(180deg, #8FC4F5 0%, #B6DBFF 38%, #D2E9FF 72%, #BCDFFF 100%);
     background-attachment: fixed;
     background-repeat: no-repeat;
     overflow-x: hidden;
@@ -73,9 +73,8 @@
   .sky { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
   .sky canvas { position: absolute; }
 
-  /* 아래를 구름으로 메운다. 흰 바닥을 깔고 그 위에 구름을 두 줄로 겹친다.
-     한 줄만 두면 구름이 바닥에 붙어 있는 띠로만 보인다. */
-  .deck { position: absolute; left: 0; right: 0; bottom: 0; height: clamp(46px, 7vh, 78px); background: #FFFFFF; }
+  /* 바닥에 흰 띠를 깔았더니 구름이 그 위에 일렬로 선 것처럼 보였다.
+     띠를 없애고 구름 덩어리를 높이가 다 다르게 겹쳐서 지평선을 만든다. */
 
   @keyframes tw { 0%, 100% { opacity: 0.2; transform: scale(0.7); } 50% { opacity: 1; transform: scale(1.1); } }
   @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
@@ -154,8 +153,8 @@
   .landfoot { position: absolute; left: 0; right: 0; bottom: clamp(12px, 2.6vh, 26px); z-index: 1; display: flex; flex-direction: column; align-items: center; gap: clamp(8px, 1.6vh, 14px); }
   /* 캐릭터는 구름 위를 돌아다닌다. 겹쳐 걸 수 없어서 세 겹으로 나눴다.
      바깥이 좌우 이동, 가운데가 방향 뒤집기, 안쪽이 통통 뛰기다. */
-  .crew { position: absolute; left: 0; right: 0; bottom: clamp(26px, 5vh, 54px); height: 64px; z-index: 1; }
-  .walker { position: absolute; bottom: 0; animation: stroll 15s ease-in-out infinite; }
+  .crew { position: absolute; left: 0; right: 0; bottom: 0; height: 64px; z-index: 1; }
+  .walker { position: absolute; bottom: var(--b, 90px); animation: stroll 15s ease-in-out infinite; }
   .walker .face { display: block; animation: face 15s steps(1) infinite; }
   .walker .face > * { display: block; animation: hop 2.4s ease-in-out infinite; }
   @keyframes stroll {
@@ -518,19 +517,33 @@
 <script>
   const $ = (id) => document.getElementById(id);
 
+  /* 칸마다 fillRect 를 부르면 큰 그림에서 수만 번이 되어 느리다.
+     원래 크기로 한 번 찍고 그걸 확대해서 옮긴다. 결과는 같다. */
   function sprite(art, scale) {
-    const cv = document.createElement('canvas');
-    cv.width = art.grid[0].length * scale;
-    cv.height = art.grid.length * scale;
-    const g = cv.getContext('2d');
+    const w = art.grid[0].length, h = art.grid.length;
+    const rgb = {};
+    for (const k in art.pal) {
+      const v = parseInt(art.pal[k].slice(1), 16);
+      rgb[k] = [(v >> 16) & 255, (v >> 8) & 255, v & 255];
+    }
+    const src = document.createElement('canvas');
+    src.width = w; src.height = h;
+    const sg = src.getContext('2d');
+    const im = sg.createImageData(w, h);
     art.grid.forEach((row, y) => {
       for (let x = 0; x < row.length; x++) {
-        const col = art.pal[row[x]];
-        if (!col) continue;
-        g.fillStyle = col;
-        g.fillRect(x * scale, y * scale, scale, scale);
+        const c = rgb[row[x]];
+        if (!c) continue;
+        const o = (y * w + x) * 4;
+        im.data[o] = c[0]; im.data[o + 1] = c[1]; im.data[o + 2] = c[2]; im.data[o + 3] = 255;
       }
     });
+    sg.putImageData(im, 0, 0);
+    const cv = document.createElement('canvas');
+    cv.width = w * scale; cv.height = h * scale;
+    const g = cv.getContext('2d');
+    g.imageSmoothingEnabled = false;
+    g.drawImage(src, 0, 0, cv.width, cv.height);
     return cv;
   }
 
@@ -635,6 +648,7 @@
       ] }
   ];
 
+  const PAL_CLOUD = { W: '#FFFFFF', L: '#D6E7F9', S: '#AECBEC' };
   const STAR = { pal: { W: '#FFFFFF' }, grid: ['...W...', '...W...', '..WWW..', 'WWWWWWW', '..WWW..', '...W...', '...W...'] };
   const STAR_Y = { pal: { W: '#FFE9A8' }, grid: ['...W...', '...W...', '..WWW..', 'WWWWWWW', '..WWW..', '...W...', '...W...'] };
   // 무지개는 곡선이라 격자로 못 찍는다. 원의 방정식으로 픽셀을 계산해서 찍는다.
@@ -656,43 +670,113 @@
     return cv;
   }
 
-  /* 구름을 격자로 손수 찍으면 한 칸이 커져서 픽셀이 굵어 보인다.
-     원을 여러 개 겹쳐 큰 격자를 만들고 작은 배율로 그려야 촘촘해진다.
-     밑은 평평하게 깎아서 구름 위에 뭔가 올려둘 수 있게 한다. */
-  function cloudArt(w, h, seed, flat) {
-    const lumps = Math.max(4, Math.round(w / 7));
+  /* 구름은 원을 여러 개 겹쳐 만든다. 격자를 크게 잡고 배율을 2로 낮춰야
+     한 칸이 2px 이 되어 레퍼런스처럼 촘촘해진다. 예전에는 작은 격자를
+     11~14배로 늘려 그려서 칸 하나가 그만큼 굵게 보였다.
+     kind 는 'puff'(떠다니는 구름) · 'flat'(발판) · 'mass'(지평선 덩어리) 셋이다. */
+  function cloudArt(w, h, seed, kind) {
+    const flat = kind === 'flat', mass = kind === 'mass';
     const g = Array.from({ length: h }, () => new Array(w).fill(' '));
-    let sd = seed >>> 0;
+    let sd = (seed >>> 0) || 1;
     const rnd = () => ((sd = (sd * 1664525 + 1013904223) >>> 0) / 4294967296);
     const base = h - 1;
-    const disc = (cx, cy, r) => {
-      for (let y = Math.max(0, Math.floor(cy - r)); y <= Math.min(base, Math.ceil(cy + r)); y++) {
-        for (let x = Math.max(0, Math.floor(cx - r)); x <= Math.min(w - 1, Math.ceil(cx + r)); x++) {
-          if ((x - cx) * (x - cx) + (y - cy) * (y - cy) <= r * r) g[y][x] = 'W';
+
+    /* 봉우리 하나. 아랫자락에만 얇게 그늘을 두른다. 아래쪽을 통째로
+       어둡게 칠했더니 구름이 아니라 파인 그릇처럼 보였다. */
+    const disc = (cx, cy, r, shade) => {
+      const band = Math.max(1, r * 0.16);
+      const y0 = Math.max(0, Math.floor(cy - r)), y1 = Math.min(base, Math.ceil(cy + r));
+      const x0 = Math.max(0, Math.floor(cx - r)), x1 = Math.min(w - 1, Math.ceil(cx + r));
+      for (let y = y0; y <= y1; y++) {
+        for (let x = x0; x <= x1; x++) {
+          const dx = x - cx, dy = y - cy, d2 = dx * dx + dy * dy;
+          if (d2 > r * r) continue;
+          if (!shade) { g[y][x] = 'W'; continue; }
+          const d = Math.sqrt(d2);
+          g[y][x] = (d > r - band && dy > r * 0.34) ? 'S'
+            : (d > r - band * 2 && dy > r * 0.18) ? 'L' : 'W';
         }
       }
     };
-    /* 뭉치마다 바닥에 닿게 두고 반지름만 다르게 한다. 가운데가 높고
-       양끝이 낮은 언덕꼴이라야 구름으로 보인다. */
-    for (let i = 0; i < lumps; i++) {
-      const t = lumps === 1 ? 0.5 : i / (lumps - 1);
-      const hump = 0.62 + 0.5 * Math.sin(Math.PI * t);
-      const lo = flat ? 0.34 : 0.30, hi = flat ? 0.14 : 0.26;
-      const r = h * (lo + rnd() * hi) * hump;
-      const cx = w * 0.06 + t * w * 0.88 + (rnd() - 0.5) * (w / lumps) * 0.5;
-      disc(cx, base - r + 0.6, r);
+    const edge = (down) => {
+      const e = new Array(w).fill(-1);
+      for (let x = 0; x < w; x++) {
+        if (down) { for (let y = base; y >= 0; y--) if (g[y][x] !== ' ') { e[x] = y; break; } }
+        else { for (let y = 0; y < h; y++) if (g[y][x] !== ' ') { e[x] = y; break; } }
+      }
+      return e;
+    };
+    /* 윗면을 따라 봉우리를 얹는다. 크기를 줄여 가며 두세 번 부르면
+       레퍼런스처럼 자잘한 결이 생긴다. */
+    const bump = (count, rr, shade) => {
+      const t = edge(false);
+      for (let i = 0; i < count; i++) {
+        const x = Math.floor(w * 0.07 + rnd() * w * 0.86);
+        if (t[x] < 0) continue;
+        const r = rr * (0.62 + rnd() * 0.76);
+        disc(x, t[x] + r * (0.40 + rnd() * 0.30), r, shade);
+      }
+    };
+    // 밑자락에도 조금 매단다. 아래가 직선이면 접시로 보인다.
+    const sag = (count, rr) => {
+      const b = edge(true);
+      for (let i = 0; i < count; i++) {
+        const x = Math.floor(w * 0.10 + rnd() * w * 0.80);
+        if (b[x] < 0) continue;
+        const r = rr * (0.60 + rnd() * 0.70);
+        disc(x, b[x] - r * (0.45 + rnd() * 0.25), r, true);
+      }
+    };
+
+    if (mass) {
+      // 지평선은 완만한 언덕을 깔고 그 위에 봉우리를 세 겹으로 얹는다
+      for (let x = 0; x < w; x++) {
+        const t = x / (w - 1);
+        const prof = 0.05 + 0.80 * Math.pow(Math.sin(Math.PI * t), 0.55);
+        for (let y = Math.floor(h * (1 - prof)); y <= base; y++) g[y][x] = 'W';
+      }
+      bump(w / (h * 0.30), h * 0.17, false);
+      bump(w / (h * 0.16), h * 0.10, true);
+      bump(w / (h * 0.09), h * 0.055, true);
+    } else {
+      /* 작은 구름은 봉우리 서넛으로 통째로 만든다. 넓적한 바탕에
+         자잘한 혹만 얹었더니 사다리꼴 판때기로 보였다. */
+      const bl = h * (flat ? 0.74 : 0.80);
+      const n = Math.max(3, Math.round(w / (h * (flat ? 0.50 : 0.55))));
+      for (let i = 0; i < n; i++) {
+        const t = n === 1 ? 0.5 : i / (n - 1);
+        const hump = 0.62 + 0.62 * Math.pow(Math.sin(Math.PI * t), 0.55);
+        const r = h * ((flat ? 0.22 : 0.24) + rnd() * 0.10) * (0.62 + hump);
+        const cx = w * 0.08 + t * w * 0.84 + (rnd() - 0.5) * (w / n) * 0.25;
+        disc(cx, bl - r * (flat ? 0.76 : 0.92), r, false);
+      }
+      if (flat) {
+        // 발판은 밑을 평평하게 깎아야 딛고 선 것처럼 보인다
+        const end = Math.floor(bl);
+        for (let x = 0; x < w; x++) {
+          let top = -1;
+          for (let y = 0; y < h; y++) if (g[y][x] !== ' ') { top = y; break; }
+          if (top < 0) continue;
+          for (let y = top; y <= end; y++) g[y][x] = 'W';
+        }
+      }
+      bump(w / (h * 0.34), h * 0.12, true);
+      bump(w / (h * 0.18), h * 0.075, true);
+      sag(w / (h * 1.20), h * 0.13);
     }
-    // 뭉치 사이를 바닥까지 메워 밑을 평평하게
+
+    // 봉우리 사이에 뚫린 데를 메우고 밑선을 따라 그늘을 한 줄 깐다
     for (let x = 0; x < w; x++) {
-      let top = -1;
-      for (let y = 0; y < h; y++) if (g[y][x] === 'W') { top = y; break; }
+      let top = -1, bot = -1;
+      for (let y = 0; y < h; y++) if (g[y][x] !== ' ') { if (top < 0) top = y; bot = y; }
       if (top < 0) continue;
-      for (let y = top; y <= base; y++) g[y][x] = 'W';
-      g[base][x] = 'S';
-      if (base - 1 > top) g[base - 1][x] = 'L';
-      if (base - 2 > top + 1) g[base - 2][x] = 'L';
+      const end = mass ? base : bot;
+      for (let y = top; y <= end; y++) if (g[y][x] === ' ') g[y][x] = 'W';
+      if (mass) continue;
+      g[end][x] = 'S';
+      if (end - 1 > top && g[end - 1][x] === 'W') g[end - 1][x] = 'L';
     }
-    return { pal: { W: '#FFFFFF', L: '#E4EFFB', S: '#CBDEF4' }, grid: g.map((r) => r.join('')) };
+    return { pal: PAL_CLOUD, grid: g.map((r) => r.join('')) };
   }
 
   /* 레퍼런스에 있던 소품 둘. 구름 위에 얹는다. */
@@ -764,7 +848,7 @@
     probe.src = SPRITE_DIR + art.key + '.png';
   }
 
-  const CLOUD_LOGO = cloudArt(88, 26, 12345, false);
+  const CLOUD_LOGO = cloudArt(120, 46, 12345, 'puff');
 
   (function decorate() {
     const box = $('sky');
@@ -775,17 +859,25 @@
       return cv;
     };
 
-    /* 멀리 흘러가는 작은 구름 넷. 개수를 줄이고 크기를 벌린다. */
-    [[6, 11, 44, 18, 2], [58, 7, 62, 22, 2], [30, 26, 38, 16, 2], [82, 20, 52, 20, 3]]
-      .forEach(([l, t, w, h, sc], n) => put(cloudArt(w, h, 91 + n * 37, false), sc, {
-        left: l + 'vw', top: t + 'vh', opacity: '0.42',
-        animation: `drift ${26 + n * 7}s ease-in-out infinite alternate`
+    /* 지평선. 크기와 높이를 크게 벌린 덩어리 여덟을 겹친다.
+       비슷한 크기를 나란히 두면 톱니처럼 한 줄로 보인다.
+       뒤엣것은 옅게 두어 앞뒤가 갈리게 한다. */
+    [[-12, 190, 120, -30, 0.7], [6, 130, 62, -14, 0.8], [20, 240, 152, -40, 0.68],
+     [40, 150, 80, -18, 0.84], [54, 210, 134, -34, 0.72], [70, 130, 54, -10, 0.88],
+     [82, 220, 108, -26, 0.78], [96, 150, 92, -22, 0.74]]
+      .forEach(([l, w, h, b, op], n) => put(cloudArt(w, h, 701 + n * 89, 'mass'), 2, {
+        left: l + 'vw', bottom: b + 'px', opacity: String(op)
+      }));
+    // 앞줄. 진하게 두어 지평선에 깊이를 만든다
+    [[-6, 170, 68, -22], [28, 130, 46, -12], [60, 190, 82, -26], [86, 150, 58, -16]]
+      .forEach(([l, w, h, b], n) => put(cloudArt(w, h, 1301 + n * 61, 'mass'), 2, {
+        left: l + 'vw', bottom: b + 'px'
       }));
 
     /* 딛고 설 만한 구름 발판 넷. 높이를 다 다르게 둔다. */
-    const PLATS = [[4, 44, 74, 20, 3], [64, 33, 62, 18, 3], [34, 58, 54, 16, 3], [84, 62, 46, 14, 3]];
-    const pf = PLATS.map(([l, t, w, h, sc], n) => put(cloudArt(w, h, 311 + n * 53, true), sc, {
-      left: l + 'vw', top: t + 'vh', opacity: '0.95',
+    const PLATS = [[3, 46, 88, 34], [63, 32, 72, 30], [33, 57, 64, 26], [82, 66, 54, 24]];
+    const pf = PLATS.map(([l, t, w, h], n) => put(cloudArt(w, h, 311 + n * 53, 'flat'), 2, {
+      left: l + 'vw', top: t + 'vh',
       animation: `float ${10 + n * 2}s ease-in-out infinite`, animationDelay: (n * 0.9) + 's'
     }));
 
@@ -793,30 +885,29 @@
     const onTop = (art, sc, ref, dx) => {
       const cv = sprite(art, sc);
       cv.style.left = `calc(${ref.style.left} + ${dx}px)`;
-      cv.style.top = `calc(${ref.style.top} - ${art.grid.length * sc - 6}px)`;
+      cv.style.top = `calc(${ref.style.top} - ${art.grid.length * sc - 14}px)`;
       cv.style.animation = ref.style.animation;
       cv.style.animationDelay = ref.style.animationDelay;
       box.appendChild(cv);
     };
-    onTop(PILLAR, 3, pf[0], 18);
-    onTop(SIGN, 3, pf[2], 22);
+    onTop(PILLAR, 3, pf[0], 34);
+    onTop(SIGN, 3, pf[2], 32);
 
-    /* 바닥 구름. 크기와 높이를 크게 벌린 덩어리 다섯 개로만 만든다.
-       같은 크기를 줄지어 놓으면 톱니처럼 한 줄로 보인다. */
-    [[-6, 132, 46, 3, -8], [16, 96, 34, 3, 16], [38, 150, 52, 3, -14],
-     [64, 104, 38, 3, 10], [84, 140, 44, 3, -6]]
-      .forEach(([l, w, h, sc, lift], n) => put(cloudArt(w, h, 701 + n * 89, false), sc, {
-        left: l + 'vw', bottom: `calc(clamp(46px, 7vh, 78px) + ${lift}px)`
+    /* 멀리 흘러가는 구름. 옅게 두어 하늘에 깊이를 만든다. */
+    [[4, 11, 66, 34], [55, 7, 86, 42], [27, 25, 50, 26], [79, 18, 72, 36], [41, 41, 46, 24]]
+      .forEach(([l, t, w, h], n) => put(cloudArt(w, h, 91 + n * 37, 'puff'), 2, {
+        left: l + 'vw', top: t + 'vh', opacity: '0.5',
+        animation: `drift ${26 + n * 7}s ease-in-out infinite alternate`
       }));
 
     /* 별 여섯. 구름 사이 빈 하늘에만 둔다. */
-    [[10, 14], [92, 20], [24, 9], [70, 26], [46, 12], [56, 46]]
+    [[13, 16], [92, 22], [25, 8], [70, 28], [47, 13], [59, 47]]
       .forEach(([l, t], n) => put(n % 2 === 0 ? STAR_Y : STAR, n % 3 === 0 ? 3 : 2, {
         left: l + 'vw', top: t + 'vh',
         animation: `tw ${3.4 + (n % 4) * 0.5}s ease-in-out infinite`, animationDelay: (n * 0.4) + 's'
       }));
 
-    const lc = sprite(CLOUD_LOGO, 4);
+    const lc = sprite(CLOUD_LOGO, 3);
     lc.className = 'logocloud';
     $('land').prepend(lc);
     const bow = rainbow(3);
@@ -824,12 +915,14 @@
     $('land').prepend(bow);
 
     /* 네 마리가 구름 위를 가로세로로 돌아다닌다. */
-    const WALK = [[8, 170, 22, 15], [32, -140, -18, 18], [57, 185, -24, 13], [78, -160, 20, 20]];
+    /* 마리마다 딛는 구름 높이가 달라서 바닥 값을 따로 준다. */
+    const WALK = [[8, 170, 22, 15, 104], [32, -140, -18, 18, 78], [57, 185, -24, 13, 118], [78, -160, 20, 20, 100]];
     CHARS.forEach((c, i) => {
-      const [left, dx, dy, dur] = WALK[i];
+      const [left, dx, dy, dur, bot] = WALK[i];
       const w = document.createElement('span');
       w.className = 'walker';
       w.style.left = left + '%';
+      w.style.setProperty('--b', bot + 'px');
       w.style.setProperty('--dx', dx + 'px');
       w.style.setProperty('--dy', dy + 'px');
       w.style.animationDuration = dur + 's';
