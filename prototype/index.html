@@ -957,7 +957,12 @@
   .res .me span { color: var(--sub); }
   .res h1 { font-family: var(--display); font-weight: 900; font-size: clamp(1.8rem, 7.4vw, 3rem); line-height: 1.22; letter-spacing: -0.045em; text-align: center; text-wrap: balance; margin-top: 4px; }
   .res h1 em { font-style: normal; color: var(--ca); }
-  .res .lead { text-align: center; color: var(--sub); font-size: 0.94rem; margin-bottom: 4px; }
+  /* 리드는 이 사람을 요약하는 문장이다. 회색 잔글씨로 두면 제목에서
+     본문으로 건너뛰며 안 읽힌다. 흰 카드에 얹어 본문보다 한 단계 키운다. */
+  .res .lead { text-align: center; color: var(--ink); font-size: 1.02rem; line-height: 1.8;
+    background: rgba(255,255,255,0.92); border: 3px solid var(--edge); border-radius: 16px;
+    padding: 15px 19px; margin-bottom: 4px; }
+  .res .lead b { color: var(--ca); }
 
   .panel { background: var(--card); border: 3px solid var(--edge-deep); border-radius: 20px; box-shadow: 0 4px 0 var(--edge-deep); padding: 20px 18px; display: flex; flex-direction: column; gap: 16px; }
   .panel > h2 { font-family: var(--pixel); font-size: 13px; display: flex; align-items: center; gap: 7px; }
@@ -1928,7 +1933,7 @@
     const ch = Math.floor(at / 5);
     sky(ch);
     $('num').textContent = String(at + 1).padStart(2, '0');
-    $('chap').textContent = (ch + 1) + '장';
+    $('chap').textContent = (ch + 1) + '장' + (at >= 15 ? ' · 절반 지남' : '');
 
     const mp = $('map');
     mp.innerHTML = '';
@@ -2099,12 +2104,13 @@
        이름을 그대로 두고 서술어만 바꿔 문장을 만든다. */
     const st = axisStats();
     const nm = (o) => `[${AXES[o.i].nm}]`;
-    $('r-lead').textContent = (named.length === 0
+    const leadText = (named.length === 0
       ? '어느 쪽으로도 크게 기울지 않습니다. 정해진 방식에 묶여 있지 않아서, 팀에서 비어 있는 자리를 메우는 역할이 잘 맞습니다.'
       : named.length === 1
         ? `성향이 가장 뚜렷한 대목은 ${nm(named[0])}입니다. 아래 서술도 그 순서로 놓았습니다.`
         : `성향이 가장 뚜렷한 대목은 ${nm(named[0])}와 ${nm(named[1])}입니다. 아래 서술도 그 순서로 놓았습니다.`)
       + hesitation(st);
+    $('r-lead').innerHTML = leadText.replace(/\[([^\]]+)\]/g, '<b>[$1]</b>');
 
     $('r-bars').innerHTML = order.map(({ i }) => {
       const ax = AXES[i], s = scores[i];
