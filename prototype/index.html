@@ -854,10 +854,14 @@
   .gbar .gt { font-size: 14px; letter-spacing: 0.04em; }
   .gbar .gq { font-size: 13px; letter-spacing: 0.06em; color: rgba(255, 255, 255, 0.72); }
   .gbar .gq b { font-size: 19px; color: #fff; }
-  /* 창 바깥 오른쪽 위. 항상 밑줄, 색은 옅게. */
-  .ghome { align-self: flex-end; font-size: 12px; color: var(--sub); opacity: 0.75;
-    text-decoration: underline; text-underline-offset: 3px; padding: 4px 2px; margin-bottom: 6px; }
-  .ghome:hover { opacity: 1; }
+  /* 창 닫기. 누르면 첫 화면으로 간다. ? 버튼처럼 올리면 진해진다. */
+  .gbar .gside { display: flex; align-items: center; gap: 12px; }
+  .gx { width: 26px; height: 26px; display: grid; place-items: center;
+    font-size: 17px; line-height: 1; font-weight: 700;
+    color: rgba(255, 255, 255, 0.85); background: rgba(255, 255, 255, 0.22);
+    border-radius: 9px; transition: background-color 0.12s, color 0.12s; }
+  .gx:hover { background: rgba(255, 255, 255, 0.95); color: var(--g-base); }
+  #xwarn { color: #fff; }
 
   /* 다섯 문항이 한 장. 캐릭터가 발판을 하나씩 밟고 지나간다. */
   .gtrail { flex: none; display: flex; align-items: flex-end; gap: 14px; padding: 12px 18px 10px; border-bottom: 3px dashed var(--ca-pale); }
@@ -1080,11 +1084,14 @@
 
   <section class="view" id="v-test">
     <div class="test">
-      <button class="ghome px" id="home" type="button">처음으로</button>
       <div class="gwin">
         <header class="gbar">
           <span class="gt px">▶ 다음 상황에서 나는?</span>
-          <span class="gq px">Q <b id="num"></b> / 30</span>
+          <span class="gside">
+            <span class="gq px" id="xwarn" hidden>답이 사라져요 · 한 번 더!</span>
+            <span class="gq px">Q <b id="num"></b> / 30</span>
+            <button class="gx" id="home" type="button" aria-label="처음으로">×</button>
+          </span>
         </header>
         <span class="tube"><i id="fill"><u></u></i></span>
         <div class="gtrail">
@@ -2309,9 +2316,9 @@
   let homeArm = 0;
   $('home').addEventListener('click', () => {
     const answered = picks.filter(Boolean).length;
-    if (answered < 10 || homeArm) { clearTimeout(homeArm); homeArm = 0; $('home').textContent = '처음으로'; goHome(); return; }
-    $('home').textContent = '답이 사라져요. 한 번 더!';
-    homeArm = setTimeout(() => { homeArm = 0; $('home').textContent = '처음으로'; }, 3000);
+    if (answered < 10 || homeArm) { clearTimeout(homeArm); homeArm = 0; $('xwarn').hidden = true; goHome(); return; }
+    $('xwarn').hidden = false;
+    homeArm = setTimeout(() => { homeArm = 0; $('xwarn').hidden = true; }, 3000);
   });
 
   function sheet(open) { $('sheet').classList.toggle('live', open); }
