@@ -968,7 +968,9 @@
   .res .me span { color: var(--sub); }
   .res h1 { font-family: var(--display); font-weight: 900; font-size: clamp(1.8rem, 7.4vw, 3rem); line-height: 1.22; letter-spacing: -0.045em; text-align: center; text-wrap: balance; margin-top: 4px; }
   .res h1 em { font-style: normal; color: var(--ca); }
-  .res h1 canvas { vertical-align: -4px; margin-right: 13px; }
+  /* 아이템은 글자와 같은 키로, 글줄 가운데에 온다. em 으로 재면
+     제목이 화면 따라 줄어들 때 아이콘도 같이 줄어든다. */
+  .res h1 canvas { height: 1.05em; width: auto; vertical-align: -0.16em; margin-right: 12px; }
   /* 리드는 이 사람을 요약하는 문장이다. 회색 잔글씨로 두면 제목에서
      본문으로 건너뛰며 안 읽힌다. 흰 카드에 얹어 본문보다 한 단계 키운다. */
   .res .lead { text-align: center; color: var(--ink); font-size: 1.02rem; line-height: 1.8;
@@ -2229,7 +2231,8 @@
     }
 
     $('r-title').innerHTML = `<em>${tn.adj}</em> ${tn.noun}`;
-    if (tn.item) $('r-title').prepend(sprite(tn.item, 2));
+    /* 제목 최대 글자 크기(48px)에서 1:1 이 되도록 3배로 그린다 */
+    if (tn.item) $('r-title').prepend(sprite(tn.item, 3));
     me.type = tn.adj + ' ' + tn.noun;
 
     /* 축 이름 뒤에 조사를 붙이면 [일과 사람 사이에서]에서 처럼 겹친다.
