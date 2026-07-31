@@ -55,12 +55,38 @@
   .who span { font-size: 11.5px; color: var(--sub); }
   .lbl { position: absolute; transform: translate(-50%, -50%); font-family: var(--pixel); font-size: 11px;
     background: var(--card); border: 2px solid var(--edge-deep); border-radius: 10px; padding: 4px 9px; cursor: pointer;
-    transition: background-color 0.12s, color 0.12s, border-color 0.12s; }
+    text-align: center; transition: background-color 0.12s, color 0.12s, border-color 0.12s; }
   .lbl:hover { border-color: var(--ca); }
   .lbl.on { background: var(--ca); border-color: var(--ca-deep); color: #fff; }
+  /* 강조하는 두 쌍. 등급이 아니라 표시까지만 */
+  .lbl em { display: block; font-style: normal; font-size: 10px; margin-bottom: 2px; }
+  .lbl.good { border-color: var(--ca); }
+  .lbl.good em { color: var(--ca); }
+  .lbl.warn { border-color: var(--cb); }
+  .lbl.warn em { color: var(--cb); }
+  .lbl.on em { color: #fff; }
 
-  /* ── 선을 눌렀을 때: 두 사람의 축 규칙 ───── */
-  .pair { margin: 10px 18px 18px; border: 3px solid var(--ca-pale); border-radius: 16px; padding: 15px 17px 6px; }
+  /* ── 팀 한 줄 + 팀 축 규칙 (본편) ────────── */
+  .one { margin: 16px 18px 0; padding: 14px 17px; background: var(--ca-pale); border-radius: 16px; }
+  .one i { display: block; font-style: normal; font-family: var(--pixel); font-size: 11px; color: var(--ca); margin-bottom: 6px; }
+  .one p { font-size: 15px; line-height: 1.7; font-weight: 600; }
+  .team { margin: 12px 18px 4px; }
+  .team h2 { font-family: var(--pixel); font-size: 14px; color: var(--ca); margin: 2px 2px 4px; }
+  .trow { padding: 12px 2px 13px; border-bottom: 2px dashed var(--edge); }
+  .trow:last-child { border-bottom: none; }
+  .trow .sit { font-family: var(--pixel); font-size: 12px; color: var(--g-edge); margin-bottom: 6px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .trow .sit i { font-style: normal; font-size: 11px; color: var(--sub); background: #F1EEF8; border-radius: 7px; padding: 1px 7px; }
+  .trow p { font-size: 14.5px; line-height: 1.72; }
+  .tmp { font-size: 10.5px; color: var(--cb); font-family: var(--pixel); margin-right: 4px; }
+  .gtitle { font-family: var(--pixel); font-size: 14px; color: var(--ca); margin: 14px 20px 0; }
+  .gsub { font-size: 12.5px; color: var(--sub); margin: 3px 20px 0; }
+
+  /* ── 선을 눌렀을 때: 두 사람의 축 규칙. 기본은 닫혀 있다 ───── */
+  .pair { display: none; margin: 10px 18px 18px; border: 3px solid var(--ca-pale); border-radius: 16px; padding: 15px 17px 6px; }
+  .pair.open { display: block; }
+  .pair .head { display: flex; justify-content: space-between; align-items: center; }
+  .pair .x { font-family: var(--pixel); font-size: 11px; color: var(--sub); background: none; border: none; padding: 4px; }
+  .pair .x:hover { color: var(--ink); }
   .pair h2 { font-family: var(--pixel); font-size: 14px; color: var(--ca); margin-bottom: 3px; }
   .pair .hint { font-size: 12.5px; color: var(--sub); margin-bottom: 10px; }
   .rule { padding: 11px 2px 12px; border-top: 2px dashed var(--edge); }
@@ -82,7 +108,7 @@
     font-family: var(--pixel); font-size: 12px; text-align: center; line-height: 2; min-height: 150px; }
 </style>
 
-<p class="note">[시안] 배치와 흐름 확인용입니다. 점선을 누르면 그 두 사람의 규칙 다섯 개가 아래에 나옵니다.</p>
+<p class="note">[시안] 구조 확인용입니다. 팀 한 줄 → 팀 규칙 → 쌍 그래프 순서이고, 쌍 세부는 길이나 라벨을 눌러야 열립니다. 축 1만 확정 톤이고 <b>[임시]</b> 표시는 자리만 잡은 문구입니다.</p>
 
 <div class="gwin">
   <div class="gbar">
@@ -90,6 +116,17 @@
     <span class="gq">3명 참여 중 · 한 자리 남음</span>
   </div>
 
+  <div class="one">
+    <i>우리 팀은</i>
+    <p><span class="tmp">[임시]</span>결과물이 빨리 나가는 팀입니다. 마지막 검토를 자기 일로 아는 사람이 없어서, 밖으로 나가는 것만 하루 묵히는 규칙 하나가 필요합니다.</p>
+  </div>
+
+  <div class="team" id="team">
+    <h2>다섯 상황에서 우리 팀</h2>
+  </div>
+
+  <p class="gtitle">둘씩 보면</p>
+  <p class="gsub">길을 누르면 그 두 사람의 세부 규칙이 열립니다.</p>
   <div class="graph" id="graph"><canvas id="trail"></canvas></div>
 
   <div class="pair" id="pair"></div>
@@ -170,13 +207,42 @@
   ];
   const PAIRS = [[0, 1], [0, 2], [1, 2]];
   const sameCount = (a, b) => a.bands.reduce((n, v, i) => n + (v === b.bands[i] ? 1 : 0), 0);
+  const oppCount = (a, b) => a.bands.reduce((n, v, i) => n + (Math.abs(v - b.bands[i]) === 2 ? 1 : 0), 0);
+
+  /* 강조하는 두 쌍: 구간 같은 축이 가장 많고 정반대가 없는 쌍 /
+     정반대(높낮) 축이 가장 많은 쌍 */
+  const stat = PAIRS.map(([a, b]) => ({ same: sameCount(M[a], M[b]), opp: oppCount(M[a], M[b]) }));
+  const GOOD = stat.reduce((g, s, k) => (s.opp === 0 && (g < 0 || s.same > stat[g].same) ? k : g), -1);
+  const WARN = stat.reduce((w, s, k) => (s.opp > 0 && (w < 0 || s.opp > stat[w].opp) ? k : w), -1);
+
+  /* 팀 축 규칙. 분포는 시안 팀 기준으로 손으로 판정했고,
+     축 1(의견이 갈릴 때)만 확정 톤, 나머지는 자리 잡기용 임시 문구다. */
+  const TEAM_ROWS = [
+    { ax: 0, dist: '먼저 말함 1 · 중간 1 · 먼저 들음 1', tmp: false,
+      text: '먼저 말하는 쪽과 듣고 정리하는 쪽이 다 있는 팀입니다. 회의 자리에서는 말하는 쪽 의견이, 하루 지나면 듣는 쪽 의견이 나옵니다. 그날 결정할 것과 하루 묵힐 것을 나누기만 하면 양쪽 의견이 다 들어옵니다.' },
+    { ax: 1, dist: '일 우선 1 · 중간 2', tmp: true,
+      text: '급한 시기에 분위기를 살피는 일이 중간쪽 둘에게 몰립니다. 그 몫도 일로 세어 주면 됩니다.' },
+    { ax: 2, dist: '빠르게 2 · 중간 1', tmp: true,
+      text: '초안은 빨리 나오는데 마지막 검토가 아무의 일도 아닙니다. 밖으로 나가는 것만 하루 묵히는 규칙 하나면 됩니다.' },
+    { ax: 3, dist: '전원 중간', tmp: true,
+      text: '맡기고 확인하는 리듬이 비슷해서 걸릴 게 거의 없는 축입니다. 어디부터 크게 틀어진 것으로 볼지 기준만 한 번 맞춰 두세요.' },
+    { ax: 4, dist: '준비형 1 · 중간 2', tmp: true,
+      text: '준비는 제나 님이 먼저 시작합니다. 일정이 바뀌면 제나 님에게 먼저 알려야 다시 정리할 시간이 생깁니다.' }
+  ];
+  TEAM_ROWS.forEach((r) => {
+    const d = document.createElement('div');
+    d.className = 'trow';
+    d.innerHTML = `<div class="sit">▶ ${AXES[r.ax]} <i>${r.dist}</i></div>
+      <p>${r.tmp ? '<span class="tmp">[임시]</span>' : ''}${r.text}</p>`;
+    $('team').appendChild(d);
+  });
 
   /* 두 사람 사이를 게임 맵의 발판처럼 픽셀 사각형으로 잇는다.
      고른 쌍의 길은 파란 발판, 마우스를 올린 길은 미리 밝아진다.
      클릭 판정은 svg 대신 그래프에서 가장 가까운 길을 계산한다 —
      라벨만 눌리는 것처럼 보인다는 피드백이 있었다. */
   const graph = $('graph'), trail = $('trail');
-  let picked = 0, hovered = -1;
+  let picked = -1, hovered = -1;
   const seg = ([a, b]) => {
     const W = graph.clientWidth, H = graph.clientHeight;
     return [M[a].x / 100 * W, M[a].y / 100 * H, M[b].x / 100 * W, M[b].y / 100 * H];
@@ -241,23 +307,31 @@
     d.append(pic, b, s);
     graph.appendChild(d);
   });
+  const mark = (k) => (k === GOOD ? ' good' : k === WARN ? ' warn' : '');
+  const badge = (k) => (k === GOOD ? '<em>합이 잘 맞아요</em>' : k === WARN ? '<em>규칙을 먼저 정하면 좋아요</em>' : '');
   const lbls = PAIRS.map(([a, b], k) => {
     const d = document.createElement('div');
-    d.className = 'lbl';
+    d.className = 'lbl' + mark(k);
     d.style.left = (M[a].x + M[b].x) / 2 + '%';
     d.style.top = (M[a].y + M[b].y) / 2 + '%';
-    d.textContent = '결이 같은 축 ' + sameCount(M[a], M[b]) + ' / 5';
+    d.innerHTML = badge(k) + '결이 같은 축 ' + sameCount(M[a], M[b]) + ' / 5';
     d.addEventListener('click', () => pick(k));
     graph.appendChild(d);
     return d;
   });
 
+  function closePair() {
+    picked = -1;
+    drawTrails();
+    lbls.forEach((d, k) => d.className = 'lbl' + mark(k));
+    $('pair').className = 'pair';
+  }
   function pick(k) {
     picked = k;
     drawTrails();
-    lbls.forEach((d, i) => d.className = 'lbl' + (i === k ? ' on' : ''));
+    lbls.forEach((d, i) => d.className = 'lbl' + mark(i) + (i === k ? ' on' : ''));
     const [a, b] = PAIRS[k], A = M[a], B = M[b];
-    let html = `<h2>${A.name} × ${B.name}</h2>
+    let html = `<div class="head"><h2>${A.name} × ${B.name}</h2><button class="x" onclick="closePair()">✕ 닫기</button></div>
       <p class="hint">다섯 상황에서 두 사람이 어떻게 맞물리는지입니다. 점수도 등급도 아닙니다.</p>`;
     AXES.forEach((ax, i) => {
       const key = [A.bands[i], B.bands[i]].sort((p, q) => q - p).join('');
@@ -267,8 +341,9 @@
         <p>${RULES[i][key]}</p></div>`;
     });
     $('pair').innerHTML = html;
+    $('pair').className = 'pair open';
   }
-  pick(0);
+  drawTrails();
 
   /* 아래: 참가자 요약 카드 + 빈 자리 */
   M.forEach((m) => {
