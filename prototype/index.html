@@ -2100,42 +2100,50 @@
     ['용감한', '신중한']
   ];
 
-  /* 명사마다 손에 드는 아이템. 결과창 캐릭터 옆에 붙는다. */
+  /* 명사마다 손에 드는 아이템. 결과창 캐릭터 옆에 붙는다.
+     장비 아이콘 규칙으로 그렸다: 1px 짙은 외곽선, 좌상단 단일 광원,
+     우하단 1톤 그늘, 무기류는 좌하에서 우상으로 45도 대각.
+     원본은 세션 스크래치의 gen_items.py 로 계산해 구웠다. */
   const TYPE_ITEM = [
-    [ // 탐색가 — 수첩
-      { pal: { K: '#2E3A5C', B: '#5D9EE4', D: '#3574BC', W: '#FFF7E6' },
-        grid: ['.KKKKKKKK.', '.KBBBBBWK.', '.KBBBBBWK.', '.KDDDDDWK.', '.KBBBBBWK.', '.KBBBBBWK.', '.KBBBBBWK.', '.KBBBBBWK.', '.KKKKKKKK.'] },
+    [
+      // 탐색가 — 수첩
+      { pal: { B: '#5D9EE4', D: '#3E76BF', H: '#8FC1F2', K: '#2E3A5C', N: '#2F4FA0', P: '#E4D2A8', W: '#FFF7E6' },
+        grid: ['.KKKKKKKKKK.', 'KHBBBBBBBWPK', 'KHBBBBBBBWPK', 'KHBBBBBBBWPK', 'KNNNNNNNNWPK', 'KNNNNNNNNWPK', 'KHBBBBBBBWPK', 'KHBBBBBBBWPK', 'KHBBBBBDDWPK', 'KHBBBDDDDWPK', 'KBBDDDDDDWPK', '.KKKKKKKKKK.'] },
       // 돌격대 — 깃발
-      { pal: { K: '#2E3A5C', B: '#8A5A2B', R: '#FF5CA3', W: '#FFFFFF' },
-        grid: ['.KK........', '.KBKKKKKK..', '.KBRRRRRRK.', '.KBRRWWRRK.', '.KBRRWWRRK.', '.KBRRRRRRK.', '.KBKKKKKK..', '.KBK.......', '.KBK.......', '.KBK.......', '.KKK.......'] }
+      { pal: { B: '#8A5A2B', F: '#F0568F', K: '#2E3A5C', R: '#FF7DAF' },
+        grid: ['...KKKKKKKKK.', '...KRRRRRRRK.', '...KRRRRRRRK.', '...KRRRRRRRKK', '...KKFFFFFFBK', '....KFFFFFFBK', '....KKFFFFFKK', '.....KKBBBKK.', '....KKBBBKK..', '...KKBBBKK...', '..KKBBBKK....', '.KKBBBKK.....', 'KKBBBKK......', 'KBBBKK.......', 'KBBKK........', 'KKKK.........'] }
     ],
-    [ // 조율사 — 물약
-      { pal: { K: '#2E3A5C', G: '#BFE7C9', R: '#FF7DAF', W: '#FFFFFF', C: '#8A5A2B' },
-        grid: ['...KCCK....', '...KCCK....', '....KK.....', '...KGGK....', '..KGGGGK...', '.KGRRRRGK..', '.KRRWRRRK..', '.KRRRRRRK..', '..KRRRRK...', '...KKKK....'] },
+    [
+      // 조율사 — 물약
+      { pal: { C: '#8A5A2B', D: '#F0568F', G: '#CFE8F7', K: '#2E3A5C', R: '#FF7DAF', W: '#FFFFFF' },
+        grid: ['....KCCK....', '....KCCK....', '.....KK.....', '....KGGK....', '...KGGGGK...', '..KGGGGGGK..', '.KGRRRRRRGK.', 'KGRRRRRRRRGK', 'KRRWWRRRRRDK', 'KRRWRRRRRDDK', 'KRRRRRRRDDDK', '.KRRRRRDDDK.', '..KKKKKKKK..'] },
       // 해결사 — 활
-      { pal: { K: '#2E3A5C', B: '#8A5A2B', W: '#EDEDF4' },
-        grid: ['..KKB......', '.KBBK.W....', 'KBK...W....', 'KBK...W....', 'KBK...W....', 'KBBK..W....', 'KBK...W....', 'KBK...W....', 'KBK...W....', '.KBBK.W....', '..KKB......'] }
+      { pal: { B: '#A9743C', G: '#7C4F22', K: '#2E3A5C', W: '#EDEDF4' },
+        grid: ['..........WKK.', '.........WKBKK', '........WKBBBK', '.......WKKBBKK', '......W.KBBBK.', '.....W.KKBBKK.', '....W.KKGBBK..', '...W.KKGGGKK..', '..WKKKGGGKK...', '.WKKBBBGKK....', 'WKBBBBBKK.....', 'KBBBBKKK......', 'KKBKKK........', '.KKK..........'] }
     ],
-    [ // 실행가 — 횃불
-      { pal: { K: '#2E3A5C', Y: '#FFD34D', O: '#FF9D3B', B: '#8A5A2B' },
-        grid: ['....KYK....', '...KYYYK...', '...KYOYK...', '..KYOOOYK..', '..KOOYOOK..', '...KOOOK...', '...KKKKK...', '....KBK....', '....KBK....', '....KBK....', '....KKK....'] },
+    [
+      // 실행가 — 횃불
+      { pal: { B: '#A9743C', E: '#7C4F22', K: '#2E3A5C', O: '#FF9D3B', Y: '#FFD34D' },
+        grid: ['........KKYKK..', '.......KKYYYKK.', '......KKYYYYYKK', '......KYYYOOYYK', '......KYYOOOYYK', '......KKYYOYYKK', '......KKBYYYKK.', '.....KKBBEEEK..', '....KKBBBKKKK..', '...KKBBBKK.....', '..KKBBBKK......', '.KKBBBKK.......', 'KKBBBKK........', 'KBBBKK.........', 'KKBKK..........', '.KKK...........'] },
       // 세공사 — 망치
-      { pal: { K: '#2E3A5C', S: '#B9C2D8', D: '#8E99B5', B: '#8A5A2B' },
-        grid: ['.KKKKKKK...', 'KSSSSSSSK..', 'KSSSSSSDK..', 'KSSSSSSDK..', '.KKKKKKK...', '....KBK....', '....KBK....', '....KBK....', '....KBK....', '....KBK....', '....KKK....'] }
+      { pal: { B: '#A9743C', D: '#8E99B5', K: '#2E3A5C', S: '#C6CFE2', W: '#FFFFFF' },
+        grid: ['......KKKKKKKKK', '......KWWWWWWWK', '......KDSSSSSSK', '......KDDSSSSSK', '......KDDDSSSSK', '......KDDDDSSSK', '.....KKDDDDDSSK', '....KKBBBKKKKKK', '...KKBBBKK.....', '..KKBBBKK......', '.KKBBBKK.......', 'KKBBBKK........', 'KBBBKK.........', 'KBBKK..........', 'KKKK...........'] }
     ],
-    [ // 지원가 — 사과
-      { pal: { K: '#2E3A5C', R: '#FF5C5C', D: '#D63A3A', W: '#FFD1D1', L: '#8FD08A', S: '#8A5A2B' },
-        grid: ['.....KLL...', '....KSLLK..', '.....KS....', '..KKRRKKK..', '.KRRRRRRRK.', 'KRWRRRRRDDK', 'KRWRRRRRDDK', 'KRRRRRRRDDK', '.KRRRRRDDK.', '..KKRRKKK..', '....KKK....'] },
+    [
+      // 지원가 — 사과
+      { pal: { D: '#D63A3A', K: '#2E3A5C', L: '#8FD08A', R: '#FF5C5C', S: '#8A5A2B', W: '#FFD1D1' },
+        grid: ['.....KLL...', '....KSLLK..', '.....KS....', '..KKRRKKK..', '.KRRRRRRRK.', 'KRWWRRRRRDK', 'KRWRRRRRDDK', 'KRRRRRRRDDK', 'KRRRRRRDDDK', '.KRRRRDDDK.', '..KKRRKKK..', '....KK.....'] },
       // 감독관 — 회중시계
-      { pal: { K: '#2E3A5C', Y: '#F5C64E', D: '#C0891C', W: '#FFFFFF' },
-        grid: ['....KKK....', '...KYDYK...', '..KKKKKKK..', '.KYYYYYYYK.', 'KYWWWWWWWYK', 'KYWWWKWWWYK', 'KYWWWKKWWYK', 'KYWWWWWWWYK', '.KYYYYYYYK.', '..KKKKKKK..'] }
+      { pal: { D: '#C0891C', K: '#2E3A5C', W: '#FFFFFF', Y: '#F5C64E' },
+        grid: ['.....KKK....', '....KYDYK...', '...KKKKKKK..', '..KYYYYYYYK.', '.KYWWWWWWDYK', 'KYWWWWWWWWDK', 'KYWWWKWWWWDK', 'KYWWWKKWWWDK', 'KYWWWWWWWWDK', '.KYWWWWWWDK.', '..KYYYYYDDK.', '...KKKKKKK..'] }
     ],
-    [ // 개척자 — 곡괭이
-      { pal: { K: '#2E3A5C', S: '#B9C2D8', B: '#8A5A2B' },
-        grid: ['..KKKKKKK..', '.KSSSSSSSK.', 'KSSKKKKKSSK', 'KSK..K..KSK', 'KK..KBK..KK', '....KBK....', '....KBK....', '....KBK....', '....KBK....', '....KBK....', '....KKK....'] },
+    [
+      // 개척자 — 곡괭이
+      { pal: { B: '#A9743C', D: '#8E99B5', K: '#2E3A5C', S: '#C6CFE2', W: '#FFFFFF' },
+        grid: ['....KWWWDKKK...', '....KDDDSWDKKK.', '....KKKKDSSSDK.', '.......KKDDSDKK', '........KKKSSDK', '......KKKKKDSDK', '.....KKBBKKKDSD', '....KKBBBK.KKSD', '...KKBBBKK..KSD', '..KKBBBKK...KDD', '.KKBBBKK....KKK', 'KKBBBKK........', 'KBBBKK.........', 'KBBKK..........', 'KKKK...........'] },
       // 설계자 — 지도
-      { pal: { K: '#2E3A5C', P: '#F3E4C3', B: '#5D9EE4', R: '#E2574C', D: '#D9C08D' },
-        grid: ['KKKKKKKKKKK', 'KPPPPDPPPPK', 'KPBBPDPPPPK', 'KPPBBDPPRPK', 'KPPPBBPRRPK', 'KPPPPBBRPPK', 'KPDDPPBPPPK', 'KPPPPPBBPPK', 'KPPPPPPPPPK', 'KKKKKKKKKKK'] }
+      { pal: { '2': '#E2CD9E', B: '#5D9EE4', D: '#D9C08D', K: '#2E3A5C', P: '#F3E4C3', R: '#E2574C', W: '#FFF7E6' },
+        grid: ['.KKKKKKKKKKKK.', 'KWPPPPDPPPPPPK', 'KWPBBPDPPPPPPK', 'KWPPBBDPPPRPPK', 'KWPPPBBPPRRPPK', 'KWPPPPBBRRPPPK', 'KWPDDPPBBPPPPK', 'KWPPPPPPBBPPPK', 'KWP2222222222K', 'KW22222222222K', '.KKKKKKKKKKKK.'] }
     ]
   ];
   function typeName(named, bands) {
