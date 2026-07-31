@@ -44,10 +44,9 @@
 
   /* ── 관계 그래프 ─────────────────────────── */
   .graph { position: relative; height: 330px; margin: 6px 14px 0; }
-  .graph svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-  .graph line { stroke: var(--edge-deep); stroke-width: 3; stroke-dasharray: 7 6; cursor: pointer; }
-  .graph line.hit { stroke: transparent; stroke-width: 26; stroke-dasharray: none; }
-  .graph line.on { stroke: var(--ca); }
+  .graph svg, .graph canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  /* 실제 길은 캔버스에 픽셀 발판으로 찍는다. svg 는 클릭 판정용 투명선만 남긴다. */
+  .graph line.hit { stroke: transparent; stroke-width: 26; cursor: pointer; }
   .who { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 4px; }
   .who .pic { position: relative; background: rgba(255,255,255,0.92); border: 3px solid var(--edge-deep); border-radius: 18px; padding: 9px; line-height: 0; }
   .who .pic canvas { position: absolute; right: -9px; bottom: -7px; }
@@ -95,7 +94,7 @@
     <button class="gbtn pink">나도 참여하기</button>
   </div>
 
-  <div class="graph" id="graph"><svg id="wires" viewBox="0 0 100 100" preserveAspectRatio="none"></svg></div>
+  <div class="graph" id="graph"><canvas id="trail"></canvas><svg id="wires" viewBox="0 0 100 100" preserveAspectRatio="none"></svg></div>
 
   <div class="pair" id="pair"></div>
 
@@ -171,20 +170,43 @@
   const PAIRS = [[0, 1], [0, 2], [1, 2]];
   const sameCount = (a, b) => a.bands.reduce((n, v, i) => n + (v === b.bands[i] ? 1 : 0), 0);
 
-  /* 그래프: 선(svg) → 아바타 → 라벨 순서로 쌓는다 */
-  const graph = $('graph'), wires = $('wires');
-  const lines = [];
+  /* 그래프: 발판 길(canvas) → 클릭 판정(svg) → 아바타 → 라벨 순서로 쌓는다 */
+  const graph = $('graph'), wires = $('wires'), trail = $('trail');
   PAIRS.forEach(([a, b], k) => {
-    ['hit', 'wire'].forEach((kind) => {
-      const l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-      l.setAttribute('x1', M[a].x); l.setAttribute('y1', M[a].y);
-      l.setAttribute('x2', M[b].x); l.setAttribute('y2', M[b].y);
-      if (kind === 'hit') l.setAttribute('class', 'hit');
-      l.addEventListener('click', () => pick(k));
-      wires.appendChild(l);
-      if (kind === 'wire') lines[k] = l;
-    });
+    const l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    l.setAttribute('x1', M[a].x); l.setAttribute('y1', M[a].y);
+    l.setAttribute('x2', M[b].x); l.setAttribute('y2', M[b].y);
+    l.setAttribute('class', 'hit');
+    l.addEventListener('click', () => pick(k));
+    wires.appendChild(l);
   });
+
+  /* 두 사람 사이를 게임 맵의 발판처럼 픽셀 사각형으로 잇는다.
+     고른 쌍의 길은 파란 발판이 되고 한 칸씩 크다. */
+  let picked = 0;
+  function drawTrails() {
+    const dpr = devicePixelRatio || 1;
+    const W = graph.clientWidth, H = graph.clientHeight;
+    trail.width = W * dpr; trail.height = H * dpr;
+    const g = trail.getContext('2d');
+    g.scale(dpr, dpr);
+    PAIRS.forEach(([a, b], k) => {
+      const on = k === picked;
+      const x1 = M[a].x / 100 * W, y1 = M[a].y / 100 * H;
+      const x2 = M[b].x / 100 * W, y2 = M[b].y / 100 * H;
+      const len = Math.hypot(x2 - x1, y2 - y1);
+      const pad = 56, step = 19, size = on ? 9 : 7;
+      g.fillStyle = on ? '#2B5BFF' : '#CBC5DC';
+      for (let d = pad; d <= len - pad; d += step) {
+        const t = d / len;
+        const x = Math.round(x1 + (x2 - x1) * t), y = Math.round(y1 + (y2 - y1) * t);
+        g.beginPath();
+        g.roundRect(x - size / 2, y - size / 2, size, size, 2);
+        g.fill();
+      }
+    });
+  }
+  addEventListener('resize', drawTrails);
   M.forEach((m) => {
     const d = document.createElement('div');
     d.className = 'who';
@@ -209,7 +231,8 @@
   });
 
   function pick(k) {
-    lines.forEach((l, i) => l.setAttribute('class', i === k ? 'on' : ''));
+    picked = k;
+    drawTrails();
     lbls.forEach((d, i) => d.className = 'lbl' + (i === k ? ' on' : ''));
     const [a, b] = PAIRS[k], A = M[a], B = M[b];
     let html = `<h2>${A.name} × ${B.name}</h2>
