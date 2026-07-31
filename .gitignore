@@ -1,3 +1,5 @@
 .vercel
-
-.vercel
+node_modules
+.env
+.env.local
+MongoDB_Key.txt

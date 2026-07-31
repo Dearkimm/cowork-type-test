@@ -1,0 +1,7 @@
+{
+  "name": "cowork-type-test",
+  "private": true,
+  "dependencies": {
+    "mongodb": "^6.17.0"
+  }
+}
