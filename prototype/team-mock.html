@@ -48,6 +48,14 @@
   /* 발판 캔버스만 늘린다. .graph canvas 로 쓰면 아이템 캔버스까지 늘어나서
      캐릭터를 덮어 버린다 — 한 번 겪었다. */
   #trail { position: absolute; inset: 0; width: 100%; height: 100%; }
+  /* 쌍을 보는 중일 때만 그래프 우측 상단에 뜬다. 패널 안 버튼만으로는
+     돌아가는 길이 눈에 안 띈다는 피드백 (07-31). */
+  .gback { display: none; position: absolute; top: 4px; right: 4px; z-index: 5;
+    font-family: var(--pixel); font-size: 11px; padding: 8px 12px;
+    background: var(--ca); color: #fff; border: 2px solid var(--ca-deep);
+    border-radius: 11px; box-shadow: 0 3px 0 var(--ca-deep); }
+  .gback:hover { transform: translateY(-1px); }
+  .gback.show { display: block; }
   .who { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 4px; }
   .who .pic { position: relative; background: rgba(255,255,255,0.92); border: 3px solid var(--edge-deep); border-radius: 18px; padding: 9px; line-height: 0; }
   .who .pic canvas { position: absolute; right: -9px; bottom: -7px; }
@@ -115,7 +123,9 @@
     <span class="gq">3명 참여 중 · 한 자리 남음</span>
   </div>
 
-  <div class="graph" id="graph"><canvas id="trail"></canvas></div>
+  <div class="graph" id="graph"><canvas id="trail"></canvas>
+    <button class="gback" id="gback" onclick="closePair()">✕ 팀 전체 보기</button>
+  </div>
   <p class="gsub">길을 누르면 아래 내용이 그 두 사람의 이야기로 바뀝니다.</p>
 
   <div class="one">
@@ -319,6 +329,7 @@
     picked = -1;
     drawTrails();
     lbls.forEach((d, k) => d.className = 'lbl' + mark(k));
+    $('gback').classList.remove('show');
     renderTeam();
   }
   function pick(k) {
@@ -336,6 +347,7 @@
         <p>${RULES[i][key]}</p></div>`;
     });
     $('panel').innerHTML = html;
+    $('gback').classList.add('show');
   }
   drawTrails();
   renderTeam();
