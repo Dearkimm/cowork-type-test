@@ -2102,16 +2102,17 @@
 
   /* 명사마다 손에 드는 아이템. 결과창 캐릭터 옆에 붙는다.
      장비 아이콘 규칙으로 그렸다: 1px 짙은 외곽선, 좌상단 단일 광원,
-     우하단 1톤 그늘, 무기류는 좌하에서 우상으로 45도 대각.
-     원본은 세션 스크래치의 gen_items.py 로 계산해 구웠다. */
+     우하단 1톤 그늘. 활·망치·곡괭이는 45도 대각이고 횃불·깃발·수첩은
+     정면이다. 대각으로 눕히니 성냥개비·쐐기·창문으로 읽혀서 되돌렸다.
+     곡선은 세션 스크래치의 gen_items.py 로 원호를 계산해 구웠다. */
   const TYPE_ITEM = [
     [
       // 탐색가 — 수첩
-      { pal: { B: '#5D9EE4', D: '#3E76BF', H: '#8FC1F2', K: '#2E3A5C', N: '#2F4FA0', P: '#E4D2A8', W: '#FFF7E6' },
-        grid: ['.KKKKKKKKKK.', 'KHBBBBBBBWPK', 'KHBBBBBBBWPK', 'KHBBBBBBBWPK', 'KNNNNNNNNWPK', 'KNNNNNNNNWPK', 'KHBBBBBBBWPK', 'KHBBBBBBBWPK', 'KHBBBBBDDWPK', 'KHBBBDDDDWPK', 'KBBDDDDDDWPK', '.KKKKKKKKKK.'] },
+      { pal: { E: '#DDE3F2', K: '#2E3A5C', L: '#C9D2E8', N: '#3E76BF', W: '#FFFFFF' },
+        grid: ['.KKKKKKKKKK.', 'KNNNNNNNNNNK', 'KNWNNWNNWNNK', 'KWWWWWWWWWEK', 'KWLLLLLLLWEK', 'KWWWWWWWWWEK', 'KWLLLLLLLWEK', 'KWWWWWWWWWEK', 'KWLLLLLLLWEK', 'KWWWWWWWWWEK', 'KEEEEEEEEEEK', '.KKKKKKKKKK.'] },
       // 돌격대 — 깃발
-      { pal: { B: '#8A5A2B', F: '#F0568F', K: '#2E3A5C', R: '#FF7DAF' },
-        grid: ['...KKKKKKKKK.', '...KRRRRRRRK.', '...KRRRRRRRK.', '...KRRRRRRRKK', '...KKFFFFFFBK', '....KFFFFFFBK', '....KKFFFFFKK', '.....KKBBBKK.', '....KKBBBKK..', '...KKBBBKK...', '..KKBBBKK....', '.KKBBBKK.....', 'KKBBBKK......', 'KBBBKK.......', 'KBBKK........', 'KKKK.........'] }
+      { pal: { B: '#A9743C', D: '#7C4F22', F: '#F0568F', K: '#2E3A5C', R: '#FF7DAF', Y: '#FFD34D' },
+        grid: ['KYK........', 'KBKKKKKKKK.', 'KBKRRRRRRRK', 'KBKRRRRRRK.', 'KBKFFFFFFK.', 'KBKFFFFFFFK', 'KBKKKKKKKK.', 'KBDK.......', 'KBDK.......', 'KBDK.......', 'KBDK.......', 'KKKK.......'] }
     ],
     [
       // 조율사 — 물약
@@ -2123,8 +2124,8 @@
     ],
     [
       // 실행가 — 횃불
-      { pal: { B: '#A9743C', E: '#7C4F22', K: '#2E3A5C', O: '#FF9D3B', Y: '#FFD34D' },
-        grid: ['........KKYKK..', '.......KKYYYKK.', '......KKYYYYYKK', '......KYYYOOYYK', '......KYYOOOYYK', '......KKYYOYYKK', '......KKBYYYKK.', '.....KKBBEEEK..', '....KKBBBKKKK..', '...KKBBBKK.....', '..KKBBBKK......', '.KKBBBKK.......', 'KKBBBKK........', 'KBBBKK.........', 'KKBKK..........', '.KKK...........'] },
+      { pal: { B: '#A9743C', D: '#7C4F22', K: '#2E3A5C', O: '#FF9D3B', S: '#8E99B5', W: '#FFFFFF', Y: '#FFD34D' },
+        grid: ['...KK...', '..KYYK..', '.KYYYYK.', '.KYOOYK.', 'KYOOOOYK', 'KYOOOOYK', 'KYYOOYYK', '.KYYYYK.', 'KSSSSSSK', 'KWSSSSDK', '.KKBBKK.', '..KBDK..', '..KBDK..', '..KBDK..', '..KKKK..'] },
       // 세공사 — 망치
       { pal: { B: '#A9743C', D: '#8E99B5', K: '#2E3A5C', S: '#C6CFE2', W: '#FFFFFF' },
         grid: ['......KKKKKKKKK', '......KWWWWWWWK', '......KDSSSSSSK', '......KDDSSSSSK', '......KDDDSSSSK', '......KDDDDSSSK', '.....KKDDDDDSSK', '....KKBBBKKKKKK', '...KKBBBKK.....', '..KKBBBKK......', '.KKBBBKK.......', 'KKBBBKK........', 'KBBBKK.........', 'KBBKK..........', 'KKKK...........'] }
@@ -2142,7 +2143,7 @@
       { pal: { B: '#A9743C', D: '#8E99B5', K: '#2E3A5C', S: '#C6CFE2', W: '#FFFFFF' },
         grid: ['....KWWWDKKK...', '....KDDDSWDKKK.', '....KKKKDSSSDK.', '.......KKDDSDKK', '........KKKSSDK', '......KKKKKDSDK', '.....KKBBKKKDSD', '....KKBBBK.KKSD', '...KKBBBKK..KSD', '..KKBBBKK...KDD', '.KKBBBKK....KKK', 'KKBBBKK........', 'KBBBKK.........', 'KBBKK..........', 'KKKK...........'] },
       // 설계자 — 지도
-      { pal: { '2': '#E2CD9E', B: '#5D9EE4', D: '#D9C08D', K: '#2E3A5C', P: '#F3E4C3', R: '#E2574C', W: '#FFF7E6' },
+      { pal: { 2: '#E2CD9E', B: '#5D9EE4', D: '#D9C08D', K: '#2E3A5C', P: '#F3E4C3', R: '#E2574C', W: '#FFF7E6' },
         grid: ['.KKKKKKKKKKKK.', 'KWPPPPDPPPPPPK', 'KWPBBPDPPPPPPK', 'KWPPBBDPPPRPPK', 'KWPPPBBPPRRPPK', 'KWPPPPBBRRPPPK', 'KWPDDPPBBPPPPK', 'KWPPPPPPBBPPPK', 'KWP2222222222K', 'KW22222222222K', '.KKKKKKKKKKKK.'] }
     ]
   ];
