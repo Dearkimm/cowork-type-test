@@ -2143,11 +2143,31 @@
       // 개척자 — 곡괭이
       { pal: { B: '#A9743C', D: '#8E99B5', K: '#2E3A5C', S: '#C6CFE2', W: '#FFFFFF' },
         grid: ['....KWWWDKKK...', '....KDDDSWDKKK.', '....KKKKDSSSDK.', '.......KKDDSDKK', '........KKKSSDK', '......KKKKKDSDK', '.....KKBBKKKDSD', '....KKBBBK.KKSD', '...KKBBBKK..KSD', '..KKBBBKK...KDD', '.KKBBBKK....KKK', 'KKBBBKK........', 'KBBBKK.........', 'KBBKK..........', 'KKKK...........'] },
-      // 설계자 — 지도
-      { pal: { 2: '#E2CD9E', B: '#5D9EE4', D: '#D9C08D', K: '#2E3A5C', P: '#F3E4C3', R: '#E2574C', W: '#FFF7E6' },
-        grid: ['.KKKKKKKKKKKK.', 'KWPPPPDPPPPPPK', 'KWPBBPDPPPPPPK', 'KWPPBBDPPPRPPK', 'KWPPPBBPPRRPPK', 'KWPPPPBBRRPPPK', 'KWPDDPPBBPPPPK', 'KWPPPPPPBBPPPK', 'KWP2222222222K', 'KW22222222222K', '.KKKKKKKKKKKK.'] }
+      // 설계자 — 지도. 평평한 한 장으로 그렸더니 무늬 있는 카드처럼
+      // 읽혀서, 세 폭 접이식 실루엣(가운데 폭이 위로 솟음)으로 갈았다.
+      // 접힌 자국(D 세로줄)이 지도임을 말해 준다. 물·경로·X 는 장식.
+      { pal: { B: '#5D9EE4', D: '#D9C08D', K: '#2E3A5C', P: '#F3E4C3', R: '#E2574C', W: '#FFF7E6' },
+        grid: ['.....KKKKK.....', 'KKKKKKWWWKKKKKK', 'KWWWWDPPPDWWWWK', 'KPBBPDPPPDPRPRK', 'KPBBPDPPPDPPRPK', 'KPBBPDPPPDPRPRK', 'KPPPPDPPPDRPPPK', 'KPPRPDRPRDPPPPK', 'KPPPPDPPPDPPPPK', 'KPPPPDPPPDPPPPK', 'KPPPPDDDDDPPPPK', 'KDDDDKKKKKDDDDK', 'KKKKK.....KKKKK'] }
     ]
   ];
+  /* 아이템 점검용 화면. index.html#items 로 열면 열 개를 이름과 함께
+     깐다. 아이템은 파일이 아니라 위의 격자라서, 그림으로 보려면
+     이 화면이 제일 빠르다. 검사 흐름과는 무관하다. */
+  if (location.hash === '#items') addEventListener('DOMContentLoaded', () => {
+    const board = document.createElement('div');
+    board.style.cssText = 'position:fixed;inset:0;z-index:99;background:#fff;display:flex;flex-wrap:wrap;gap:34px 40px;align-items:center;justify-content:center;align-content:center;';
+    TYPE_ITEM.forEach((pair, i) => pair.forEach((it, p) => {
+      const cell = document.createElement('div');
+      cell.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:10px;font-family:var(--pixel);font-size:12px;';
+      cell.appendChild(sprite(it, 4));
+      const b = document.createElement('b');
+      b.textContent = TYPE_NOUN[i][p];
+      cell.appendChild(b);
+      board.appendChild(cell);
+    }));
+    document.body.appendChild(board);
+  });
+
   function typeName(named, bands) {
     if (named.length === 0) return { adj: '유연한', noun: '올라운더', item: null };
     const n0 = named[0], p0 = bands[n0.i] === 2 ? 1 : 0;
