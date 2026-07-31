@@ -965,11 +965,10 @@
   .res { width: 100%; max-width: 640px; margin: 0 auto; padding: 72px clamp(14px, 5vw, 28px) 72px; display: flex; flex-direction: column; gap: 18px; }
   .res .me { align-self: center; display: flex; align-items: center; gap: 9px; background: rgba(255,255,255,0.92); border: 3px solid var(--edge-deep); border-radius: 14px; padding: 7px 14px 7px 9px; }
   .res .me b { font-family: var(--pixel); font-size: 11px; }
-  .hold { position: relative; display: inline-block; line-height: 0; }
-  .hold .item { position: absolute; right: -10px; bottom: -4px; }
   .res .me span { color: var(--sub); }
   .res h1 { font-family: var(--display); font-weight: 900; font-size: clamp(1.8rem, 7.4vw, 3rem); line-height: 1.22; letter-spacing: -0.045em; text-align: center; text-wrap: balance; margin-top: 4px; }
   .res h1 em { font-style: normal; color: var(--ca); }
+  .res h1 canvas { vertical-align: -4px; margin-right: 13px; }
   /* 리드는 이 사람을 요약하는 문장이다. 회색 잔글씨로 두면 제목에서
      본문으로 건너뛰며 안 읽힌다. 흰 카드에 얹어 본문보다 한 단계 키운다. */
   .res .lead { text-align: center; color: var(--ink); font-size: 1.02rem; line-height: 1.8;
@@ -2217,16 +2216,7 @@
     const meBox = $('r-me');
     meBox.innerHTML = '';
     if (me.c !== null) {
-      const hold = document.createElement('span');
-      hold.className = 'hold';
-      hold.appendChild(charEl(me.c, 2));
-      // 명사에 딸린 아이템을 캐릭터 앞발 쪽에 쥐여 준다
-      if (tn.item) {
-        const it = sprite(tn.item, 2);
-        it.className = 'item';
-        hold.appendChild(it);
-      }
-      meBox.appendChild(hold);
+      meBox.appendChild(charEl(me.c, 2));
       const b = document.createElement('b');
       b.textContent = me.nick || CHARS[me.c].name;
       const s = document.createElement('span');
@@ -2239,6 +2229,7 @@
     }
 
     $('r-title').innerHTML = `<em>${tn.adj}</em> ${tn.noun}`;
+    if (tn.item) $('r-title').prepend(sprite(tn.item, 2));
     me.type = tn.adj + ' ' + tn.noun;
 
     /* 축 이름 뒤에 조사를 붙이면 [일과 사람 사이에서]에서 처럼 겹친다.
