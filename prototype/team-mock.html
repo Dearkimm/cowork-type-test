@@ -44,9 +44,9 @@
 
   /* ── 관계 그래프 ─────────────────────────── */
   .graph { position: relative; height: 330px; margin: 6px 14px 0; }
-  .graph svg, .graph canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-  /* 실제 길은 캔버스에 픽셀 발판으로 찍는다. svg 는 클릭 판정용 투명선만 남긴다. */
-  .graph line.hit { stroke: transparent; stroke-width: 26; cursor: pointer; }
+  /* 발판 캔버스만 늘린다. .graph canvas 로 쓰면 아이템 캔버스까지 늘어나서
+     캐릭터를 덮어 버린다 — 한 번 겪었다. */
+  #trail { position: absolute; inset: 0; width: 100%; height: 100%; }
   .who { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 4px; }
   .who .pic { position: relative; background: rgba(255,255,255,0.92); border: 3px solid var(--edge-deep); border-radius: 18px; padding: 9px; line-height: 0; }
   .who .pic canvas { position: absolute; right: -9px; bottom: -7px; }
@@ -94,7 +94,7 @@
     <button class="gbtn pink">나도 참여하기</button>
   </div>
 
-  <div class="graph" id="graph"><canvas id="trail"></canvas><svg id="wires" viewBox="0 0 100 100" preserveAspectRatio="none"></svg></div>
+  <div class="graph" id="graph"><canvas id="trail"></canvas></div>
 
   <div class="pair" id="pair"></div>
 
@@ -170,43 +170,64 @@
   const PAIRS = [[0, 1], [0, 2], [1, 2]];
   const sameCount = (a, b) => a.bands.reduce((n, v, i) => n + (v === b.bands[i] ? 1 : 0), 0);
 
-  /* 그래프: 발판 길(canvas) → 클릭 판정(svg) → 아바타 → 라벨 순서로 쌓는다 */
-  const graph = $('graph'), wires = $('wires'), trail = $('trail');
-  PAIRS.forEach(([a, b], k) => {
-    const l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    l.setAttribute('x1', M[a].x); l.setAttribute('y1', M[a].y);
-    l.setAttribute('x2', M[b].x); l.setAttribute('y2', M[b].y);
-    l.setAttribute('class', 'hit');
-    l.addEventListener('click', () => pick(k));
-    wires.appendChild(l);
-  });
-
   /* 두 사람 사이를 게임 맵의 발판처럼 픽셀 사각형으로 잇는다.
-     고른 쌍의 길은 파란 발판이 되고 한 칸씩 크다. */
-  let picked = 0;
+     고른 쌍의 길은 파란 발판, 마우스를 올린 길은 미리 밝아진다.
+     클릭 판정은 svg 대신 그래프에서 가장 가까운 길을 계산한다 —
+     라벨만 눌리는 것처럼 보인다는 피드백이 있었다. */
+  const graph = $('graph'), trail = $('trail');
+  let picked = 0, hovered = -1;
+  const seg = ([a, b]) => {
+    const W = graph.clientWidth, H = graph.clientHeight;
+    return [M[a].x / 100 * W, M[a].y / 100 * H, M[b].x / 100 * W, M[b].y / 100 * H];
+  };
   function drawTrails() {
     const dpr = devicePixelRatio || 1;
     const W = graph.clientWidth, H = graph.clientHeight;
     trail.width = W * dpr; trail.height = H * dpr;
     const g = trail.getContext('2d');
     g.scale(dpr, dpr);
-    PAIRS.forEach(([a, b], k) => {
-      const on = k === picked;
-      const x1 = M[a].x / 100 * W, y1 = M[a].y / 100 * H;
-      const x2 = M[b].x / 100 * W, y2 = M[b].y / 100 * H;
+    PAIRS.forEach((pr, k) => {
+      const on = k === picked, hov = k === hovered && !on;
+      const [x1, y1, x2, y2] = seg(pr);
       const len = Math.hypot(x2 - x1, y2 - y1);
-      const pad = 56, step = 19, size = on ? 9 : 7;
-      g.fillStyle = on ? '#2B5BFF' : '#CBC5DC';
+      const pad = 58, step = 13, size = on ? 8 : 6;
+      g.fillStyle = on ? '#2B5BFF' : hov ? '#A9BEFF' : '#CBC5DC';
       for (let d = pad; d <= len - pad; d += step) {
         const t = d / len;
-        const x = Math.round(x1 + (x2 - x1) * t), y = Math.round(y1 + (y2 - y1) * t);
-        g.beginPath();
-        g.roundRect(x - size / 2, y - size / 2, size, size, 2);
-        g.fill();
+        const x = Math.round(x1 + (x2 - x1) * t - size / 2);
+        const y = Math.round(y1 + (y2 - y1) * t - size / 2);
+        g.fillRect(x, y, size, size);
       }
     });
   }
   addEventListener('resize', drawTrails);
+
+  /* 점에서 선분까지의 거리. 14px 안이면 그 길 위에 있는 것으로 본다. */
+  function nearLine(mx, my) {
+    let best = -1, bd = 14;
+    PAIRS.forEach((pr, k) => {
+      const [x1, y1, x2, y2] = seg(pr);
+      const dx = x2 - x1, dy = y2 - y1;
+      const t = Math.max(0.12, Math.min(0.88, ((mx - x1) * dx + (my - y1) * dy) / (dx * dx + dy * dy)));
+      const d = Math.hypot(mx - (x1 + dx * t), my - (y1 + dy * t));
+      if (d < bd) { bd = d; best = k; }
+    });
+    return best;
+  }
+  const overPiece = (e) => e.target.closest('.who, .lbl');
+  graph.addEventListener('mousemove', (e) => {
+    const r = graph.getBoundingClientRect();
+    const k = overPiece(e) ? -1 : nearLine(e.clientX - r.left, e.clientY - r.top);
+    graph.style.cursor = k >= 0 ? 'pointer' : '';
+    if (k !== hovered) { hovered = k; drawTrails(); }
+  });
+  graph.addEventListener('mouseleave', () => { hovered = -1; drawTrails(); });
+  graph.addEventListener('click', (e) => {
+    if (overPiece(e)) return;
+    const r = graph.getBoundingClientRect();
+    const k = nearLine(e.clientX - r.left, e.clientY - r.top);
+    if (k >= 0) pick(k);
+  });
   M.forEach((m) => {
     const d = document.createElement('div');
     d.className = 'who';
