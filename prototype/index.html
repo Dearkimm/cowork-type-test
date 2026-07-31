@@ -965,6 +965,8 @@
   .res { width: 100%; max-width: 640px; margin: 0 auto; padding: 72px clamp(14px, 5vw, 28px) 72px; display: flex; flex-direction: column; gap: 18px; }
   .res .me { align-self: center; display: flex; align-items: center; gap: 9px; background: rgba(255,255,255,0.92); border: 3px solid var(--edge-deep); border-radius: 14px; padding: 7px 14px 7px 9px; }
   .res .me b { font-family: var(--pixel); font-size: 11px; }
+  .hold { position: relative; display: inline-block; line-height: 0; }
+  .hold .item { position: absolute; right: -10px; bottom: -4px; }
   .res .me span { color: var(--sub); }
   .res h1 { font-family: var(--display); font-weight: 900; font-size: clamp(1.8rem, 7.4vw, 3rem); line-height: 1.22; letter-spacing: -0.045em; text-align: center; text-wrap: balance; margin-top: 4px; }
   .res h1 em { font-style: normal; color: var(--ca); }
@@ -2080,12 +2082,54 @@
      쉰한 가지 이름이 나온다(두 축 40 + 한 축 10 + 균형 1).
      이름은 손잡이일 뿐이고 본체는 아래 서술이다. 이름을 위해 새 단어를
      만들면 서술과 어긋나기 시작해서, 축의 극 문구와 같은 결로만 지었다. */
+  /* 명사는 탐험대 역할이다. 회사 직함처럼 들리는 단어(스프린터·조율가)를
+     쓰니 워크숍 자료처럼 읽혀서 갈았다. 어느 쪽도 착해 보이면 안 된다는
+     규칙은 그대로다. 참모-선봉장, 치유사-사냥꾼처럼 짝을 맞췄다. */
   const TYPE_NOUN = [
-    ['경청가', '선봉장'],   // 의견이 갈릴 때: 먼저 듣는 / 먼저 말하는
-    ['조율가', '해결사'],   // 일과 사람: 사람을 먼저 / 일을 먼저
-    ['스프린터', '장인'],   // 결과물: 빠르게 / 끝까지
-    ['후원자', '길잡이'],   // 맡길 때: 기다리는 / 확인하는
-    ['개척자', '설계자']    // 시작 전: 가서 맞추는 / 미리 알아두는
+    ['참모', '선봉장'],     // 의견이 갈릴 때: 먼저 듣는 / 먼저 말하는
+    ['치유사', '사냥꾼'],   // 일과 사람: 사람을 먼저 / 일을 먼저
+    ['선발대', '대장장이'], // 결과물: 빠르게 / 끝까지
+    ['의뢰인', '파수꾼'],   // 맡길 때: 기다리는 / 확인하는
+    ['모험가', '설계자']    // 시작 전: 가서 맞추는 / 미리 알아두는
+  ];
+
+  /* 명사마다 손에 드는 아이템. 결과창 캐릭터 옆에 붙는다. */
+  const TYPE_ITEM = [
+    [ // 참모 — 두루마리
+      { pal: { K: '#2E3A5C', P: '#F3E4C3', D: '#D9C08D' },
+        grid: ['..KKKKKKK..', '.KPPPPPPPK.', 'KPDPPPPPDPK', 'KPPPPPPPPPK', '.KPPPPPPPK.', '.KPPPPPPK..', '.KPPPPPPPK.', 'KPPPPPPPPPK', 'KPDPPPPPDPK', '.KPPPPPPPK.', '..KKKKKKK..'] },
+      // 선봉장 — 깃발
+      { pal: { K: '#2E3A5C', B: '#8A5A2B', R: '#FF5CA3', W: '#FFFFFF' },
+        grid: ['.KK........', '.KBKKKKKK..', '.KBRRRRRRK.', '.KBRRWWRRK.', '.KBRRWWRRK.', '.KBRRRRRRK.', '.KBKKKKKK..', '.KBK.......', '.KBK.......', '.KBK.......', '.KKK.......'] }
+    ],
+    [ // 치유사 — 물약
+      { pal: { K: '#2E3A5C', G: '#BFE7C9', R: '#FF7DAF', W: '#FFFFFF', C: '#8A5A2B' },
+        grid: ['...KCCK....', '...KCCK....', '....KK.....', '...KGGK....', '..KGGGGK...', '.KGRRRRGK..', '.KRRWRRRK..', '.KRRRRRRK..', '..KRRRRK...', '...KKKK....'] },
+      // 사냥꾼 — 활
+      { pal: { K: '#2E3A5C', B: '#8A5A2B', W: '#EDEDF4' },
+        grid: ['..KKB......', '.KBBK.W....', 'KBK...W....', 'KBK...W....', 'KBK...W....', 'KBBK..W....', 'KBK...W....', 'KBK...W....', 'KBK...W....', '.KBBK.W....', '..KKB......'] }
+    ],
+    [ // 선발대 — 횃불
+      { pal: { K: '#2E3A5C', Y: '#FFD34D', O: '#FF9D3B', B: '#8A5A2B' },
+        grid: ['....KYK....', '...KYYYK...', '...KYOYK...', '..KYOOOYK..', '..KOOYOOK..', '...KOOOK...', '...KKKKK...', '....KBK....', '....KBK....', '....KBK....', '....KKK....'] },
+      // 대장장이 — 망치
+      { pal: { K: '#2E3A5C', S: '#B9C2D8', D: '#8E99B5', B: '#8A5A2B' },
+        grid: ['.KKKKKKK...', 'KSSSSSSSK..', 'KSSSSSSDK..', 'KSSSSSSDK..', '.KKKKKKK...', '....KBK....', '....KBK....', '....KBK....', '....KBK....', '....KBK....', '....KKK....'] }
+    ],
+    [ // 의뢰인 — 봉인된 의뢰장
+      { pal: { K: '#2E3A5C', P: '#F7EFDC', R: '#E2574C', D: '#D9C08D' },
+        grid: ['KKKKKKKKKKK', 'KPPPPPPPPPK', 'KPDPPPPPDPK', 'KPPDPPPDPPK', 'KPPPDRDPPPK', 'KPPPRRRPPPK', 'KPPPPRPPPPK', 'KPPPPPPPPPK', 'KKKKKKKKKKK'] },
+      // 파수꾼 — 랜턴
+      { pal: { K: '#2E3A5C', Y: '#FFE9A8', O: '#FFB13B', S: '#8E99B5' },
+        grid: ['....KKK....', '...KSSSK...', '..KKKKKKK..', '..KYYYYYK..', '..KYOOOYK..', '..KYOOOYK..', '..KYYYYYK..', '..KKKKKKK..', '...KSSSK...', '....KKK....'] }
+    ],
+    [ // 모험가 — 검
+      { pal: { K: '#2E3A5C', S: '#D7DEEE', D: '#AEB9D2', B: '#8A5A2B', Y: '#FFD34D' },
+        grid: ['.....KSK...', '....KSSK...', '....KSDK...', '...KSSDK...', '...KSDK....', '..KSSDK....', '..KSDK.....', 'KYKKKK.....', '.KYYK......', 'KBKYK......', 'KKK.KK.....'] },
+      // 설계자 — 지도
+      { pal: { K: '#2E3A5C', P: '#F3E4C3', B: '#5D9EE4', R: '#E2574C', D: '#D9C08D' },
+        grid: ['KKKKKKKKKKK', 'KPPPPDPPPPK', 'KPBBPDPPPPK', 'KPPBBDPPRPK', 'KPPPBBPRRPK', 'KPPPPBBRPPK', 'KPDDPPBPPPK', 'KPPPPPBBPPK', 'KPPPPPPPPPK', 'KKKKKKKKKKK'] }
+    ]
   ];
   const TYPE_ADJ = [
     ['먼저 듣는', '먼저 말하는'],
@@ -2095,11 +2139,12 @@
     ['부딪히며 맞추는', '미리 준비하는']
   ];
   function typeName(named, bands) {
-    if (named.length === 0) return { adj: '유연한', noun: '올라운더' };
+    if (named.length === 0) return { adj: '유연한', noun: '올라운더', item: null };
     const n0 = named[0], p0 = bands[n0.i] === 2 ? 1 : 0;
-    if (named.length === 1) return { adj: TYPE_ADJ[n0.i][p0], noun: TYPE_NOUN[n0.i][p0] };
+    const item = TYPE_ITEM[n0.i][p0];
+    if (named.length === 1) return { adj: TYPE_ADJ[n0.i][p0], noun: TYPE_NOUN[n0.i][p0], item };
     const n1 = named[1], p1 = bands[n1.i] === 2 ? 1 : 0;
-    return { adj: TYPE_ADJ[n1.i][p1], noun: TYPE_NOUN[n0.i][p0] };
+    return { adj: TYPE_ADJ[n1.i][p1], noun: TYPE_NOUN[n0.i][p0], item };
   }
 
   /* 성향과 반대로 답한 문항. 축이 한쪽으로 기울었는데 특정 상황에서만
@@ -2154,10 +2199,24 @@
   function render(scores) {
     const bands = scores.map(band);
 
+    /* 치우친 순서. 제목·막대·서술·아이템이 모두 이 순서를 따른다. */
+    const order = scores.map((v, i) => ({ i, d: Math.abs(v - MID) })).sort((p, q) => q.d - p.d);
+    const named = order.filter((o) => bands[o.i] !== 1).slice(0, 2);
+    const tn = typeName(named, bands);
+
     const meBox = $('r-me');
     meBox.innerHTML = '';
     if (me.c !== null) {
-      meBox.appendChild(charEl(me.c, 2));
+      const hold = document.createElement('span');
+      hold.className = 'hold';
+      hold.appendChild(charEl(me.c, 2));
+      // 명사에 딸린 아이템을 캐릭터 앞발 쪽에 쥐여 준다
+      if (tn.item) {
+        const it = sprite(tn.item, 2);
+        it.className = 'item';
+        hold.appendChild(it);
+      }
+      meBox.appendChild(hold);
       const b = document.createElement('b');
       b.textContent = me.nick || CHARS[me.c].name;
       const s = document.createElement('span');
@@ -2169,12 +2228,6 @@
       meBox.appendChild(s);
     }
 
-    /* 치우친 순서. 제목·막대·서술이 모두 이 순서를 따른다.
-       축 순서대로 늘어놓으면 다섯 개의 판정이 나열된 것처럼 읽힌다. */
-    const order = scores.map((v, i) => ({ i, d: Math.abs(v - MID) })).sort((p, q) => q.d - p.d);
-    const named = order.filter((o) => bands[o.i] !== 1).slice(0, 2);
-
-    const tn = typeName(named, bands);
     $('r-title').innerHTML = `<em>${tn.adj}</em> ${tn.noun}`;
     me.type = tn.adj + ' ' + tn.noun;
 
