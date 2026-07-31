@@ -50,11 +50,11 @@
   #trail { position: absolute; inset: 0; width: 100%; height: 100%; }
   /* 쌍을 보는 중일 때만 그래프 우측 상단에 뜬다. 패널 안 버튼만으로는
      돌아가는 길이 눈에 안 띈다는 피드백 (07-31). */
-  .gback { display: none; position: absolute; top: 4px; right: 4px; z-index: 5;
-    font-family: var(--pixel); font-size: 11px; padding: 8px 12px;
-    background: var(--ca); color: #fff; border: 2px solid var(--ca-deep);
-    border-radius: 11px; box-shadow: 0 3px 0 var(--ca-deep); }
-  .gback:hover { transform: translateY(-1px); }
+  .gback { display: none; position: absolute; top: 2px; right: 2px; z-index: 5;
+    font-family: var(--pixel); font-size: 10px; padding: 5px 10px;
+    background: rgba(255,255,255,0.92); color: var(--sub); border: 2px solid var(--edge-deep);
+    border-radius: 9px; }
+  .gback:hover { color: var(--ink); border-color: var(--sub); }
   .gback.show { display: block; }
   .who { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 4px; }
   .who .pic { position: relative; background: rgba(255,255,255,0.92); border: 3px solid var(--edge-deep); border-radius: 18px; padding: 9px; line-height: 0; }
@@ -65,7 +65,10 @@
     background: var(--card); border: 2px solid var(--edge-deep); border-radius: 10px; padding: 4px 9px; cursor: pointer;
     text-align: center; transition: background-color 0.12s, color 0.12s, border-color 0.12s; }
   .lbl:hover { border-color: var(--ca); }
-  .lbl.on { background: var(--ca); border-color: var(--ca-deep); color: #fff; }
+  /* 고른 라벨도 제 쌍의 색을 따른다. 전부 새파래지는 게 과하다는 피드백 */
+  .lbl.on { background: #8F87A8; border-color: #6E668C; color: #fff; }
+  .lbl.good.on { background: var(--ca); border-color: var(--ca-deep); }
+  .lbl.warn.on { background: var(--cb); border-color: var(--cb-deep); }
   /* 강조하는 두 쌍. 등급이 아니라 표시까지만 */
   .lbl em { display: block; font-style: normal; font-size: 10px; margin-bottom: 2px; }
   .lbl.good { border-color: var(--ca); }
@@ -124,13 +127,13 @@
   </div>
 
   <div class="graph" id="graph"><canvas id="trail"></canvas>
-    <button class="gback" id="gback" onclick="closePair()">✕ 팀 전체 보기</button>
+    <button class="gback" id="gback" onclick="closePair()">← 팀 전체</button>
   </div>
   <p class="gsub">길을 누르면 아래 내용이 그 두 사람의 이야기로 바뀝니다.</p>
 
   <div class="one">
     <i>우리 팀은</i>
-    <p><span class="tmp">[임시]</span>결과물이 빨리 나가는 팀입니다. 마지막 검토를 자기 일로 아는 사람이 없어서, 밖으로 나가는 것만 하루 묵히는 규칙 하나가 필요합니다.</p>
+    <p><span class="tmp">[임시]</span>결과물이 빨리 나가는 팀입니다. 대신 마지막 검토는 오래 걸리거나 흐지부지되기 쉬워서, 검토 담당 하나만 정해 두면 됩니다.</p>
   </div>
 
   <div class="panel" id="panel"></div>
@@ -225,13 +228,13 @@
     { ax: 0, dist: '먼저 말함 1 · 중간 1 · 먼저 들음 1', tmp: false,
       text: '먼저 말하는 쪽과 듣고 정리하는 쪽이 다 있는 팀입니다. 회의 자리에서는 말하는 쪽 의견이, 하루 지나면 듣는 쪽 의견이 나옵니다. 그날 결정할 것과 하루 묵힐 것을 나누기만 하면 양쪽 의견이 다 들어옵니다.' },
     { ax: 1, dist: '일 우선 1 · 중간 2', tmp: true,
-      text: '급한 시기에 분위기를 살피는 일이 중간쪽 둘에게 몰립니다. 그 몫도 일로 세어 주면 됩니다.' },
+      text: '급한 시기에 분위기를 살피는 일이 중간쪽 둘에게 몰립니다. 그 역할을 당연하게 여기지 않고 알아주는 것만으로도 부담이 줄어듭니다.' },
     { ax: 2, dist: '빠르게 2 · 중간 1', tmp: true,
-      text: '초안은 빨리 나오는데 마지막 검토가 아무의 일도 아닙니다. 밖으로 나가는 것만 하루 묵히는 규칙 하나면 됩니다.' },
+      text: '초안은 빨리 나오지만 마지막 검토는 오래 걸리거나 흐지부지되기 쉽습니다. 밖으로 나가는 결과물만 검토 담당을 정해 두면 됩니다.' },
     { ax: 3, dist: '전원 중간', tmp: true,
-      text: '맡기고 확인하는 리듬이 비슷해서 걸릴 게 거의 없는 축입니다. 어디부터 크게 틀어진 것으로 볼지 기준만 한 번 맞춰 두세요.' },
+      text: '맡기고 확인하는 리듬이 비슷해서 부딪힐 일이 거의 없습니다. 어디서부터 크게 틀어진 것으로 볼지 기준만 한 번 맞춰 두세요.' },
     { ax: 4, dist: '준비형 1 · 중간 2', tmp: true,
-      text: '준비는 제나 님이 먼저 시작합니다. 일정이 바뀌면 제나 님에게 먼저 알려야 다시 정리할 시간이 생깁니다.' }
+      text: '제나 님은 준비할 시간이 필요한 사람입니다. 일정이 바뀌면 가장 먼저 알려 주세요. 다시 정리할 시간이 생깁니다.' }
   ];
   function renderTeam() {
     let html = '<h2>다섯 상황에서 우리 팀</h2>\n<p class="hint">쌍을 고르지 않았을 때는 팀 전체 이야기가 나옵니다.</p>';
@@ -258,12 +261,21 @@
     trail.width = W * dpr; trail.height = H * dpr;
     const g = trail.getContext('2d');
     g.scale(dpr, dpr);
+    /* 길 색은 쌍의 성격을 따른다. 잘 맞는 쌍은 파랑 계열, 규칙이 먼저
+       필요한 쌍은 분홍 계열, 나머지는 회보라. 고르면 같은 계열에서
+       진해질 뿐 새파랗게 뒤집지 않는다 — 과하다는 피드백 (07-31). */
+    const HUE = {
+      good: { base: '#B9CCFF', hov: '#7E9BFF', on: '#3D66E8' },
+      warn: { base: '#FFC3DA', hov: '#FF8FBB', on: '#F0568F' },
+      none: { base: '#D5D0E3', hov: '#B4ACC9', on: '#8F87A8' }
+    };
     PAIRS.forEach((pr, k) => {
       const on = k === picked, hov = k === hovered && !on;
       const [x1, y1, x2, y2] = seg(pr);
       const len = Math.hypot(x2 - x1, y2 - y1);
       const pad = 58, step = 13, size = on ? 8 : 6;
-      g.fillStyle = on ? '#2B5BFF' : hov ? '#A9BEFF' : '#CBC5DC';
+      const hue = HUE[k === GOOD ? 'good' : k === WARN ? 'warn' : 'none'];
+      g.fillStyle = on ? hue.on : hov ? hue.hov : hue.base;
       for (let d = pad; d <= len - pad; d += step) {
         const t = d / len;
         const x = Math.round(x1 + (x2 - x1) * t - size / 2);
@@ -319,7 +331,7 @@
     d.className = 'lbl' + mark(k);
     d.style.left = (M[a].x + M[b].x) / 2 + '%';
     d.style.top = (M[a].y + M[b].y) / 2 + '%';
-    d.innerHTML = badge(k) + '결이 같은 축 ' + sameCount(M[a], M[b]) + ' / 5';
+    d.innerHTML = badge(k) + '결이 같은 상황 ' + sameCount(M[a], M[b]) + ' / 5';
     d.addEventListener('click', () => pick(k));
     graph.appendChild(d);
     return d;
