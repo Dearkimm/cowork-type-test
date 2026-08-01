@@ -1036,6 +1036,75 @@
   .sheet dt { font-weight: 800; font-size: 0.89rem; color: var(--cb); margin-bottom: 2px; }
   .sheet dd { font-size: 0.88rem; line-height: 1.62; }
 
+  /* ── 팀 화면. 시안(team-mock)을 본편 토큰으로 옮겼다. t- 접두사는
+     결과 화면의 .panel 등과 클래스가 겹치지 않게 하기 위한 것이다. ── */
+  .teampg { max-width: 880px; margin: 0 auto; padding: 26px 12px 46px; }
+  .twin { background: var(--card); border: 4px solid var(--edge-deep); border-radius: 20px;
+    box-shadow: 0 7px 0 var(--edge-deep); overflow: hidden; }
+  .tbar { display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+    padding: 13px 18px; background: var(--g-base); color: #fff; border-bottom: 4px solid var(--edge-deep); }
+  .tbar .gt { font-size: 15px; letter-spacing: 0.04em; }
+  .tbar .gq { font-size: 12px; color: rgba(255, 255, 255, 0.78); }
+  .tgraph { position: relative; height: 330px; margin: 16px 14px 0; }
+  #t-trail { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .tback { display: none; position: absolute; top: 2px; right: 2px; z-index: 5;
+    font-size: 10px; padding: 5px 10px; background: rgba(255, 255, 255, 0.92); color: var(--sub);
+    border: 2px solid var(--edge-deep); border-radius: 9px; }
+  .tback:hover { color: var(--ink); border-color: var(--sub); }
+  .tback.show { display: block; }
+  .twho { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .twho .pic { position: relative; background: rgba(255, 255, 255, 0.92); border: 3px solid var(--edge-deep); border-radius: 18px; padding: 9px; line-height: 0; }
+  .twho .pic .titem { position: absolute; right: -9px; bottom: -7px; }
+  .twho b { font-family: var(--pixel); font-size: 12px; background: rgba(255, 255, 255, 0.9); border-radius: 8px; padding: 2px 7px; }
+  .twho span { font-size: 11.5px; color: var(--sub); }
+  .tlbl { position: absolute; transform: translate(-50%, -50%); font-family: var(--pixel); font-size: 11px;
+    background: var(--card); border: 2px solid var(--edge-deep); border-radius: 10px; padding: 4px 9px;
+    text-align: center; cursor: var(--hand); transition: background-color 0.12s, color 0.12s, border-color 0.12s; }
+  .tlbl:hover { border-color: var(--ca); }
+  .tlbl.on { background: #8F87A8; border-color: #6E668C; color: #fff; }
+  .tlbl.good.on { background: var(--ca); border-color: var(--ca-deep); }
+  .tlbl.warn.on { background: var(--cb); border-color: var(--cb-deep); }
+  .tlbl em { display: block; font-style: normal; font-size: 10px; margin-bottom: 2px; }
+  .tlbl.good { border-color: var(--ca); }
+  .tlbl.good em { color: var(--ca); }
+  .tlbl.warn { border-color: var(--cb); }
+  .tlbl.warn em { color: var(--cb); }
+  .tlbl.on em { color: #fff; }
+  .tsub { font-size: 12.5px; color: var(--sub); margin: 3px 20px 0; }
+  .tpanel { margin: 12px 18px 18px; border: 3px solid var(--g-light); border-radius: 16px; padding: 15px 17px 6px; }
+  .tpanel .head { display: flex; justify-content: space-between; align-items: center; }
+  .tpanel .x { font-family: var(--pixel); font-size: 11px; color: var(--sub); background: none; border: none; padding: 4px; }
+  .tpanel .x:hover { color: var(--ink); }
+  .tpanel h2 { font-family: var(--pixel); font-size: 14px; color: var(--ca); margin-bottom: 3px; }
+  .tpanel .hint { font-size: 12.5px; color: var(--sub); margin-bottom: 10px; }
+  .trule { padding: 11px 2px 12px; border-top: 2px dashed var(--edge); }
+  .trule:first-of-type { border-top: none; }
+  .trule .sit { font-family: var(--pixel); font-size: 12px; color: var(--g-edge); margin-bottom: 5px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .trule .sit i { font-style: normal; font-size: 11px; color: var(--sub); background: #F1EEF8; border-radius: 7px; padding: 1px 7px; }
+  .trule .sit i.same { color: #fff; background: var(--cb); }
+  .trule p { font-size: 14.5px; line-height: 1.72; }
+  .ttmp { font-size: 10.5px; color: var(--cb); font-family: var(--pixel); margin-right: 4px; }
+  .tcrew { display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); gap: 12px; padding: 0 18px 8px; }
+  .tmate { border: 3px solid var(--edge); border-radius: 16px; padding: 13px 14px; }
+  .tmate .top { display: flex; align-items: center; gap: 9px; margin-bottom: 8px; }
+  .tmate .top b { font-family: var(--pixel); font-size: 12px; }
+  .tmate .top small { display: block; color: var(--sub); font-size: 11.5px; margin-top: 2px; }
+  .tmate ul { list-style: none; margin: 0; padding: 0; }
+  .tmate li { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--sub); padding: 3px 0; }
+  .tmate li b { font-weight: 700; color: var(--ink); }
+  .tmate.empty { border-style: dashed; display: grid; place-items: center; color: var(--sub);
+    font-family: var(--pixel); font-size: 12px; text-align: center; line-height: 2; min-height: 150px; }
+  .tacts { padding: 6px 18px 4px; }
+  .ttoast { padding: 0 18px 16px; }
+  .tform { display: flex; flex-direction: column; gap: 8px; }
+  .tform label { color: var(--sub); margin-top: 4px; }
+  .tform input { border: 3px solid var(--edge-deep); border-radius: 12px; padding: 11px 13px; font-size: 15px; }
+  .tform input:focus { border-color: var(--ca); outline: none; }
+  .tsgo { margin-top: 8px; font-family: var(--pixel); font-size: 15px; padding: 13px;
+    background: var(--ca); color: #fff; border: 3px solid var(--ca-deep); border-radius: 14px; box-shadow: 0 4px 0 var(--ca-deep); }
+  .tsgo:disabled { opacity: 0.55; }
+  .tsnote { color: var(--sub); }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
@@ -1161,7 +1230,32 @@
         <button class="gbtn" id="again">다시 하기</button>
       </div>
       <p class="toast px" id="toast"></p>
-      <p class="disc px">개인 결과 공유는 지금도 됩니다. 팀 만들기는 준비 중입니다. 팀 하나에 링크 하나가 생기고, 방장 포함 네 명까지 같은 링크로 들어옵니다.</p>
+      <p class="disc px">팀 하나에 링크 하나가 생기고, 방장 포함 네 명까지 같은 링크로 들어옵니다. 팀에는 유형과 구간만 가고 점수 숫자는 나만 봅니다.</p>
+    </div>
+  </section>
+
+  <!-- 팀 화면. 팀 하나에 URL 하나(#t=아이디). 인원수를 따라간다 —
+       혼자면 자리와 초대 링크만, 둘이면 쌍 규칙 다섯, 셋부터는 그래프가 문. -->
+  <section class="view" id="v-team">
+    <div class="teampg">
+      <div class="twin">
+        <header class="tbar">
+          <span class="gt px" id="t-name"></span>
+          <span class="gq px" id="t-count"></span>
+        </header>
+        <div class="tgraph" id="t-graph"><canvas id="t-trail"></canvas>
+          <button class="tback px" id="t-back" type="button">← 팀 전체</button>
+        </div>
+        <p class="tsub" id="t-sub"></p>
+        <div class="tpanel" id="t-panel"></div>
+        <div class="tcrew" id="t-crew"></div>
+        <div class="acts tacts">
+          <button class="gbtn primary" id="t-share">팀 링크 공유하기</button>
+          <button class="gbtn primary pink" id="t-join">나도 참여하기</button>
+          <button class="gbtn" id="t-mine" hidden>내 결과 보기</button>
+        </div>
+        <p class="toast px ttoast" id="t-toast"></p>
+      </div>
     </div>
   </section>
 </div>
@@ -1178,8 +1272,27 @@
       <div><dt>유형 이름은 어떻게 정해지나요</dt><dd>다섯 가지 성향 중 가장 뚜렷하게 기운 것이 뒤의 이름이 되고, 두 번째로 기운 것이 앞의 수식어가 돼요. [신중한 탐색가]라면 탐색가 쪽이 가장 세고 신중한 쪽이 그다음이라는 뜻입니다. 조합은 모두 91가지이고, 어느 쪽으로도 기울지 않으면 [유연한 올라운더]가 나옵니다.</dd></div>
       <div><dt>어떻게 답하나요</dt><dd>위아래 말풍선 사이에 네 칸이 있어요. 위쪽 말풍선에 가까우면 왼쪽 두 칸, 아래쪽에 가까우면 오른쪽 두 칸에서 고릅니다. 삼각형이 두 개면 [확실히], 하나면 [조금]이에요. 키보드 1·2·3·4로도 됩니다.</dd></div>
       <div><dt>팀은 몇 명까지인가요</dt><dd>방장을 포함해 네 명이에요.</dd></div>
-      <div><dt>내 답은 어디에 남나요</dt><dd>서버에 저장하지 않아요. 결과는 공유 링크 주소 안에 통째로 들어 있어서, 링크를 보낸 사람만 볼 수 있습니다. 내 점수 숫자는 나만 보고, 팀에는 서술만 가요.</dd></div>
+      <div><dt>내 답은 어디에 남나요</dt><dd>개인 결과는 서버에 저장하지 않아요. 결과는 공유 링크 주소 안에 통째로 들어 있어서, 링크를 보낸 사람만 볼 수 있습니다. 내 점수 숫자는 나만 보고, 팀에는 서술만 가요.</dd></div>
+      <div><dt>팀 결과는 얼마나 보관되나요</dt><dd>팀에 마지막 활동이 있고 나서 3개월 뒤에 자동 삭제됩니다.</dd></div>
     </dl>
+  </div>
+</div>
+
+<div class="sheet" id="tsheet">
+  <div class="veil" data-tclose></div>
+  <div class="pane" role="dialog" aria-label="팀 만들기">
+    <div class="head">
+      <h2>팀 만들기</h2>
+      <button class="gbtn x" data-tclose aria-label="닫기">✕</button>
+    </div>
+    <div class="tform">
+      <label class="px" for="ts-team">팀 이름 (스무 자까지) — 방장이 정해요</label>
+      <input id="ts-team" type="text" maxlength="20" placeholder="예: 떡볶이 원정대" autocomplete="off">
+      <label class="px" for="ts-name">팀에서 쓸 내 이름 (여덟 자까지)</label>
+      <input id="ts-name" type="text" maxlength="8" autocomplete="off">
+      <button class="gbtn tsgo" id="ts-go" type="button">팀 만들기</button>
+      <p class="px tsnote" id="ts-note">팀 하나에 링크 하나가 생겨요. 팀 결과는 마지막 활동 후 3개월 뒤 자동 삭제됩니다.</p>
+    </div>
   </div>
 </div>
 
@@ -1840,7 +1953,7 @@
   let at = 0;
   let picks = new Array(Q.length).fill(null);
   let me = { c: null, nick: '' };
-  const views = { land: $('v-land'), pick: $('v-pick'), test: $('v-test'), res: $('v-res') };
+  const views = { land: $('v-land'), pick: $('v-pick'), test: $('v-test'), res: $('v-res'), team: $('v-team') };
 
   function show(name) {
     Object.entries(views).forEach(([k, el]) => el.classList.toggle('live', k === name));
@@ -2261,6 +2374,10 @@
     /* 제목 최대 글자 크기(48px)에서 1:1 이 되도록 3배로 그린다 */
     if (tn.item) $('r-title').prepend(sprite(tn.item, 3));
     me.type = tn.adj + ' ' + tn.noun;
+    /* 팀에 보낼 요약. 원점수는 넣지 않는다 — 팀에는 구간과 유형명만 간다.
+       아이템은 [축, 극] 좌표. 올라운더는 null. */
+    me.bands = bands;
+    me.item = named.length ? [named[0].i, bands[named[0].i] === 2 ? 1 : 0] : null;
 
     /* 축 이름 뒤에 조사를 붙이면 [일과 사람 사이에서]에서 처럼 겹친다.
        이름을 그대로 두고 서술어만 바꿔 문장을 만든다. */
@@ -2352,7 +2469,10 @@
     if (me.c !== null) parts.push('c=' + me.c);
     if (me.nick) parts.push('n=' + encodeURIComponent(me.nick));
     location.hash = parts.join('&');
+    me.phash = '#' + parts.join('&');   // 팀 화면에서 [내 결과 보기]로 돌아올 주소
     sky(0); render(scores); show('res'); scrollTo(0, 0);
+    /* 팀 링크의 [나도 참여하기]로 들어온 검사면, 결과가 나온 김에 팀에 합류한다 */
+    if (joinId) joinTeam(joinId, false);
   }
 
   $('go').addEventListener('click', () => { show('pick'); nickIn.focus(); });
@@ -2362,6 +2482,7 @@
 
   addEventListener('keydown', (e) => {
     if ($('sheet').classList.contains('live')) { if (e.key === 'Escape') sheet(false); return; }
+    if ($('tsheet').classList.contains('live')) { if (e.key === 'Escape') tsheet(false); return; }
     if (views.land.classList.contains('live') && (e.key === 'Enter' || e.key === ' ')) { $('go').click(); return; }
     if (views.pick.classList.contains('live') && e.key === 'Enter' && !$('go2').disabled) { $('go2').click(); return; }
     if (!views.test.classList.contains('live')) return;
@@ -2382,10 +2503,17 @@
       $('toast').textContent = '주소창의 링크를 복사해서 보내주세요.';
     }
   });
-  /* 팀은 상태를 저장할 곳이 생긴 뒤에 연다. 팀 하나에 URL 하나가
-     원칙이라 링크에 실어 보내는 방식으로는 안 된다. */
+  /* 팀 만들기. 합류가 실패해 남아 있으면 재시도부터, 이미 팀이 있으면
+     그 팀으로 간다 (팀 하나에 URL 하나). */
   $('team').addEventListener('click', () => {
-    $('toast').textContent = '팀 기능은 준비 중이에요. 지금은 개인 결과 공유만 됩니다.';
+    if (joinId) { joinTeam(joinId, false); return; }
+    if (myTeamId) { openTeam(myTeamId); return; }
+    if (!me.bands || me.c === null || !me.nick) {
+      $('toast').textContent = '캐릭터와 별명을 정하고 검사를 마친 결과에서 팀을 만들 수 있어요.';
+      return;
+    }
+    $('ts-name').value = me.nick;
+    tsheet(true); $('ts-team').focus();
   });
   function goHome() {
     at = 0; picks = new Array(Q.length).fill(null);
@@ -2409,8 +2537,367 @@
   $('help').addEventListener('click', () => sheet(true));
   $('sheet').addEventListener('click', (e) => { if (e.target.closest('[data-close]')) sheet(false); });
 
+  /* ── 팀 ─────────────────────────────────────────────
+     저장은 api/team.js (MongoDB). 팀 하나에 URL 하나(#t=아이디)다.
+     화면은 인원수를 따라간다 — 혼자면 자리 넷과 초대 링크만, 둘이면
+     쌍 규칙 다섯 개가 바로 열리고, 셋부터 그래프가 문이 되어
+     기본 패널은 팀 이야기 · 길을 누르면 그 두 사람 이야기다. */
+  const TEAM_API = '/api/team';
+  const BAND_NM = ['낮음', '중간', '높음'];
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  /* 쌍 규칙 문구. 축 1은 새톤(07-31 확정 문구 결), 축 2~5는 구톤에 일괄
+     수정만 반영한 것. 원본은 docs/team-rules.md. 키는 두 구간을 정렬한 것
+     — 22 = 높높, 21 = 높중, 20 = 높낮, 11 = 중중, 10 = 중낮, 00 = 낮낮 */
+  const PAIR_RULES = [
+    { 22: '결론은 빨리 납니다. 대신 한 사람이 의견을 접어서 끝난 안건은 사라진 게 아니라서, 다음 회의에 같은 안건이 다시 올라오는 패턴이 생기기 쉽습니다. 결정 전에 각자 근거를 한 번씩 말하는 순서를 정해 두면 의견을 접었던 사람도 할 말을 하고 끝납니다.',
+      21: '평소에는 먼저 말하는 사람이 정하고 중간인 사람이 따라가는 흐름으로 굴러갑니다. 중간인 사람은 의견이 없는 게 아니라 고른 뒤에 말하는 편이라, 물어보면 나오고 안 물어보면 안 나옵니다. 결정 전에 한 번 지목해서 물으면 충분합니다.',
+      20: '회의록만 보면 한 사람 의견으로 굴러가는 팀처럼 보이게 됩니다. 듣는 사람은 그 자리에서 정리가 안 끝나서 말을 아끼는 것이지 동의한 게 아닙니다. 결정을 바로 확정하지 않고 한 번 더 검토하는 시간을 두면, 듣는 사람의 의견이 정리되어 들어옵니다.',
+      11: '평소에는 조용히 굴러가고, 둘 다 입을 여는 안건이 실제로 중요한 안건입니다. 대신 애매한 안건은 서로 상대가 말하겠지 하고 넘기기 쉬우니, 그런 것만 누가 짚을지 정해 두는 것으로 충분합니다.',
+      10: '부딪힐 일은 거의 없지만, 정하자고 먼저 나서는 사람도 없어서 결정이 늦어집니다. 마감일을 명확히 설정해 두고 다수결 투표나 정해진 체크리스트에 따라 결정하면 논의가 길어지는 것을 방지할 수 있습니다.',
+      '00': '서로 말을 끊을 일은 없는 조합입니다. 대신 둘 다 상대 이야기를 다 듣고 나서 정리하는 편이라, 회의가 끝나도 결정은 안 나 있는 날이 생깁니다. 이번 건을 정하는 담당을 번갈아 맡으면 결정이 밀리지 않습니다.' },
+    { 22: '둘 다 결과부터 봅니다. 용건만 오가도 서로 편하고 속도가 납니다. 대신 둘 다 분위기를 안 살피는 편이라, 팀에 다른 사람이 있으면 그 사람이 지치는 것을 늦게 알아차립니다.',
+      21: '일을 먼저 보는 사람의 담담한 말투를 중간인 사람이 무리 없이 받아서 마찰이 적습니다. 급한 시기에는 동료를 챙기는 일이 중간인 사람에게 몰리기 쉬우니, 그 수고를 당연하게 여기지 않고 알아주면 부담이 쌓이지 않습니다.',
+      20: '서로 반대라서 초반에 오해가 잦은 조합입니다. 일을 먼저 보는 사람의 지적은 공격이 아니고, 동료를 먼저 살피는 사람의 안부는 시간 낭비가 아닙니다. 피드백에서 내용과 말투를 나눠서 보기로 합의하면 마찰이 크게 줄어듭니다.',
+      11: '상황에 따라 둘 다 움직여서 무난합니다. 규칙이 따로 필요하지 않고, 지금 무엇이 급한지만 서로 알려 주는 것으로 충분합니다.',
+      10: '동료를 먼저 챙기는 사람이 분위기를 살피고 중간인 사람이 맞춥니다. 편한 팀이 되는데, 지적할 일을 둘 다 미루기 쉽습니다. 아쉬운 점은 회고 같은 정해진 자리에서 꺼내기로 하면 쌓이지 않습니다.',
+      '00': '둘 다 동료의 상황을 먼저 살핍니다. 분위기는 좋은데 문제 제기가 늦습니다. 감정 상할 일이 아니라고 미리 합의한 안건 목록을 두면 말을 꺼내기 쉬워집니다.' },
+    { 22: '둘 다 끝까지 다듬습니다. 품질은 걱정이 없는데 마감이 밀립니다. 어디까지 다듬을지 범위를 시작할 때 정하면 둘의 기준이 같은 곳을 봅니다.',
+      21: '다듬는 사람이 마지막 10%를 맡고 중간인 사람이 속도를 냅니다. 잘 맞물리는데, 그 10%가 일정에 안 잡혀 있기 쉽습니다. 검수 시간을 일정에 미리 잡아 두면 그 10%가 일정 안으로 들어옵니다.',
+      20: '한 사람은 80%에서 내보내고, 다른 한 사람은 끝까지 잡고 있습니다. 서로의 방식이 무성의와 비효율로 보이기 쉬운데, 순서를 나누면 맞물립니다. 빠른 사람이 초안을, 다듬는 사람이 마무리를 맡는 흐름입니다.',
+      11: '둘 다 범위가 정해지면 그 안에서 조절합니다. 범위만 흐릿하지 않으면 걸릴 게 없습니다.',
+      10: '속도가 나는 조합입니다. 내보내기 전에 한 번 같이 보는 짧은 검토만 정해 두면, 빠져나가는 실수를 줄일 수 있습니다.',
+      '00': '둘 다 빠르게 내보냅니다. 진행은 시원한데 다듬는 사람이 없습니다. 마지막 검토를 누가 할지 정해 두거나, 밖으로 나가는 것만이라도 한 번 더 점검하고 보내면 사고가 줄어듭니다.' },
+    { 22: '둘 다 중간을 확인합니다. 확인을 주고받는 것 자체는 문제가 없는데, 둘 다 남의 일까지 들고 있어서 일이 두 사람에게 모입니다. 각자 확인할 범위를 나눠 두면 겹치지 않습니다.',
+      21: '확인하는 사람이 묻기 전에 중간인 사람이 먼저 알리면 매끄럽습니다. 보고 주기를 한 번 정해 두면 묻는 일 자체가 줄어듭니다.',
+      20: '한 사람은 중간 상태가 궁금하고, 다른 한 사람은 맡겼으면 들여다보지 않습니다. 확인하는 사람의 질문이 기다리는 사람에게는 재촉으로 읽힙니다. 시작할 때 중간 공유 시점을 한 번만 합의하면, 묻지 않아도 되고 재촉도 아니게 됩니다.',
+      11: '크게 틀어질 때만 서로 개입합니다. 잘 굴러가는 조합이고, 어디부터가 크게인지 기준만 한 번 맞춰 두는 것으로 충분합니다.',
+      10: '둘 다 맡기면 잘 안 들여다보는 편이라 서로 편합니다. 대신 어긋난 것을 늦게 발견합니다. 절반쯤 진행됐을 때 한 번 맞춰 보는 자리를 넣어 두면 어긋난 것을 일찍 발견할 수 있습니다.',
+      '00': '둘 다 온전히 맡기고 기다립니다. 간섭이 없어 편한데, 방향이 어긋나면 끝에 가서야 보입니다. 마감 3분의 2 지점에 중간 공유를 하나만 두면 방향이 어긋나도 일찍 보입니다.' },
+    { 22: '둘 다 미리 알아보고 들어갑니다. 준비는 든든한데 착수가 늦습니다. 조사 기한을 먼저 정하면 준비가 길어지는 것을 막을 수 있습니다.',
+      21: '준비하는 사람이 바탕을 깔고 중간인 사람이 속도를 맞춥니다. 무난한 조합입니다. 준비하는 사람에게는 다시 정리할 시간이 필요하니, 일정이 바뀌면 먼저 알려 주는 것이 좋습니다.',
+      20: '한 사람은 계획을 세우고, 다른 한 사람은 부딪히며 맞춥니다. 역할이 나뉘면 강한 조합입니다. 준비하는 사람에게는 정리할 시간이 필요하니, 갑작스러운 변경일수록 먼저 알려 주는 것이 좋습니다.',
+      11: '둘 다 필요한 만큼 준비하고 시작합니다. 걸릴 지점이 거의 없습니다.',
+      10: '시작이 빠른 조합입니다. 대신 같은 결정을 두 번 하게 되는 일이 생기니, 시작 전에 10분만 아는 것을 같이 정리하면 줄어듭니다.',
+      '00': '둘 다 일단 시작합니다. 착수는 빠른데 중간에 방향을 다시 잡는 비용이 큽니다. 결정한 것을 어딘가에 적어 두는 것만으로도 같은 논의가 반복되는 것을 막을 수 있습니다.' }
+  ];
+
+  /* 셋·넷일 때 팀 축 규칙. 문구가 확정된 것은 축 1뿐이라(새톤 검토 중)
+     축 1은 분포를 판정해 문구를 내고, 나머지 축은 분포만 보여준다.
+     양극(높음과 낮음 공존)을 외톨이보다 먼저 본다 — 시안 팀 판정 기준. */
+  function ax1TeamText(ms) {
+    const b = ms.map((m) => m.bands[0]);
+    if (b.every((v) => v === 2)) return '결론은 빨리 나는데, 끝나고 나면 각자 자기가 말한 결론으로 기억하고 흩어지기 쉽습니다. 회의 끝에 결정된 것을 한 사람이 소리 내어 확인하는 역할을 정해 두면 서로 다르게 기억하는 일이 줄어듭니다.';
+    if (b.every((v) => v === 0)) return '서로 기분 상할 일은 없는데, 아무도 먼저 정하자고 하지 않아서 안건이 다음 회의로 넘어가는 일이 잦아집니다. 안건마다 결정할 날짜를 정해 두면 미뤄지지 않습니다.';
+    if (b.includes(2) && b.includes(0)) return '먼저 말하는 사람과 듣고 정리하는 사람이 다 있는 팀입니다. 회의 자리에서는 말하는 사람의 의견이, 하루 지나면 듣는 사람의 의견이 나옵니다. 그날 결정할 것과 다시 논의할 것을 나누기만 하면 양쪽 의견이 다 들어옵니다.';
+    const highs = ms.filter((m) => m.bands[0] === 2);
+    if (highs.length === 1) return `회의가 ${esc(highs[0].name)} 님 의견 위주로 정리되기 쉽습니다. 나머지가 조용한 것이 동의라서인지 정리 중이라서인지는 물어보기 전엔 모릅니다. 결정 전에 돌아가며 한 마디씩 받는 순서를 넣으면 나머지 의견도 자리를 얻습니다.`;
+    return null;
+  }
+
+  let team = null, myTeamId = null, joinId = null;
+  let tPairs = [], tPicked = -1, tHovered = -1, tGood = -1, tWarn = -1, tLbls = [];
+  const T_POS = {
+    2: [{ x: 26, y: 50 }, { x: 74, y: 50 }],
+    3: [{ x: 50, y: 25 }, { x: 20, y: 75 }, { x: 80, y: 75 }],
+    4: [{ x: 24, y: 24 }, { x: 76, y: 24 }, { x: 24, y: 78 }, { x: 76, y: 78 }]
+  };
+  const sameCount = (a, b) => a.bands.reduce((n, v, i) => n + (v === b.bands[i] ? 1 : 0), 0);
+  const oppCount = (a, b) => a.bands.reduce((n, v, i) => n + (Math.abs(v - b.bands[i]) === 2 ? 1 : 0), 0);
+
+  async function teamPost(body) {
+    const r = await fetch(TEAM_API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw j.error || 'server';
+    return j;
+  }
+  async function fetchTeam(id) {
+    const r = await fetch(TEAM_API + '?id=' + id);
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw j.error || 'server';
+    return j;
+  }
+  const myMember = () => ({ name: me.nick, char: me.c, bands: me.bands, tname: me.type, item: me.item });
+  const teamUrl = () => location.origin + location.pathname + '#t=' + team.id;
+
+  const tgEl = $('t-graph'), ttrail = $('t-trail');
+  function drawTeamTrails() {
+    if (tgEl.hidden || !team) return;
+    const dpr = devicePixelRatio || 1;
+    const W = tgEl.clientWidth, H = tgEl.clientHeight;
+    ttrail.width = W * dpr; ttrail.height = H * dpr;
+    const g = ttrail.getContext('2d');
+    g.scale(dpr, dpr);
+    /* 길 색은 쌍의 성격을 따른다. 잘 맞는 쌍은 파랑, 규칙이 먼저 필요한
+       쌍은 분홍, 나머지는 회보라. 고르면 같은 계열에서 진해질 뿐이다. */
+    const HUE = {
+      good: { base: '#B9CCFF', hov: '#7E9BFF', on: '#3D66E8' },
+      warn: { base: '#FFC3DA', hov: '#FF8FBB', on: '#F0568F' },
+      none: { base: '#D5D0E3', hov: '#B4ACC9', on: '#8F87A8' }
+    };
+    const seg = ([a, b]) => [team.members[a].x / 100 * W, team.members[a].y / 100 * H, team.members[b].x / 100 * W, team.members[b].y / 100 * H];
+    tPairs.forEach((pr, k) => {
+      const on = k === tPicked, hov = k === tHovered && !on;
+      const [x1, y1, x2, y2] = seg(pr);
+      const len = Math.hypot(x2 - x1, y2 - y1);
+      const pad = 58, step = 13, size = on ? 8 : 6;
+      const hue = HUE[k === tGood ? 'good' : k === tWarn ? 'warn' : 'none'];
+      g.fillStyle = on ? hue.on : hov ? hue.hov : hue.base;
+      for (let d = pad; d <= len - pad; d += step) {
+        const t = d / len;
+        g.fillRect(Math.round(x1 + (x2 - x1) * t - size / 2), Math.round(y1 + (y2 - y1) * t - size / 2), size, size);
+      }
+    });
+  }
+  addEventListener('resize', drawTeamTrails);
+
+  function nearTeamLine(mx, my) {
+    const W = tgEl.clientWidth, H = tgEl.clientHeight;
+    let best = -1, bd = 14;
+    tPairs.forEach(([a, b], k) => {
+      const x1 = team.members[a].x / 100 * W, y1 = team.members[a].y / 100 * H;
+      const x2 = team.members[b].x / 100 * W, y2 = team.members[b].y / 100 * H;
+      const dx = x2 - x1, dy = y2 - y1;
+      const t = Math.max(0.12, Math.min(0.88, ((mx - x1) * dx + (my - y1) * dy) / (dx * dx + dy * dy)));
+      const d = Math.hypot(mx - (x1 + dx * t), my - (y1 + dy * t));
+      if (d < bd) { bd = d; best = k; }
+    });
+    return best;
+  }
+  const overTeamPiece = (e) => e.target.closest('.twho, .tlbl');
+  tgEl.addEventListener('mousemove', (e) => {
+    if (!team || tPairs.length < 2) return;
+    const r = tgEl.getBoundingClientRect();
+    const k = overTeamPiece(e) ? -1 : nearTeamLine(e.clientX - r.left, e.clientY - r.top);
+    tgEl.style.cursor = k >= 0 ? 'pointer' : '';
+    if (k !== tHovered) { tHovered = k; drawTeamTrails(); }
+  });
+  tgEl.addEventListener('mouseleave', () => { tHovered = -1; drawTeamTrails(); });
+  tgEl.addEventListener('click', (e) => {
+    if (!team || tPairs.length < 2 || overTeamPiece(e)) return;
+    const r = tgEl.getBoundingClientRect();
+    const k = nearTeamLine(e.clientX - r.left, e.clientY - r.top);
+    if (k >= 0) pickPair(k, false);
+  });
+
+  const tMark = (k) => (k === tGood ? ' good' : k === tWarn ? ' warn' : '');
+  const tBadge = (k) => (k === tGood ? '<em>합이 잘 맞아요</em>' : k === tWarn ? '<em>규칙을 먼저 정하면 좋아요</em>' : '');
+  function refreshLbls() { tLbls.forEach((d, k) => d.className = 'tlbl' + tMark(k) + (k === tPicked ? ' on' : '')); }
+
+  function renderTeamPanel() {
+    let html = '<h2>다섯 상황에서 우리 팀</h2><p class="hint">길(발판)을 누르면 그 두 사람의 이야기로 바뀝니다.</p>';
+    AXES.forEach((ax, i) => {
+      const c = [0, 1, 2].map((v) => team.members.filter((m) => m.bands[i] === v).length);
+      const dist = [c[0] ? `${COPY[i].pole[0]} ${c[0]}` : '', c[1] ? `중간 ${c[1]}` : '', c[2] ? `${COPY[i].pole[2]} ${c[2]}` : ''].filter(Boolean).join(' · ');
+      const text = i === 0 ? ax1TeamText(team.members) : null;
+      html += `<div class="trule"><div class="sit">▶ ${ax.nm} <i>${dist}</i></div>
+        <p>${text || '<span class="ttmp">[준비 중]</span>이 상황의 팀 문구는 다듬는 중이에요. 위에서 길을 누르면 두 사람씩 볼 수 있어요.'}</p></div>`;
+    });
+    $('t-panel').innerHTML = html;
+  }
+  function pickPair(k, solo) {
+    tPicked = k; drawTeamTrails(); refreshLbls();
+    const [a, b] = tPairs[k], A = team.members[a], B = team.members[b];
+    let html = `<div class="head"><h2>${esc(A.name)} × ${esc(B.name)}</h2>${solo ? '' : '<button class="x" id="t-close" type="button">← 팀 전체로</button>'}</div>
+      <p class="hint">다섯 상황에서 두 사람이 어떻게 맞물리는지예요. 점수도 등급도 아니에요.</p>`;
+    AXES.forEach((ax, i) => {
+      const key = [A.bands[i], B.bands[i]].sort((p, q) => q - p).join('');
+      const same = A.bands[i] === B.bands[i];
+      html += `<div class="trule"><div class="sit">▶ ${ax.nm} <i class="${same ? 'same' : ''}">${same ? '결이 같음' : BAND_NM[A.bands[i]] + ' · ' + BAND_NM[B.bands[i]]}</i></div>
+        <p>${PAIR_RULES[i][key]}</p></div>`;
+    });
+    $('t-panel').innerHTML = html;
+    if (!solo) {
+      $('t-back').classList.add('show');
+      $('t-close').addEventListener('click', closePair);
+    }
+  }
+  function closePair() {
+    tPicked = -1; drawTeamTrails(); refreshLbls();
+    $('t-back').classList.remove('show');
+    renderTeamPanel();
+  }
+  $('t-back').addEventListener('click', closePair);
+
+  function renderTeamPage(t) {
+    team = t;
+    history.replaceState(null, '', '#t=' + t.id);
+    const ms = t.members, n = ms.length;
+    $('t-name').textContent = t.team;
+    $('t-count').textContent = n + '명 참여 중' + (n < 4 ? ' · ' + (n === 3 ? '한 자리' : (4 - n) + '자리') + ' 남음' : '');
+    tPicked = -1; tHovered = -1; tLbls = []; tPairs = [];
+    $('t-back').classList.remove('show');
+    [...tgEl.querySelectorAll('.twho, .tlbl')].forEach((el) => el.remove());
+
+    /* 혼자면 자리와 초대 링크만. 판정 칸도, 잠긴 칸도 만들지 않는다. */
+    const solo = n === 1;
+    tgEl.hidden = solo; $('t-sub').hidden = true; $('t-panel').hidden = solo;
+
+    if (!solo) {
+      const pos = T_POS[n];
+      ms.forEach((m, i) => { m.x = pos[i].x; m.y = pos[i].y; });
+      for (let a = 0; a < n; a++) for (let b = a + 1; b < n; b++) tPairs.push([a, b]);
+      const stat = tPairs.map(([a, b]) => ({ same: sameCount(ms[a], ms[b]), opp: oppCount(ms[a], ms[b]) }));
+      /* 강조 두 쌍: 구간이 같은 축이 가장 많고 정반대가 없는 쌍 / 정반대가 가장 많은 쌍.
+         둘뿐이면 강조가 의미 없으니 붙이지 않는다. */
+      tGood = n >= 3 ? stat.reduce((gi, s, k) => (s.opp === 0 && (gi < 0 || s.same > stat[gi].same) ? k : gi), -1) : -1;
+      tWarn = n >= 3 ? stat.reduce((w, s, k) => (s.opp > 0 && (w < 0 || s.opp > stat[w].opp) ? k : w), -1) : -1;
+
+      ms.forEach((m, i) => {
+        const d = document.createElement('div');
+        d.className = 'twho';
+        d.style.left = m.x + '%'; d.style.top = m.y + '%';
+        const pic = document.createElement('span'); pic.className = 'pic';
+        pic.appendChild(charEl(m.char, 3));
+        if (m.item) { const cv = sprite(TYPE_ITEM[m.item[0]][m.item[1]], 2); cv.className = 'titem'; pic.appendChild(cv); }
+        const b = document.createElement('b'); b.textContent = m.name;
+        const s = document.createElement('span'); s.textContent = m.tname;
+        d.append(pic, b, s);
+        tgEl.appendChild(d);
+      });
+      /* 네 명이면 대각선 두 쌍의 가운데가 겹친다. 겹치는 라벨은 아래위로 비킨다. */
+      const seen = {};
+      tLbls = tPairs.map(([a, b], k) => {
+        const d = document.createElement('div');
+        d.className = 'tlbl' + tMark(k);
+        let mx = (ms[a].x + ms[b].x) / 2, my = (ms[a].y + ms[b].y) / 2;
+        const key = mx + ',' + my;
+        if (seen[key]) { my += seen[key] % 2 ? -9 : 9; }
+        seen[key] = (seen[key] || 0) + 1;
+        d.style.left = mx + '%'; d.style.top = my + '%';
+        d.innerHTML = tBadge(k) + '결이 같은 상황 ' + sameCount(ms[a], ms[b]) + ' / 5';
+        d.addEventListener('click', () => pickPair(k, n === 2));
+        tgEl.appendChild(d);
+        return d;
+      });
+      requestAnimationFrame(drawTeamTrails);
+      if (n === 2) pickPair(0, true);
+      else { renderTeamPanel(); $('t-sub').hidden = false; $('t-sub').textContent = '길을 누르면 아래 내용이 그 두 사람의 이야기로 바뀝니다.'; }
+    }
+
+    /* 참가자 카드 + 빈 자리. 카드는 팀용 요약까지만 — 답 인용은 본인 링크로만 */
+    const crew = $('t-crew');
+    crew.innerHTML = '';
+    ms.forEach((m) => {
+      const d = document.createElement('div');
+      d.className = 'tmate';
+      const top = document.createElement('div'); top.className = 'top';
+      top.appendChild(charEl(m.char, 2));
+      const tx = document.createElement('div');
+      const nb = document.createElement('b'); nb.textContent = m.name;
+      const sm = document.createElement('small'); sm.textContent = m.tname;
+      tx.append(nb, sm);
+      top.appendChild(tx);
+      const ul = document.createElement('ul');
+      AXES.forEach((ax, i) => {
+        const li = document.createElement('li');
+        const sp = document.createElement('span'); sp.textContent = ax.nm;
+        const bb = document.createElement('b'); bb.textContent = BAND_NM[m.bands[i]];
+        li.append(sp, bb);
+        ul.appendChild(li);
+      });
+      d.append(top, ul);
+      crew.appendChild(d);
+    });
+    for (let i = n; i < 4; i++) {
+      const d = document.createElement('div');
+      d.className = 'tmate empty';
+      d.textContent = solo ? '초대 링크로 들어올 자리예요' : (4 - n === 1 ? '한 자리 남았어요' : '아직 비어 있는 자리예요');
+      crew.appendChild(d);
+    }
+
+    $('t-join').hidden = n >= 4;
+    $('t-mine').hidden = !me.phash;
+    $('t-toast').textContent = solo ? '아직 혼자예요. [팀 링크 공유하기]로 팀원을 초대해 주세요.' : '';
+    sky(0); show('team'); scrollTo(0, 0);
+  }
+
+  function openTeam(id) {
+    fetchTeam(id).then(renderTeamPage).catch(() => {
+      $('toast').textContent = '팀을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.';
+    });
+  }
+
+  async function joinTeam(id, overwrite) {
+    try {
+      const r = await teamPost({ op: 'join', id, overwrite: !!overwrite, member: myMember() });
+      joinId = null; myTeamId = r.id;
+      $('team').textContent = '팀 화면 보기';
+      renderTeamPage(r);   // 검사가 끝나면 팀 페이지로 돌아온다
+      $('t-toast').textContent = '팀에 참여했어요. [내 결과 보기]에서 자세한 개인 결과를 볼 수 있어요.';
+    } catch (e) {
+      if (e === 'name-taken') {
+        /* 같은 이름은 두 사람일 수 있어서 그냥 덮지 않는다 */
+        if (confirm(`[${me.nick}] 이름이 이 팀에 이미 있어요.\n본인이 다시 검사한 것이면 [확인] — 예전 결과를 덮어써요.\n다른 사람이면 [취소] 후 이름을 바꿔 주세요.`)) return joinTeam(id, true);
+        const nn = (prompt('팀에서 쓸 다른 이름 (여덟 자까지)', me.nick) || '').trim();
+        if (nn) { me.nick = nn.slice(0, 8); return joinTeam(id, false); }
+        joinId = null;
+        $('toast').textContent = '팀 참여를 취소했어요. 개인 결과는 그대로 볼 수 있어요.';
+      } else if (e === 'full') {
+        joinId = null;
+        $('toast').textContent = '팀 자리가 다 찼어요. 방장 포함 네 명까지예요.';
+      } else {
+        /* joinId 를 지우지 않는다. 팀 버튼이 재시도 버튼이 된다. */
+        $('toast').textContent = '팀 서버에 연결하지 못했어요. 새로고침하지 말고 잠시 후 아래 버튼으로 다시 시도해 주세요.';
+        $('team').textContent = '팀 참여 다시 시도';
+      }
+    }
+  }
+
+  function tsheet(open) { $('tsheet').classList.toggle('live', open); }
+  $('tsheet').addEventListener('click', (e) => { if (e.target.closest('[data-tclose]')) tsheet(false); });
+  $('ts-go').addEventListener('click', async () => {
+    const tn = $('ts-team').value.trim();
+    const nn = $('ts-name').value.trim();
+    if (!tn) { $('ts-note').textContent = '팀 이름을 지어 주세요. 방장이 정하는 거예요.'; $('ts-team').focus(); return; }
+    if (!nn) { $('ts-note').textContent = '팀에서 쓸 이름이 필요해요.'; $('ts-name').focus(); return; }
+    me.nick = nn.slice(0, 8);
+    $('ts-go').disabled = true;
+    try {
+      const r = await teamPost({ op: 'create', team: tn.slice(0, 20), member: myMember() });
+      tsheet(false);
+      myTeamId = r.id;
+      $('team').textContent = '팀 화면 보기';
+      renderTeamPage({ id: r.id, team: tn.slice(0, 20), members: [myMember()] });
+    } catch {
+      $('ts-note').textContent = '팀 서버에 연결하지 못했어요. 잠시 후 다시 눌러 주세요.';
+    }
+    $('ts-go').disabled = false;
+  });
+
+  $('t-share').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(`오시에테 · ${team.team}\n${teamUrl()}`);
+      $('t-toast').textContent = '팀 링크를 복사했어요. 누가 언제 들어와도 같은 링크예요.';
+    } catch {
+      $('t-toast').textContent = '주소창의 링크를 복사해서 보내주세요.';
+    }
+  });
+  /* 참가는 팀 페이지에서 시작한다. 캐릭터·이름을 정하고 검사가 끝나면
+     joinId 가 살아 있어서 자동으로 이 팀에 합류한다. */
+  $('t-join').addEventListener('click', () => {
+    joinId = team.id;
+    at = 0; picks = new Array(Q.length).fill(null);
+    me.phash = null;
+    show('pick'); nickIn.focus();
+  });
+  $('t-mine').addEventListener('click', () => {
+    if (!me.phash) return;
+    history.replaceState(null, '', me.phash);
+    show('res'); scrollTo(0, 0);
+  });
+
   (function fromHash() {
     const h = new URLSearchParams(location.hash.slice(1));
+    /* 팀 링크. 개인 결과(#p=)와 겹치지 않는다 — 팀 하나에 URL 하나 */
+    const tid = h.get('t') || '';
+    if (/^[a-z0-9]{8}$/.test(tid)) {
+      fetchTeam(tid).then(renderTeamPage).catch(() => {
+        $('tagline').textContent = '팀 링크가 만료됐거나 잘못됐어요. 새로 시작해 보세요!';
+        history.replaceState(null, '', location.pathname);
+      });
+      return;
+    }
     const p = h.get('p');
     if (!p || p[0] !== PACK_VER || !/^[0-9a-z]{12}$/.test(p.slice(1))) return;
     const got = unpackPicks(p.slice(1));
@@ -2420,6 +2907,7 @@
     const c = Number(h.get('c'));
     if (Number.isInteger(c) && CHARS[c]) { me.c = c; setCursor(c); }
     me.nick = (h.get('n') || '').slice(0, 8);
+    me.phash = location.hash;
     render(scores);
     show('res');
   })();
