@@ -74,6 +74,9 @@
   input { font-family: inherit; }
   :focus-visible { outline: 3px solid var(--cb); outline-offset: 4px; }
   .px { font-family: var(--pixel); font-size: 11px; line-height: 1.6; }
+  /* display 를 직접 준 요소(.panel 의 flex 등)에서 hidden 속성이 무시되던
+     것을 바로잡는다 — [망설임 없던 답]이 빈 채로 뜨던 원인. */
+  [hidden] { display: none !important; }
   canvas { image-rendering: pixelated; }
   /* 좁은 칸 안에서도 폭이 눌리면 안 된다. 리셋의 max-width 를 되돌린다. */
   .chrimg { max-width: none; }
@@ -1085,6 +1088,8 @@
   .trule p { font-size: 14.5px; line-height: 1.72; }
   .ttmp { font-size: 10.5px; color: var(--cb); font-family: var(--pixel); margin-right: 4px; }
   .tcrew { display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); gap: 12px; padding: 0 18px 8px; }
+  /* 혼자라 그래프가 없으면 카드가 첫 내용이 된다. 상태창에 붙지 않게 띄운다 */
+  .tgraph[hidden] ~ .tcrew { padding-top: 18px; }
   .tmate { border: 3px solid var(--edge); border-radius: 16px; padding: 13px 14px; }
   .tmate .top { display: flex; align-items: center; gap: 9px; margin-bottom: 8px; }
   .tmate .top b { font-family: var(--pixel); font-size: 12px; }
@@ -1094,8 +1099,8 @@
   .tmate li b { font-weight: 700; color: var(--ink); }
   .tmate.empty { border-style: dashed; display: grid; place-items: center; color: var(--sub);
     font-family: var(--pixel); font-size: 12px; text-align: center; line-height: 2; min-height: 150px; }
-  .tacts { padding: 6px 18px 4px; }
-  .ttoast { padding: 0 18px 16px; }
+  .tacts { padding: 10px 18px 6px; }
+  .ttoast { padding: 4px 18px 18px; }
   .tform { display: flex; flex-direction: column; gap: 8px; }
   .tform label { color: var(--sub); margin-top: 4px; }
   .tform input { border: 3px solid var(--edge-deep); border-radius: 12px; padding: 11px 13px; font-size: 15px; }
@@ -1104,6 +1109,8 @@
     background: var(--ca); color: #fff; border: 3px solid var(--ca-deep); border-radius: 14px; box-shadow: 0 4px 0 var(--ca-deep); }
   .tsgo:disabled { opacity: 0.55; }
   .tsnote { color: var(--sub); }
+  .tsme { color: var(--sub); }
+  .nickwarn { color: var(--cb); margin-top: 7px; }
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
@@ -1151,6 +1158,7 @@
       <div class="nick">
         <label class="px" for="nick-in">별명 (여덟 자까지)</label>
         <input id="nick-in" type="text" maxlength="8" placeholder="화면에 표시될 이름" autocomplete="off">
+        <p class="px nickwarn" id="nick-warn" hidden>팀에 이미 있는 이름이에요. 본인이 다시 검사하는 게 아니라면 다른 이름을 써 주세요. 그대로 진행하면 예전 결과를 덮어써요.</p>
       </div>
       <button class="gbtn pxbtn go2" id="go2" disabled>검사 시작</button>
     </div>
@@ -1288,8 +1296,7 @@
     <div class="tform">
       <label class="px" for="ts-team">팀 이름 (스무 자까지) — 방장이 정해요</label>
       <input id="ts-team" type="text" maxlength="20" placeholder="예: 떡볶이 원정대" autocomplete="off">
-      <label class="px" for="ts-name">팀에서 쓸 내 이름 (여덟 자까지)</label>
-      <input id="ts-name" type="text" maxlength="8" autocomplete="off">
+      <p class="px tsme" id="ts-me"></p>
       <button class="gbtn tsgo" id="ts-go" type="button">팀 만들기</button>
       <p class="px tsnote" id="ts-note">팀 하나에 링크 하나가 생겨요. 팀 결과는 마지막 활동 후 3개월 뒤 자동 삭제됩니다.</p>
     </div>
@@ -2003,7 +2010,12 @@
   }
   const nickIn = $('nick-in');
   nickIn.addEventListener('input', () => { me.nick = nickIn.value.trim(); refreshWho(); validate(); });
-  function validate() { $('go2').disabled = !(me.c !== null && me.nick.length > 0); }
+  function validate() {
+    /* 팀에 합류하러 온 검사면 이름이 겹치는지 여기서 미리 알려준다.
+       막지는 않는다 — 같은 이름 재검사는 덮어쓰는 게 규칙이다. */
+    $('nick-warn').hidden = !(joinId && joinNames.includes(me.nick));
+    $('go2').disabled = !(me.c !== null && me.nick.length > 0);
+  }
 
   /* 줄바꿈된 실제 글줄 중 가장 긴 것에 상자 너비를 맞춘다.
      CSS 만으로는 줄바꿈 뒤에도 상자가 max-width 로 남는다. */
@@ -2471,8 +2483,9 @@
     location.hash = parts.join('&');
     me.phash = '#' + parts.join('&');   // 팀 화면에서 [내 결과 보기]로 돌아올 주소
     sky(0); render(scores); show('res'); scrollTo(0, 0);
-    /* 팀 링크의 [나도 참여하기]로 들어온 검사면, 결과가 나온 김에 팀에 합류한다 */
-    if (joinId) joinTeam(joinId, false);
+    /* 팀 링크의 [나도 참여하기]로 들어온 검사면, 결과가 나온 김에 팀에 합류한다.
+       겹치는 이름은 별명 입력 때 이미 경고했으니 그대로 진행하면 덮어쓴다. */
+    if (joinId) joinTeam(joinId, joinNames.includes(me.nick));
   }
 
   $('go').addEventListener('click', () => { show('pick'); nickIn.focus(); });
@@ -2494,10 +2507,10 @@
     if (e.key === 'Backspace') { e.preventDefault(); $('back').click(); }
   });
 
+  /* 주소만 복사한다. 앞에 유형명을 붙였더니 주소창에 그대로 넣으면 안 열렸다 */
   $('share').addEventListener('click', async () => {
     try {
-      await navigator.clipboard.writeText((me.type ? `오시에테 · ${me.type}
-` : '') + location.href);
+      await navigator.clipboard.writeText(location.href);
       $('toast').textContent = '내 결과 링크를 복사했어요. 이 링크를 연 사람은 내 결과를 봅니다.';
     } catch {
       $('toast').textContent = '주소창의 링크를 복사해서 보내주세요.';
@@ -2512,11 +2525,13 @@
       $('toast').textContent = '캐릭터와 별명을 정하고 검사를 마친 결과에서 팀을 만들 수 있어요.';
       return;
     }
-    $('ts-name').value = me.nick;
+    /* 이름은 검사 시작 때 정한 별명을 그대로 쓴다. 두 번 묻지 않는다 */
+    $('ts-me').textContent = `팀에는 [${me.nick}] 이름으로 들어가요.`;
     tsheet(true); $('ts-team').focus();
   });
   function goHome() {
     at = 0; picks = new Array(Q.length).fill(null);
+    joinId = null;   // 합류하러 가던 길을 접었으면 다음 검사가 그 팀에 붙으면 안 된다
     history.replaceState(null, '', location.pathname);
     sky(0); show('land');
   }
@@ -2595,7 +2610,7 @@
     return null;
   }
 
-  let team = null, myTeamId = null, joinId = null;
+  let team = null, myTeamId = null, joinId = null, joinNames = [];
   let tPairs = [], tPicked = -1, tHovered = -1, tGood = -1, tWarn = -1, tLbls = [];
   const T_POS = {
     2: [{ x: 26, y: 50 }, { x: 74, y: 50 }],
@@ -2755,15 +2770,16 @@
         d.append(pic, b, s);
         tgEl.appendChild(d);
       });
-      /* 네 명이면 대각선 두 쌍의 가운데가 겹친다. 겹치는 라벨은 아래위로 비킨다. */
-      const seen = {};
+      /* 네 명이면 대각선 두 쌍의 가운데가 같은 점에서 겹친다. 겹치는
+         라벨은 제 길의 3할 지점으로 비킨다 — 라벨이 자기 길 위에 남는다. */
+      const mids = tPairs.map(([a, b]) => [(ms[a].x + ms[b].x) / 2, (ms[a].y + ms[b].y) / 2]);
+      const clash = (k) => mids.some((m, j) => j !== k && Math.abs(m[0] - mids[k][0]) < 6 && Math.abs(m[1] - mids[k][1]) < 6);
       tLbls = tPairs.map(([a, b], k) => {
         const d = document.createElement('div');
         d.className = 'tlbl' + tMark(k);
-        let mx = (ms[a].x + ms[b].x) / 2, my = (ms[a].y + ms[b].y) / 2;
-        const key = mx + ',' + my;
-        if (seen[key]) { my += seen[key] % 2 ? -9 : 9; }
-        seen[key] = (seen[key] || 0) + 1;
+        const t = clash(k) ? 0.3 : 0.5;
+        const mx = ms[a].x + (ms[b].x - ms[a].x) * t;
+        const my = ms[a].y + (ms[b].y - ms[a].y) * t;
         d.style.left = mx + '%'; d.style.top = my + '%';
         d.innerHTML = tBadge(k) + '결이 같은 상황 ' + sameCount(ms[a], ms[b]) + ' / 5';
         d.addEventListener('click', () => pickPair(k, n === 2));
@@ -2806,7 +2822,10 @@
       crew.appendChild(d);
     }
 
-    $('t-join').hidden = n >= 4;
+    /* 이미 이 팀에 들어 있는 사람(방장 포함)에게는 참여 버튼을 안 보인다.
+       다시 검사하고 싶으면 초대 링크로 들어와 같은 이름으로 덮어쓴다. */
+    const mine = !!(me.phash && me.nick && ms.some((m) => m.name === me.nick));
+    $('t-join').hidden = n >= 4 || mine;
     $('t-mine').hidden = !me.phash;
     $('t-toast').textContent = solo ? '아직 혼자예요. [팀 링크 공유하기]로 팀원을 초대해 주세요.' : '';
     sky(0); show('team'); scrollTo(0, 0);
@@ -2848,10 +2867,7 @@
   $('tsheet').addEventListener('click', (e) => { if (e.target.closest('[data-tclose]')) tsheet(false); });
   $('ts-go').addEventListener('click', async () => {
     const tn = $('ts-team').value.trim();
-    const nn = $('ts-name').value.trim();
     if (!tn) { $('ts-note').textContent = '팀 이름을 지어 주세요. 방장이 정하는 거예요.'; $('ts-team').focus(); return; }
-    if (!nn) { $('ts-note').textContent = '팀에서 쓸 이름이 필요해요.'; $('ts-name').focus(); return; }
-    me.nick = nn.slice(0, 8);
     $('ts-go').disabled = true;
     try {
       const r = await teamPost({ op: 'create', team: tn.slice(0, 20), member: myMember() });
@@ -2865,9 +2881,10 @@
     $('ts-go').disabled = false;
   });
 
+  /* 주소만 복사한다. 앞에 글자를 붙이면 그대로 주소창에 넣었을 때 안 열린다 */
   $('t-share').addEventListener('click', async () => {
     try {
-      await navigator.clipboard.writeText(`오시에테 · ${team.team}\n${teamUrl()}`);
+      await navigator.clipboard.writeText(teamUrl());
       $('t-toast').textContent = '팀 링크를 복사했어요. 누가 언제 들어와도 같은 링크예요.';
     } catch {
       $('t-toast').textContent = '주소창의 링크를 복사해서 보내주세요.';
@@ -2877,9 +2894,11 @@
      joinId 가 살아 있어서 자동으로 이 팀에 합류한다. */
   $('t-join').addEventListener('click', () => {
     joinId = team.id;
+    /* 지금 팀에 있는 이름들. 별명을 칠 때 겹치면 바로 알려주기 위한 것 */
+    joinNames = team.members.map((m) => m.name);
     at = 0; picks = new Array(Q.length).fill(null);
     me.phash = null;
-    show('pick'); nickIn.focus();
+    show('pick'); nickIn.focus(); validate();
   });
   $('t-mine').addEventListener('click', () => {
     if (!me.phash) return;
