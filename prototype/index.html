@@ -1109,7 +1109,8 @@
     background: var(--ca); color: #fff; border: 3px solid var(--ca-deep); border-radius: 14px; box-shadow: 0 4px 0 var(--ca-deep); }
   .tsgo:disabled { opacity: 0.55; }
   .tsnote { color: var(--sub); margin-top: 12px; }
-  .tsme { color: var(--sub); }
+  /* 삭제 안내만 한 톤 세운다. 지나가는 설명이 아니라 기억해야 할 정보다 */
+  .tsnote .tsdel { color: var(--cb); }
   .nickwarn { color: var(--cb); margin-top: 7px; }
 
   @media (prefers-reduced-motion: reduce) {
@@ -1294,11 +1295,10 @@
       <button class="gbtn x" data-tclose aria-label="닫기">✕</button>
     </div>
     <div class="tform">
-      <label class="px" for="ts-team">팀 이름 (스무 자까지) — 방장이 정해요</label>
+      <label class="px" for="ts-team" id="ts-teamlab">팀 이름 (스무 자까지) — 방장이 정해요</label>
       <input id="ts-team" type="text" maxlength="20" placeholder="예: 떡볶이 원정대" autocomplete="off">
-      <p class="px tsme" id="ts-me"></p>
       <button class="gbtn tsgo" id="ts-go" type="button">팀 만들기</button>
-      <p class="px tsnote" id="ts-note">팀 하나에 링크 하나가 생겨요.<br>※ 팀 결과는 3개월 뒤 자동 삭제됩니다.</p>
+      <p class="px tsnote" id="ts-note">팀 하나에 링크 하나가 생겨요.<br><span class="tsdel">※ 팀 결과는 3개월 뒤 자동 삭제됩니다.</span></p>
     </div>
   </div>
 </div>
@@ -2529,7 +2529,7 @@
       return;
     }
     /* 이름은 검사 시작 때 정한 별명을 그대로 쓴다. 두 번 묻지 않는다 */
-    $('ts-me').textContent = `팀에는 [${me.nick}] 이름으로 들어가요.`;
+    $('ts-teamlab').textContent = `팀 이름 (스무 자까지) — 방장인 [${me.nick}]이 정해요`;
     tsheet(true); $('ts-team').focus();
   });
   function goHome() {
@@ -2843,10 +2843,11 @@
   async function joinTeam(id, overwrite) {
     try {
       const r = await teamPost({ op: 'join', id, overwrite: !!overwrite, member: myMember() });
-      joinId = null; myTeamId = r.id;
+      joinId = null; myTeamId = r.id; team = r;
+      /* 합류는 뒤에서 끝내고 화면은 개인 결과에 머문다. 자기 결과를
+         읽고 나서 [팀 화면 보기]로 넘어간다 (08-01 결정). */
       $('team').textContent = '팀 화면 보기';
-      renderTeamPage(r);   // 검사가 끝나면 팀 페이지로 돌아온다
-      $('t-toast').textContent = '팀에 참여했어요. [내 결과 보기]에서 자세한 개인 결과를 볼 수 있어요.';
+      $('toast').textContent = `[${r.team}] 팀에 합류했어요. 내 결과를 본 뒤 아래 [팀 화면 보기]를 눌러 주세요.`;
     } catch (e) {
       if (e === 'name-taken') {
         /* 같은 이름은 두 사람일 수 있어서 그냥 덮지 않는다 */
