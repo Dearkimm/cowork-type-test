@@ -1261,6 +1261,7 @@
         <div class="acts tacts">
           <button class="gbtn primary" id="t-share">팀 링크 공유하기</button>
           <button class="gbtn primary pink" id="t-join">나도 참여하기</button>
+          <button class="gbtn" id="t-retake" hidden>다시 검사하기</button>
           <button class="gbtn" id="t-mine" hidden>내 결과 보기</button>
         </div>
         <p class="toast px ttoast" id="t-toast"></p>
@@ -2487,8 +2488,9 @@
     sky(0); render(scores); show('res'); scrollTo(0, 0);
     /* 팀 링크의 [나도 참여하기]로 들어온 검사면, 결과가 나온 김에 팀에 합류한다.
        겹치는 이름은 입력에서 막았으니 여기서 409가 나면 검사 중에 누가
-       같은 이름으로 들어온 드문 경우다 — 그때만 확인창이 뜬다. */
-    if (joinId) joinTeam(joinId, false);
+       같은 이름으로 들어온 드문 경우다 — 그때만 확인창이 뜬다.
+       [다시 검사하기]로 온 검사면 joinOverwrite 가 서 있어서 바로 덮어쓴다. */
+    if (joinId) joinTeam(joinId, joinOverwrite);
   }
 
   $('go').addEventListener('click', () => { show('pick'); nickIn.focus(); });
@@ -2534,7 +2536,7 @@
   });
   function goHome() {
     at = 0; picks = new Array(Q.length).fill(null);
-    joinId = null;   // 합류하러 가던 길을 접었으면 다음 검사가 그 팀에 붙으면 안 된다
+    joinId = null; joinOverwrite = false;   // 합류하러 가던 길을 접었으면 다음 검사가 그 팀에 붙으면 안 된다
     history.replaceState(null, '', location.pathname);
     sky(0); show('land');
   }
@@ -2613,7 +2615,12 @@
     return null;
   }
 
-  let team = null, myTeamId = null, joinId = null, joinNames = [];
+  let team = null, myTeamId = null, joinId = null, joinNames = [], joinOverwrite = false;
+  /* 이 브라우저가 팀의 누구인지. 팀을 만들거나 합류할 때 찍어 둔다.
+     로그인이 없어서 이게 유일한 본인 표식이고, [다시 검사하기]가
+     이 표식이 있는 기기에서만 보인다 — 남의 결과를 덮는 길을 막는다. */
+  const stampMe = (id) => { try { localStorage.setItem('ot-' + id, JSON.stringify({ name: me.nick, char: me.c })) } catch { } };
+  const stampedMe = (id) => { try { return JSON.parse(localStorage.getItem('ot-' + id) || 'null'); } catch { return null; } };
   let tPairs = [], tPicked = -1, tHovered = -1, tGood = -1, tWarn = -1, tLbls = [];
   const T_POS = {
     2: [{ x: 26, y: 50 }, { x: 74, y: 50 }],
@@ -2825,10 +2832,14 @@
       crew.appendChild(d);
     }
 
-    /* 이미 이 팀에 들어 있는 사람(방장 포함)에게는 참여 버튼을 안 보인다.
-       다시 검사하고 싶으면 초대 링크로 들어와 같은 이름으로 덮어쓴다. */
+    /* 이미 이 팀에 들어 있는 사람(방장 포함)에게는 참여 버튼을 안 보인다. */
     const mine = !!(me.phash && me.nick && ms.some((m) => m.name === me.nick));
     $('t-join').hidden = n >= 4 || mine;
+    /* 재검사는 이 기기로 만들거나 합류한 사람에게만 열린다. 별명·캐릭터를
+       다시 고르지 않고 바로 문항으로 간다 (08-01 제나). */
+    const st = stampedMe(t.id);
+    retakeAs = (st && ms.find((m) => m.name === st.name)) ? st : null;
+    $('t-retake').hidden = !retakeAs;
     $('t-mine').hidden = !me.phash;
     $('t-toast').textContent = solo ? '아직 혼자예요. [팀 링크 공유하기]로 팀원을 초대해 주세요.' : '';
     sky(0); show('team'); scrollTo(0, 0);
@@ -2843,7 +2854,8 @@
   async function joinTeam(id, overwrite) {
     try {
       const r = await teamPost({ op: 'join', id, overwrite: !!overwrite, member: myMember() });
-      joinId = null; myTeamId = r.id; team = r;
+      joinId = null; joinOverwrite = false; myTeamId = r.id; team = r;
+      stampMe(r.id);
       /* 합류는 뒤에서 끝내고 화면은 개인 결과에 머문다. 자기 결과를
          읽고 나서 [팀 화면 보기]로 넘어간다 (08-01 결정). */
       $('team').textContent = '팀 화면 보기';
@@ -2877,6 +2889,7 @@
       const r = await teamPost({ op: 'create', team: tn.slice(0, 20), member: myMember() });
       tsheet(false);
       myTeamId = r.id;
+      stampMe(r.id);
       $('team').textContent = '팀 화면 보기';
       renderTeamPage({ id: r.id, team: tn.slice(0, 20), members: [myMember()] });
     } catch {
@@ -2897,12 +2910,23 @@
   /* 참가는 팀 페이지에서 시작한다. 캐릭터·이름을 정하고 검사가 끝나면
      joinId 가 살아 있어서 자동으로 이 팀에 합류한다. */
   $('t-join').addEventListener('click', () => {
-    joinId = team.id;
+    joinId = team.id; joinOverwrite = false;
     /* 지금 팀에 있는 이름들. 별명을 칠 때 겹치면 바로 알려주기 위한 것 */
     joinNames = team.members.map((m) => m.name);
     at = 0; picks = new Array(Q.length).fill(null);
     me.phash = null;
     show('pick'); nickIn.focus(); validate();
+  });
+  /* 재검사. 이미 팀에 있는 사람이라 별명·캐릭터 선택을 건너뛰고
+     바로 1번 문항으로 간다. 끝나면 같은 이름 위에 덮어쓴다. */
+  let retakeAs = null;
+  $('t-retake').addEventListener('click', () => {
+    if (!retakeAs) return;
+    me.nick = retakeAs.name; me.c = retakeAs.char;
+    joinId = team.id; joinOverwrite = true;
+    at = 0; picks = new Array(Q.length).fill(null);
+    me.phash = null;
+    show('test'); paint();
   });
   $('t-mine').addEventListener('click', () => {
     if (!me.phash) return;
